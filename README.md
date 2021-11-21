@@ -11,7 +11,7 @@ It relies on the NBER's [TAXSIM 32](https://users.nber.org/~taxsim/taxsim32/) ta
 You can install `usincometaxes` from [GitHub](https://github.com/shanejorr/usincometaxes) with:
 
 ``` r
-devtools::install_github("uhanejorr/suincometaxes")
+devtools::install_github("shanejorr/usincometaxes")
 ```
 
 ## Example
