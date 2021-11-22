@@ -1,3 +1,10 @@
 ^usincometaxes\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^notes$
+^README\.Rmd$
+^cran-comments\.md$
+^data-raw$
+^pkgdown$
+^_pkgdown\.yml$
+^\.github$
