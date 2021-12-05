@@ -5,6 +5,9 @@
 #' See \url{https://users.nber.org/~taxsim/taxsim32/} for more information on TAXSIM 32.
 #'
 #' @docType package
+#'
 #' @name usincometaxes
+#'
+#' @keywords internal
 NULL
 #> NULL

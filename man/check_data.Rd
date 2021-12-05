@@ -19,3 +19,4 @@ The function does not return a value. It either produces a stop message with the
 \description{
 Check to ensure all the required column are present and data types are correct. This function binds all the checks through helper functions.
 }
+\keyword{internal}

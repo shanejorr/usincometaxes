@@ -7,6 +7,7 @@
 #' @param state_column_name The column name of the state column.
 #'
 #' @return The function does not return a value. It either produces a stop message with the error or prints that all checks were successful.
+#' @keywords internal
 check_data <- function(.data, cols, state_column_name) {
 
   # make sure all the required column are present

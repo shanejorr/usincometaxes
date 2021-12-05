@@ -67,6 +67,8 @@ clean_from_taxsim <- function(from_taxsim) {
 #' Map input column names.
 #'
 #' Map the input column names required in this package to the input column names required by TAXSIM.
+#'
+#' @keywords internal
 taxsim_cols <- function() {
 
   c(
