@@ -3,6 +3,7 @@
 library(tidyverse)
 library(curl)
 library(glue)
+library(usincometaxes)
 
 # testing -----------------------------------------
 
@@ -22,6 +23,8 @@ load("R/sysdata.rda")
   primary_age = c(26, 36)
 )
 
+test_data <- create_dataset_for_taxsim(.data)
+
 taxes <- taxsim_calculate_taxes(.data)
 
 merge(.data, taxes, by = 'id_number')
@@ -39,7 +42,7 @@ required_variables <- c('taxsimid', 'mstat', 'year')
 to_taxsim <- data.frame(
   taxsimid = rep(1, n),
   mstat = rep(2, n),
-  year = rep(1970, n),
+  year = rep(20, n),
   ltcg = rep(100000, n)
 )
 
@@ -51,7 +54,7 @@ to_taxsim[] <- lapply(to_taxsim, as.integer)
 #to_taxsim_filename <- 'to_taxsim.csv'
 
 to_taxsim_tmp_filename <- tempfile("to_taxsim_")
-write.csv(to_taxsim, to_taxsim_tmp_filename, row.names = FALSE)
+utils::write.csv(to_taxsim, to_taxsim_tmp_filename, row.names = FALSE)
 read.csv(to_taxsim_tmp_filename)
 
 #write.csv(tax_df, to_taxsim_filename, row.names = FALSE)

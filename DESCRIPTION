@@ -1,6 +1,6 @@
 Package: usincometaxes
 Title: Calculate Federal and State Income Taxes in the United States
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
     person(given = "Shane",
            family = "Orr",
@@ -22,4 +22,6 @@ Imports:
     RCurl
 Suggests: 
     testthat (>= 3.0.0)
+Depends: 
+    R (>= 3.1)
 Config/testthat/edition: 3

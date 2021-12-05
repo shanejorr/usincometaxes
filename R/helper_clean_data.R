@@ -3,8 +3,8 @@
 #' Return the integer number state SOI of a state based on either its two letter abbreviation or
 #'     full name.
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program.
-#'     The column names of the input parameters are below. The column can be in any order.
+#' @param state_column Vectors containing the states to calculate taxes for. Generally, this is the
+#'     state column from the data set that will be sent to TAXSIM.
 #'
 #' @return Named integer vector with each number between 1 and 51 representing the state's SOI.
 #'     Names are the state's two letter abbreviation.
@@ -15,8 +15,8 @@ get_state_soi <- function(state_column) {
 
   # add DC to list of states, since there is an SOI code for it
   # lwoer-case everything to make it easier to match with the user-entered states
-  state_abb <- tolower(c(state.abb, "DC", "No State"))
-  state_name <- tolower(c(state.name, "District of Columbia", "No State"))
+  state_abb <- tolower(c(datasets::state.abb, "DC", "No State"))
+  state_name <- tolower(c(datasets::state.name, "District of Columbia", "No State"))
 
   states_listed <- tolower(state_column)
 

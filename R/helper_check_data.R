@@ -45,7 +45,7 @@ check_state <- function(.data, cols, state_column_name) {
   # state should either be the two letter abbreviation or full name
   if (state_column_name %in% cols) {
 
-    proper_states <- c(state.abb, state.name, "DC", "District of Columbia")
+    proper_states <- c(datasets::state.abb, datasets::state.name, "DC", "District of Columbia")
 
     # make state list and entered data lower case to ensure a state is not recogizend simply because of capitalization
     proper_states <- tolower(proper_states)
@@ -110,7 +110,7 @@ check_numeric <- function(.data, cols) {
   } else {
 
     # convert all numeric values to integer and return dataframe
-    .data[numeric_cols_in_data] <- as.data.frame(sapply(.data[numeric_cols_in_data], as.integer))
+    .data[numeric_cols_in_data] <- as.data.frame(lapply(.data[numeric_cols_in_data], as.integer))
 
     return(.data)
 

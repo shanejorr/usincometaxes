@@ -7,8 +7,8 @@
 get_state_soi(state_column)
 }
 \arguments{
-\item{.data}{A data frame containing the input parameters for the TAXSIM 32 program.
-The column names of the input parameters are below. The column can be in any order.}
+\item{state_column}{Vectors containing the states to calculate taxes for. Generally, this is the
+state column from the data set that will be sent to TAXSIM.}
 }
 \value{
 Named integer vector with each number between 1 and 51 representing the state's SOI.

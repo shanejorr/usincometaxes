@@ -6,6 +6,9 @@
 \usage{
 create_dataset_for_taxsim(.data)
 }
+\arguments{
+\item{.data}{The data set used to calculate taxes from}
+}
 \description{
 This function takes a data set, checks it to make sure it is in the proper format for TAXSIM 32,
 and then cleans so it can be sent to TAXSIM 32.
