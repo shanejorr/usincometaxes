@@ -40,6 +40,8 @@ check_data <- function(.data, cols, state_column_name) {
 #' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
 #' @param state_column_name The column name of the state column.
+#'
+#' @keywords internal
 check_state <- function(.data, cols, state_column_name) {
 
   # state should either be the two letter abbreviation or full name
@@ -63,6 +65,8 @@ check_state <- function(.data, cols, state_column_name) {
 #' Ensure the required columns are present
 #'
 #' @param cols The column names, as a string, in the data set `.data`
+#'
+#' @keywords internal
 check_required_cols <- function(cols) {
 
   required_columns <- names(taxsim_cols())[1:3]
@@ -88,6 +92,8 @@ check_required_cols <- function(cols) {
 #'
 #' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
+#'
+#' @keywords internal
 check_numeric <- function(.data, cols) {
 
   # all numeric columns should be 'double' or integer
@@ -124,6 +130,8 @@ check_numeric <- function(.data, cols) {
 #'
 #' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
+#'
+#' @keywords internal
 check_greater_zero <- function(.data, cols) {
 
   cols_greater_zero <- names(taxsim_cols())[greater_zero_cols()]
@@ -158,6 +166,8 @@ check_greater_zero <- function(.data, cols) {
 #' The `id_number` column requires a data type of integer and unique value. Check to make sure this is true..
 #'
 #' @param id_number_col Vector that id the `id_number` column. This will always be the column `id_number` in the input data frame.
+#'
+#' @keywords internal
 check_id_number <- function(id_number_col) {
 
   # make sure id_number is an integer

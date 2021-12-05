@@ -117,7 +117,7 @@ The following columns are required:
 
 Optional columns can be found in the help documentation of
 `taxsim_calculate_taxes()` under the section `Optional columns`. Use
-`?taxsim_calculate_taxes()` to access the help documentation.
+`?taxsim_calculate_taxes` to access the help documentation.
 
 ## Giving credit
 

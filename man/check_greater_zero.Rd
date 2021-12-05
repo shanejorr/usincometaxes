@@ -14,3 +14,4 @@ check_greater_zero(.data, cols)
 \description{
 Some columns must have all values greater than zero. Check to make sure this is true.
 }
+\keyword{internal}

@@ -18,3 +18,4 @@ Names are the state's two letter abbreviation.
 Return the integer number state SOI of a state based on either its two letter abbreviation or
 full name.
 }
+\keyword{internal}

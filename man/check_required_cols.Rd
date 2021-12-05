@@ -12,3 +12,4 @@ check_required_cols(cols)
 \description{
 Ensure the required columns are present
 }
+\keyword{internal}

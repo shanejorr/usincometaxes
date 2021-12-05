@@ -12,3 +12,4 @@ check_id_number(id_number_col)
 \description{
 The \code{id_number} column requires a data type of integer and unique value. Check to make sure this is true..
 }
+\keyword{internal}

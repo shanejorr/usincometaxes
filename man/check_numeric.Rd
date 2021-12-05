@@ -14,3 +14,4 @@ check_numeric(.data, cols)
 \description{
 Checks that each column which should be numeric or integer is numeric or integer.
 }
+\keyword{internal}

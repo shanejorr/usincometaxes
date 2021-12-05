@@ -15,3 +15,4 @@ Vector with integers reflecting numeric value of filing status.
 \description{
 Check to make sure the strings in \code{filing_status} are correct and recode from a string to an integer.
 }
+\keyword{internal}

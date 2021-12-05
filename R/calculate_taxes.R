@@ -8,6 +8,7 @@
 #' and then cleans so it can be sent to TAXSIM 32.
 #'
 #' @details None
+#' @keywords internal
 create_dataset_for_taxsim <- function(.data) {
 
   state_colname <- 'state'

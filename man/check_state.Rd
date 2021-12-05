@@ -16,3 +16,4 @@ check_state(.data, cols, state_column_name)
 \description{
 State should be either a two letter abbreviation or full state name. Check to make sure this is true.
 }
+\keyword{internal}

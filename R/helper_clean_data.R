@@ -8,6 +8,8 @@
 #'
 #' @return Named integer vector with each number between 1 and 51 representing the state's SOI.
 #'     Names are the state's two letter abbreviation.
+#'
+#' @keywords internal
 get_state_soi <- function(state_column) {
 
   # the SOI crosswalk has two letter abbreviation
@@ -42,6 +44,8 @@ get_state_soi <- function(state_column) {
 #'
 #' @return Data frame containing the row's `id_number` and tax calculations. This data frame can be
 #'     merged with the original input data frame by `id_number`.
+#'
+#' @keywords internal
 clean_from_taxsim <- function(from_taxsim) {
 
   # change column names from the TAXSIM names to more descriptive names
@@ -86,6 +90,8 @@ taxsim_cols <- function() {
 #' Map output column names.
 #'
 #' Map the output column names required in this package to the input column names required by TAXSIM.
+#'
+#' @keywords internal
 from_taxsim_cols <- function() {
 
   # named vector to rename the columns of the data set received from TAXSIM
@@ -97,6 +103,7 @@ from_taxsim_cols <- function() {
 
 }
 
+#' @keywords internal
 non_numeric_col <- function() {
 
   # filing status and state are the only non-numeric column
@@ -104,6 +111,7 @@ non_numeric_col <- function() {
   c(3, 4)
 }
 
+#' @keywords internal
 greater_zero_cols <- function() {
 
   # columns that must have all values greater than zero
@@ -119,6 +127,8 @@ greater_zero_cols <- function() {
 #' @param filing_status_colname Column, as a vector, containing filing status
 #'
 #' @return Vector with integers reflecting numeric value of filing status.
+#'
+#' @keywords internal
 recode_filing_status <- function(filing_status_colname) {
 
   # mapping of strings to integers
