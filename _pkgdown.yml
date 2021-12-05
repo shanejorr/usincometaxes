@@ -2,4 +2,8 @@ url: https://shanejorr.github.io/usincometaxes
 template:
   bootstrap: 5
 
+authors:
+  Shane Orr:
+     href: https://shaneorr.io
+
 destination: '../shanes-site/static/R/usincometaxes'

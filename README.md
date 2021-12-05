@@ -5,13 +5,14 @@
 
 ## Calculate Federal and State Income Taxes
 
-`usincometaxes` calculates federal and state income taxes in the United
-States. It relies on the National Bureau of Economic Research’s (NBER)
-[TAXSIM 32](https://users.nber.org/~taxsim/taxsim32/) tax simulator for
-calculations. The package takes care of the behind-the-scenes work of
-getting the data in the proper format, converting it to the proper file
-type for uploading to the NBER server, uploading the data, downloading
-the results, and placing the results into a tidy data frame.
+`usincometaxes` is an R package that calculates federal and state income
+taxes in the United States. It relies on the National Bureau of Economic
+Research’s (NBER) [TAXSIM 32](https://users.nber.org/~taxsim/taxsim32/)
+tax simulator for calculations. The package takes care of the
+behind-the-scenes work of getting the data in the proper format,
+converting it to the proper file type for uploading to the NBER server,
+uploading the data, downloading the results, and placing the results
+into a tidy data frame.
 
 *NOTE: This package is not associated with the NBER. It is a private
 creation that uses their wonderful tax calculator.*
