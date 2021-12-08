@@ -1,20 +1,15 @@
 # create functions by hand to test
 
 library(tidyverse)
-library(curl)
+library(RCurl)
 library(glue)
 library(usincometaxes)
 
 # testing -----------------------------------------
 
-source("R/calculate_taxes.R")
-source("R/custom_names.R")
-source("R/helper_check_data.R")
-source("R/helper_clean_data.R")
-source("R/helper_recode_data.R")
-load("R/sysdata.rda")
+devtools::load_all()
 
-.data <- data.frame(
+input_data <- data.frame(
   id_number = as.integer(c(1, 2)),
   state = c('North Carolina', 'NY'),
   tax_year = c(2015, 2015),
@@ -23,9 +18,36 @@ load("R/sysdata.rda")
   primary_age = c(26, 36)
 )
 
+taxes <- taxsim_calculate_taxes(input_data, "ftp")
+
 test_data <- create_dataset_for_taxsim(.data)
 
-taxes <- taxsim_calculate_taxes(.data)
+# ssh --------------
+library('ssh')
+
+#ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <txpydata.raw > results.csv
+
+command <- "ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <txpydata.raw > aaresults.csv"
+system(command)
+
+scp("remote.ssh.host.com", "/home/dir/file.txt", "My.SCP.Passphrase", user="username")
+
+session <- ssh_connect("taxsimssh@taxsimssh.nber.org")
+
+scp_upload(session, files = 'txpydata.raw', to = ".", verbose = TRUE)
+
+results <- ssh_exec_internal(session, "-T -o StrictHostKeyChecking=no <txpydata.raw")
+
+ssh_exec_wait(session, command = "-T -o StrictHostKeyChecking=no <txpydata.raw")
+scp StrictHostKeyChecking=no txpydata.raw taxsimssh@taxsimssh.nber.org:/txpydata.raw
+# https ---------------
+
+write_csv(test_data, "txpydata.raw")
+
+# curl -F txpydata.raw=@txpydata.raw "https://wwwdev.nber.org/uptest/webfile.cgi"
+
+##################
+taxes <- taxsim_calculate_taxes(input_data, "ssh")
 
 merge(.data, taxes, by = 'id_number')
 ###

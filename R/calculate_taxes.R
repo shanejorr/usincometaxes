@@ -59,6 +59,9 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' @param .data Data frame containing the information that will be used to calculate taxes.
 #'    This data set will be sent to TAXSIM. Data frame must have specified column names and data types.
+#' @param upload_method Either 'ftp' or 'ssh'. Determines whether ftp or ssh will be used to send data
+#'    to TAXSIM and retrieve the results. Defaults to 'ftp'. SSH is available in Windows 10 since autumn of 2019.
+#'    If you run an earlier Windows, try the built-in ftp client instead.
 #'
 #' @section Required columns:
 #'
@@ -183,7 +186,7 @@ create_dataset_for_taxsim <- function(.data) {
 #'      primary_age = c(26, 36)
 #' )
 #'
-#' family_taxes <- taxsim_calculate_taxes(family_income)
+#' family_taxes <- taxsim_calculate_taxes(family_income, upload_method = 'ftp')
 #'
 #' merge(family_income, family_taxes, by = 'id_number')
 #'
@@ -197,7 +200,11 @@ create_dataset_for_taxsim <- function(.data) {
 #' Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
 #'
 #' @export
-taxsim_calculate_taxes <- function(.data) {
+taxsim_calculate_taxes <- function(.data, upload_method = 'ftp') {
+
+  if (!upload_method %in% c('ftp', 'ssh')) {
+    stop("Upload method must be either 'ft;' or 'ssh'.")
+  }
 
   # TAXSIM username and password are publicly listed
   # that's why they are hard-coded
@@ -214,27 +221,62 @@ taxsim_calculate_taxes <- function(.data) {
   to_taxsim_tmp_filename <- tempfile("to_taxsim_")
   utils::write.csv(to_taxsim, to_taxsim_tmp_filename, row.names = FALSE)
 
-  # create random filename to upload to server
-  fake_taxsim_filename <- sample(letters, 10, replace = T)
-  fake_taxsim_filename <- paste(fake_taxsim_filename, collapse = "")
-  fake_taxsim_filename <- paste0("ftp://", taxsim_user_pass, "@taxsimftp.nber.org/tmp/", fake_taxsim_filename)
+  if (upload_method == 'ftp') {
 
-  # upload TAXSIM csv file to server
-  print("Uploading data to TAXSIM server.")
-  RCurl::ftpUpload(
-    what = to_taxsim_tmp_filename,
-    to = fake_taxsim_filename
-  )
+    # create random filename to upload to server
+    fake_taxsim_filename <- sample(letters, 10, replace = T)
+    fake_taxsim_filename <- paste(fake_taxsim_filename, collapse = "")
+    fake_taxsim_filename <- paste0("ftp://", taxsim_user_pass, "@taxsimftp.nber.org/tmp/", fake_taxsim_filename)
 
-  # download data set containing tax values from taxsim server
-  # store data in temp folder
+    # upload TAXSIM csv file to server
+    print("Uploading data to TAXSIM server via ftp.")
 
-  # FTP url to download results
-  taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
+    tryCatch(
+      expr = {
+        RCurl::ftpUpload(
+          what = to_taxsim_tmp_filename,
+          to = fake_taxsim_filename
+        )
+      },
+      error = function(e){
+        stop("There was a problem with ssh. Try ftp instead.")
+      }
+    )
 
-  print("Downloading data to TAXSIM server.")
-  from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 60)
-  from_taxsim <- utils::read.csv(text = from_taxsim_curl)
+    # download data set containing tax values from taxsim server
+    # store data in temp folder
+
+    # FTP url to download results
+    taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
+
+    print("Downloading data from TAXSIM server via ftp.")
+    from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 60)
+
+    from_taxsim <- utils::read.csv(text = from_taxsim_curl)
+
+  } else if (upload_method == 'ssh') {
+
+    # tempfile to save csv results into
+    from_taxsim_curl <- paste0(tempfile("from_taxsim_"), ".csv")
+
+    ssh_command <- paste0("ssh -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org < ",
+                          to_taxsim_tmp_filename, " > ", from_taxsim_curl)
+
+    print("Sending and retrieving data from TAXSIM server via SSH")
+
+    # run ssh command with error handling
+    tryCatch(
+      expr = {
+        system(ssh_command)
+      },
+      error = function(e){
+        stop("There was a problem with ssh. Try ftp instead.")
+      }
+    )
+
+    from_taxsim <- utils::read.csv(from_taxsim_curl)
+
+  }
 
   # clean final output
   from_taxism_cleaned <- clean_from_taxsim(from_taxsim)

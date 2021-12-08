@@ -45,10 +45,10 @@ family_income <- data.frame(
   primary_age = c(26, 36)
 )
 
-family_taxes <- taxsim_calculate_taxes(family_income)
+family_taxes <- taxsim_calculate_taxes(family_income, upload_method = 'ftp')
 #> [1] "All required columns are present and the data is in the proper format!"
-#> [1] "Uploading data to TAXSIM server."
-#> [1] "Downloading data to TAXSIM server."
+#> [1] "Uploading data to TAXSIM server via ftp."
+#> [1] "Downloading data from TAXSIM server via ftp."
 ```
 
 ``` r
@@ -93,9 +93,10 @@ columns:
 
 ## Input
 
-`.data` is the only parameter for `taxsim_calculate_taxes()`. It is a
-data frame containing the information used to calculate taxes. Column
-names must match the names below.
+The input data frame, `.data` must contain three required columns.
+Optional columns can also be specified for better tax calculations. All
+columns must have the column names and data types listed below or in teh
+help file for `taxsim_calculate_taxes`.
 
 ### Required columns
 
@@ -119,6 +120,14 @@ The following columns are required:
 Optional columns can be found in the help documentation of
 `taxsim_calculate_taxes()` under the section `Optional columns`. Use
 `?taxsim_calculate_taxes` to access the help documentation.
+
+## Upload and download method
+
+FTP or SSH can be used to upload and retrieve information to and from
+the TAXSIM server. This is set with the `upload_method` parameter to
+`taxsim_calculate_taxes()` and defaults to FTP. Behind the scenes, FTP
+uses the `RCurl` package and SSH issues an SSH command to the operating
+system.
 
 ## Giving credit
 

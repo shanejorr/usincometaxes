@@ -4,11 +4,15 @@
 \alias{taxsim_calculate_taxes}
 \title{Calculate state and federal taxes using TAXSIM 32.}
 \usage{
-taxsim_calculate_taxes(.data)
+taxsim_calculate_taxes(.data, upload_method = "ftp")
 }
 \arguments{
 \item{.data}{Data frame containing the information that will be used to calculate taxes.
 This data set will be sent to TAXSIM. Data frame must have specified column names and data types.}
+
+\item{upload_method}{Either 'ftp' or 'ssh'. Determines whether ftp or ssh will be used to send data
+to TAXSIM and retrieve the results. Defaults to 'ftp'. SSH is available in Windows 10 since autumn of 2019.
+If you run an earlier Windows, try the built-in ftp client instead.}
 }
 \value{
 Returns a data frame with the following columns:
@@ -153,7 +157,7 @@ family_income <- data.frame(
      primary_age = c(26, 36)
 )
 
-family_taxes <- taxsim_calculate_taxes(family_income)
+family_taxes <- taxsim_calculate_taxes(family_income, upload_method = 'ftp')
 
 merge(family_income, family_taxes, by = 'id_number')
 
