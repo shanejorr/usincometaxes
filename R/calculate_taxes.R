@@ -277,8 +277,6 @@ taxsim_calculate_taxes <- function(.data, upload_method = 'ftp') {
       }
     )
 
-    #from_taxsim <- utils::read.csv(from_taxsim_curl)
-
   }
 
   # clean final output
