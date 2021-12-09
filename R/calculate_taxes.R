@@ -267,14 +267,17 @@ taxsim_calculate_taxes <- function(.data, upload_method = 'ftp') {
     # run ssh command with error handling
     tryCatch(
       expr = {
-        system(ssh_command)
+        # run different commands depending on whether the platform is windows or unix
+        if (.Platform$OS.type == 'windows') shell(ssh_command) else shell(ssh_command)
+
+        from_taxsim <- utils::read.csv(from_taxsim_curl)
       },
       error = function(e){
         stop("There was a problem with ssh. Try ftp instead.")
       }
     )
 
-    from_taxsim <- utils::read.csv(from_taxsim_curl)
+    #from_taxsim <- utils::read.csv(from_taxsim_curl)
 
   }
 

@@ -18,17 +18,26 @@ input_data <- data.frame(
   primary_age = c(26, 36)
 )
 
-taxes <- taxsim_calculate_taxes(input_data, "ftp")
+taxes <- taxsim_calculate_taxes(input_data, "ssh")
 
-test_data <- create_dataset_for_taxsim(.data)
+test_data <- create_dataset_for_taxsim(input_data)
 
 # ssh --------------
 library('ssh')
 
 #ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <txpydata.raw > results.csv
 
-command <- "ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <txpydata.raw > aaresults.csv"
-system(command)
+command <- "ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <txpydata.raw"
+shell
+
+px <- paste0(
+  system.file(package = "processx", "bin", "px"),
+  system.file(package = "processx", "bin", .Platform$r_arch, "px.exe")
+)
+
+processx::run(command)
+
+a <- shell(command)
 
 scp("remote.ssh.host.com", "/home/dir/file.txt", "My.SCP.Passphrase", user="username")
 

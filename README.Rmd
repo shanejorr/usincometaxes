@@ -53,7 +53,7 @@ family_income <- data.frame(
   primary_age = c(26, 36)
 )
 
-family_taxes <- taxsim_calculate_taxes(family_income, upload_method = 'ftp')
+family_taxes <- taxsim_calculate_taxes(family_income, upload_method = 'ssh')
 ```
 
 ```{r}
