@@ -98,10 +98,29 @@ from_taxsim_cols <- function() {
 
   # named vector to rename the columns of the data set received from TAXSIM
   col_names_output <- c(
+    # primary output
     'taxsimid' = 'id_number', 'year' = 'year', 'state' = 'state',  'fiitax' = 'federal_taxes',
     'siitax' = 'state_taxes',  'fica' = 'fica_taxes',  'frate' = 'federal_marginal_rate',
-    'srate' = 'state_marginal_rate',  'ficar' = 'fica_rate'
+    'srate' = 'state_marginal_rate',  'ficar' = 'fica_rate',
+
+    # extended output
+    'v10' = 'federal_agi', 'v11' = 'ui_age', 'v12' = 'soc_sec_agi', 'v13' = 'zero_bracket_amount',
+    'v14' = 'personal_exemptions', 'v15' = 'exemption_phaseout', 'v16' = 'deducation_phaseout',
+    'v17' = 'itemized_deductions', 'v18' = 'federal_taxable_income', 'v19' = 'tax_on_taxable_income',
+    'v20' = 'exemption_surtax', 'v21' = 'general_tax_credit', 'v22' = 'child_tax_credit_adjusted',
+    'v23' = 'child_tax_credit_refundable', 'v24' = 'child_care_credit', 'v25' = 'eitc',
+    'v26' = 'amt_income', 'v27' = 'amt_liability', 'v28' = 'fed_income_tax_before_credit', 'v29' = 'fica',
+
+    # columns are zero if no state is specified
+    'v30' = 'state_household_income', 'v31' = 'state_rent_expense',
+    'v32' = 'state_agi', 'v33' = 'state_exemption_amount', 'v34' = 'state_std_deduction_amount',
+    'v35' = 'state_itemized_deducation', 'v36' = 'state_taxable_income', 'v37' = 'state_property_tax_credit',
+    'v38' = 'state_child_care_credit', 'v39' = 'state_eitc', 'v40' = 'state_total_credits',
+    'v41' = 'state_bracket_rate', 'v42' = 'self_emp_income', 'v43' = 'medicare_tax_unearned_income',
+    'v44' = 'medicare_tax_earned_income', 'v45' = 'cares_recovery_rebate'
   )
+
+  return(col_names_output)
 
 }
 

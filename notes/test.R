@@ -3,7 +3,7 @@
 library(tidyverse)
 library(RCurl)
 library(glue)
-library(usincometaxes)
+#library(usincometaxes)
 
 # testing -----------------------------------------
 
@@ -18,7 +18,17 @@ input_data <- data.frame(
   primary_age = c(26, 36)
 )
 
-taxes <- taxsim_calculate_taxes(input_data, "ftp")
+data.frame(
+  taxsimid = as.integer(c(1, 2)),
+  year = c(2015, 2015),
+  mstat = c(1,2),
+  page = c(26, 36),
+  pwages = c(10000, 100000),
+  idtl = 2
+) %>%
+  write_csv('test_df.csv')
+
+taxes <- taxsim_calculate_taxes(input_data, T,  "ftp")
 
 test_data <- create_dataset_for_taxsim(.data)
 

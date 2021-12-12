@@ -59,8 +59,12 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' @param .data Data frame containing the information that will be used to calculate taxes.
 #'    This data set will be sent to TAXSIM. Data frame must have specified column names and data types.
-#' @param upload_method Either 'ftp' or 'ssh'. Determines whether ftp or ssh will be used to send data
-#'    to TAXSIM and retrieve the results. Defaults to 'ftp'. SSH is available in Windows 10 since autumn of 2019.
+#' @param return_all_information Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
+#'     or only key information (FALSE). Returning all information returns 42 columns of output, while only
+#'     returning key information returns 9 columns. It is faster to download results with only key information.
+#' @param upload_method Either 'ftp' or 'ssh'. Defaults to 'ftp'. Determines whether ftp or ssh will be used to send data
+#'    to TAXSIM and retrieve the results. SSH is faster, so use it when there are over 100,000 records.
+#'    SSH is available in Windows 10 since autumn of 2019.
 #'    If you run an earlier Windows, try the built-in ftp client instead.
 #'
 #' @section Required columns:
@@ -157,6 +161,11 @@ create_dataset_for_taxsim <- function(.data) {
 #' \code{spouse_specialized_service_trade} Spouse's SSTB. Must be zero for non-joint returns, or the
 #'      column should not exist.
 #'
+#' @section Note on number of dependents:
+#'
+#' \code{num_dependents} columns are not mutually exclusive. For example, a family with a 13 year old
+#' can report the dependent in \code{num_dependents_thirteen} and also in \code{num_dependents_seventeen}.
+#'
 #' @return Returns a data frame with the following columns:
 #'
 #' \code{id_number} The unique id number for the row that corresponds to the id number in \code{.data}
@@ -174,6 +183,9 @@ create_dataset_for_taxsim <- function(.data) {
 #' \code{state_marginal_rate} State marginal tax rate of taxpayer. Corresponds to \code{srate} in TAXSIM.
 #'
 #' \code{fica_rate} FICA rate. Corresponds to \code{ficar} in TAXSIM.
+#'
+#' @section Additional Output
+#'
 #'
 #' @examples
 #'
@@ -200,11 +212,11 @@ create_dataset_for_taxsim <- function(.data) {
 #' Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
 #'
 #' @export
-taxsim_calculate_taxes <- function(.data, upload_method = 'ftp') {
+taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload_method = 'ftp') {
 
-  if (!upload_method %in% c('ftp', 'ssh')) {
-    stop("Upload method must be either 'ft;' or 'ssh'.")
-  }
+  # check parameter options
+  # msut change this function if parameters are added
+  check_parameters(.data, return_all_information, upload_method)
 
   # TAXSIM username and password are publicly listed
   # that's why they are hard-coded
@@ -214,6 +226,9 @@ taxsim_calculate_taxes <- function(.data, upload_method = 'ftp') {
 
   # create data set to send to taxsim
   to_taxsim <- create_dataset_for_taxsim(.data)
+
+  # add 2 to column if we need all columns, otherwise add 0 for only the default columns
+  to_taxsim$idtl <- if (return_all_information) 2 else 0
 
   # send data set to taxsim server
 

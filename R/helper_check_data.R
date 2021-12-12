@@ -187,3 +187,22 @@ check_id_number <- function(id_number_col) {
   }
 
 }
+#' Check input parameters
+#'
+#' Check that the input parameters to `taxsim_calculate_taxes` are of the proper type
+#'    The paramters to this function should be the same as those to `taxsim_calcualte_taxes`
+#'
+#' @keywords internal
+check_parameters <- function(.data, all_columns, upload_method) {
+
+  if (!is.data.frame(.data)) stop("`.data` parameter must be a data frame.")
+
+  if (!(all_columns %in% c(T, F))) stop('`all_columns` parameter must be either TRUE or FALSE.')
+
+  if (!upload_method %in% c('ftp', 'ssh')) {
+    stop("`upload_method` parameter must be either 'ft;' or 'ssh'.")
+  }
+
+  NULL
+
+}
