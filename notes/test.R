@@ -18,6 +18,7 @@ input_data <- data.frame(
   primary_age = c(26, 36)
 )
 
+<<<<<<< HEAD
 data.frame(
   taxsimid = as.integer(c(1, 2)),
   year = c(2015, 2015),
@@ -29,8 +30,11 @@ data.frame(
   write_csv('test_df_short.csv')
 
 taxes <- taxsim_calculate_taxes(input_data, T,  "ssh")
+=======
+taxes <- taxsim_calculate_taxes(input_data, "ssh")
+>>>>>>> 04b33de335401215867981353685df58650c2af8
 
-test_data <- create_dataset_for_taxsim(.data)
+test_data <- create_dataset_for_taxsim(input_data)
 
 to_taxsim_tmp_filename <- "test_df_long.csv"
 
@@ -49,8 +53,17 @@ library('ssh')
 
 #ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <txpydata.raw > results.csv
 
-command <- "ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <txpydata.raw > aaresults.csv"
-system(command)
+command <- "ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <txpydata.raw"
+shell
+
+px <- paste0(
+  system.file(package = "processx", "bin", "px"),
+  system.file(package = "processx", "bin", .Platform$r_arch, "px.exe")
+)
+
+processx::run(command)
+
+a <- shell(command)
 
 scp("remote.ssh.host.com", "/home/dir/file.txt", "My.SCP.Passphrase", user="username")
 

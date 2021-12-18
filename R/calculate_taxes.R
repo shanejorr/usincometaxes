@@ -282,9 +282,11 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
     # run ssh command with error handling
     tryCatch(
       expr = {
+
         system(ssh_command)
 
         from_taxsim <- vroom::vroom(from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE)
+
       },
       error = function(e){
         stop("There was a problem with ssh. Try ftp instead.")

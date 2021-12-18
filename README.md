@@ -45,10 +45,9 @@ family_income <- data.frame(
   primary_age = c(26, 36)
 )
 
-family_taxes <- taxsim_calculate_taxes(family_income, upload_method = 'ftp')
+family_taxes <- taxsim_calculate_taxes(family_income, upload_method = 'ssh')
 #> [1] "All required columns are present and the data is in the proper format!"
-#> [1] "Uploading data to TAXSIM server via ftp."
-#> [1] "Downloading data from TAXSIM server via ftp."
+#> [1] "Sending and retrieving data from TAXSIM server via SSH"
 ```
 
 ``` r
