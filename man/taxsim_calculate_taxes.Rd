@@ -86,7 +86,7 @@ younger than 24 and a full-time student).
 \code{spouse_wages} Wage and salary income of Spouse (include self-employment but no QBI). Must
 be zero or the column should not exist for non-joint returns.
 
-\code{dividens} Dividend income (qualified dividends only for 2003 on).
+\code{dividends} Dividend income (qualified dividends only for 2003 on).
 
 \code{interest} Interest income received (+/-).
 
