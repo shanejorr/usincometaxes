@@ -234,7 +234,7 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
 
   # save csv file of data set to a temp folder
   to_taxsim_tmp_filename <- tempfile("to_taxsim_")
-  utils::write.csv(to_taxsim, to_taxsim_tmp_filename, row.names = FALSE)
+  readr::write_csv(to_taxsim, to_taxsim_tmp_filename)
 
   if (upload_method == 'ftp') {
 
@@ -252,22 +252,22 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
           what = to_taxsim_tmp_filename,
           to = fake_taxsim_filename
         )
+
+        # download data set containing tax values from taxsim server
+        # store data in temp folder
+
+        # FTP url to download results
+        taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
+
+        print("Downloading data from TAXSIM server via ftp.")
+        from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 60)
+
+        from_taxsim <- vroom::vroom(from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE)
       },
       error = function(e){
         stop("There was a problem with ssh. Try ftp instead.")
       }
     )
-
-    # download data set containing tax values from taxsim server
-    # store data in temp folder
-
-    # FTP url to download results
-    taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
-
-    print("Downloading data from TAXSIM server via ftp.")
-    from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 60)
-
-    from_taxsim <- utils::read.csv(text = from_taxsim_curl)
 
   } else if (upload_method == 'ssh') {
 
@@ -283,13 +283,13 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
     tryCatch(
       expr = {
         system(ssh_command)
+
+        from_taxsim <- vroom::vroom(from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE)
       },
       error = function(e){
         stop("There was a problem with ssh. Try ftp instead.")
       }
     )
-
-    from_taxsim <- utils::read.csv(from_taxsim_curl)
 
   }
 

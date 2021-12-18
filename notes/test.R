@@ -1,7 +1,7 @@
 # create functions by hand to test
 
 library(tidyverse)
-library(RCurl)
+#library(RCurl)
 library(glue)
 #library(usincometaxes)
 
@@ -24,14 +24,26 @@ data.frame(
   mstat = c(1,2),
   page = c(26, 36),
   pwages = c(10000, 100000),
-  idtl = 2
+  idtl = 0
 ) %>%
-  write_csv('test_df.csv')
+  write_csv('test_df_short.csv')
 
-taxes <- taxsim_calculate_taxes(input_data, T,  "ftp")
+taxes <- taxsim_calculate_taxes(input_data, T,  "ssh")
 
 test_data <- create_dataset_for_taxsim(.data)
 
+to_taxsim_tmp_filename <- "test_df_long.csv"
+
+from_taxsim_file <- 'from_taxsim_long.csv'
+
+ssh_command <- paste0("ssh -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org < ",
+                      to_taxsim_tmp_filename, " > ", from_taxsim_file)
+
+system(ssh_command)
+a <- read_csv(from_taxsim_file, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE)
+a <- read.table(from_taxsim_file, stringsAsFactors = FALSE,
+                sep=",", dec = '.', row.names = NULL, strip.white = TRUE)
+as.integer(a$row.names)
 # ssh --------------
 library('ssh')
 
