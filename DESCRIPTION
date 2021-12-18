@@ -24,7 +24,10 @@ Imports:
     readr,
     vroom
 Suggests: 
+    rmarkdown,
+    knitr,
     testthat (>= 3.0.0)
 Depends: 
     R (>= 3.1)
 Config/testthat/edition: 3
+VignetteBuilder: knitr

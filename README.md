@@ -28,11 +28,16 @@ devtools::install_github("shanejorr/usincometaxes")
 
 ## Quick example
 
+`usincometaxes` helps users estimate household income taxes from data
+sets containing financial and household data. This allows users to
+estimate income taxes from surveys with financial information, as the
+United States Census Public Use Micro Data (PUMS).
+
 `usincometaxes` contains one function: `taxsim_calculate_taxes()`. Below
 is a simple example of its use.
 
 ``` r
-library(tidyverse)
+library(dplyr)
 library(knitr)
 library(usincometaxes)
 
@@ -94,7 +99,7 @@ columns:
 
 The input data frame, `.data` must contain three required columns.
 Optional columns can also be specified for better tax calculations. All
-columns must have the column names and data types listed below or in teh
+columns must have the column names and data types listed below or in the
 help file for `taxsim_calculate_taxes`.
 
 ### Required columns
@@ -126,7 +131,7 @@ FTP or SSH can be used to upload and retrieve information to and from
 the TAXSIM server. This is set with the `upload_method` parameter to
 `taxsim_calculate_taxes()` and defaults to FTP. Behind the scenes, FTP
 uses the `RCurl` package and SSH issues an SSH command to the operating
-system.
+system. Large data sets should sue SSH since it is faster.
 
 ## Giving credit
 

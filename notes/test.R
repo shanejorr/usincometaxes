@@ -18,7 +18,6 @@ input_data <- data.frame(
   primary_age = c(26, 36)
 )
 
-<<<<<<< HEAD
 data.frame(
   taxsimid = as.integer(c(1, 2)),
   year = c(2015, 2015),
@@ -30,9 +29,6 @@ data.frame(
   write_csv('test_df_short.csv')
 
 taxes <- taxsim_calculate_taxes(input_data, T,  "ssh")
-=======
-taxes <- taxsim_calculate_taxes(input_data, "ssh")
->>>>>>> 04b33de335401215867981353685df58650c2af8
 
 test_data <- create_dataset_for_taxsim(input_data)
 
