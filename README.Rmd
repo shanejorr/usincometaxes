@@ -55,7 +55,11 @@ family_income <- data.frame(
   primary_age = c(26, 36)
 )
 
-family_taxes <- taxsim_calculate_taxes(family_income, upload_method = 'ssh')
+family_taxes <- taxsim_calculate_taxes(
+  .data = family_income,
+  return_all_information = FALSE,
+  upload_method = 'ftp'
+)
 ```
 
 ```{r}
@@ -76,33 +80,28 @@ family_income %>%
 `taxsim_calculate_taxes()` returns a data frame where each row corresponds to a row in `.data` and
 each column is a piece of tax information. The output and `.data` can be linked by the `id_number` column.
 
+The amount of output (tax information) received is controlled by the `return_all_information` parameter 
+to `taxsim_calculate_taxes()`. Setting `return_all_information` to `FALSE` returns minimal information such as 
+federal and state tax liabilities and FICA taxes. When `return_all_information` is `TRUE` 45 different tax 
+items are returned.
+
 See the [Description of Output Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-output.html) vignette for output information.
 
 ## Input
 
-The input data frame, `.data`, must contain three required columns. Optional columns can also be specified 
-for better tax calculations. All columns must have the column names and data types listed in the 
+Taxes are calculated with `taxsim_calculate_taxes()` using the financial and household characteristics 
+found in the data frame represented by the `.data` parameter. Each column is a different piece of information
+and each row contains a tax payer unit.
+
+All columns must have the column names and data types listed in the 
 [Description of Input Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html) vignette.
-
 `.data` can contain columns beyond those listed in the vignette. The additional columns will be ignored.
-
-### Required columns
-
-The following columns are required:
-
-- `id_number` An arbitrary, non-negative, **integer**. This number links the results from TAXSIM 32 to the original data frame with entries.
-
-- `tax_year` Tax year ending Dec 31 (4 digits between 1960 and 2023). State must be zero if year is before 1977 or after 2023.
-
-- `filing_status` Filing status of tax unit. One of the following: "single" for single; "married, jointly" for married, filing jointly; "married, separately" for married, filing separately; "dependent child" for dependent, usually a child with income; or "head of household" for head of household filing status.
-
-### Optional columns
-
-Optional columns can be found in the help documentation of `taxsim_calculate_taxes()` under the section `Optional columns`. Use `?taxsim_calculate_taxes` to access the help documentation.
 
 ## Upload and download method
 
-FTP or SSH can be used to upload and retrieve information to and from the TAXSIM server. This is set with the `upload_method` parameter to `taxsim_calculate_taxes()` and defaults to FTP. Behind the scenes, FTP uses the `RCurl` package and SSH issues an SSH command to the operating system. Large data sets should sue SSH since it is faster.
+FTP or SSH can be used to upload and retrieve information to and from the TAXSIM server. This is set 
+with the `upload_method` parameter to `taxsim_calculate_taxes()` and defaults to FTP. Behind the scenes, 
+FTP uses the `RCurl` package and SSH issues an SSH command to the operating system. Large data sets should sue SSH since it is faster.
 
 ## Giving credit
 
