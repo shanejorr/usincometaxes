@@ -218,7 +218,7 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
   upload_method <- tolower(upload_method)
 
   # check parameter options
-  # msut change this function if parameters are added
+  # must change this function if parameters are added
   check_parameters(.data, return_all_information, upload_method)
 
   # TAXSIM username and password are publicly listed
