@@ -62,7 +62,7 @@ create_dataset_for_taxsim <- function(.data) {
 #' @param return_all_information Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 #'     or only key information (FALSE). Returning all information returns 42 columns of output, while only
 #'     returning key information returns 9 columns. It is faster to download results with only key information.
-#' @param upload_method Either 'ftp' or 'ssh'. Defaults to 'ftp'. Determines whether ftp or ssh will be used to send data
+#' @param upload_method Either 'ftp' or 'ssh', can also use upper case. Defaults to 'ftp'. Determines whether ftp or ssh will be used to send data
 #'    to TAXSIM and retrieve the results. SSH is faster, so use it when there are over 100,000 records.
 #'    SSH is available in Windows 10 since autumn of 2019.
 #'    If you run an earlier Windows, try the built-in ftp client instead.
@@ -213,6 +213,9 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' @export
 taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload_method = 'ftp') {
+
+  # make ftp and ssh lower case so that FTP and SSH work also
+  upload_method <- tolower(upload_method)
 
   # check parameter options
   # msut change this function if parameters are added

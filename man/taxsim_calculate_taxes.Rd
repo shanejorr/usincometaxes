@@ -18,7 +18,7 @@ This data set will be sent to TAXSIM. Data frame must have specified column name
 or only key information (FALSE). Returning all information returns 42 columns of output, while only
 returning key information returns 9 columns. It is faster to download results with only key information.}
 
-\item{upload_method}{Either 'ftp' or 'ssh'. Defaults to 'ftp'. Determines whether ftp or ssh will be used to send data
+\item{upload_method}{Either 'ftp' or 'ssh', can also use upper case. Defaults to 'ftp'. Determines whether ftp or ssh will be used to send data
 to TAXSIM and retrieve the results. SSH is faster, so use it when there are over 100,000 records.
 SSH is available in Windows 10 since autumn of 2019.
 If you run an earlier Windows, try the built-in ftp client instead.}
