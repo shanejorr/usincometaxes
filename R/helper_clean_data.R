@@ -105,7 +105,7 @@ from_taxsim_cols <- function() {
 
     # extended output
     'v10' = 'federal_agi', 'v11' = 'ui_age', 'v12' = 'soc_sec_agi', 'v13' = 'zero_bracket_amount',
-    'v14' = 'personal_exemptions', 'v15' = 'exemption_phaseout', 'v16' = 'deducation_phaseout',
+    'v14' = 'personal_exemptions', 'v15' = 'exemption_phaseout', 'v16' = 'deduction_phaseout',
     'v17' = 'itemized_deductions', 'v18' = 'federal_taxable_income', 'v19' = 'tax_on_taxable_income',
     'v20' = 'exemption_surtax', 'v21' = 'general_tax_credit', 'v22' = 'child_tax_credit_adjusted',
     'v23' = 'child_tax_credit_refundable', 'v24' = 'child_care_credit', 'v25' = 'eitc',

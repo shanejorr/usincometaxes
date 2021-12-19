@@ -81,26 +81,26 @@ family_income %>%
 
 ## Output
 
-`taxsim_calculate_taxes()` returns a data frame containing the following
-columns:
+`taxsim_calculate_taxes()` returns a data frame where each row
+corresponds to a row in `.data` and each column is a piece of tax
+information. The output and `.data` can be linked by the `id_number`
+column.
 
--   `id_number`: ID number from the input data set, so users can match
-    the tax information with the input data set
--   `federal_taxes`: Total federal taxes
--   `state_taxes`: Total state taxes, if a state was identified
--   `fica_taxes`: Total FICA taxes, including the employers and
-    employees share
--   `federal_marginal_rate`: Marginal federal tax rate
--   `state_marginal_rate`: Marginal state tax rate, if a state was
-    identified
--   `fica_rate`: FICA rate
+See the [Description of Output
+Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-output.html)
+vignette for output information.
 
 ## Input
 
-The input data frame, `.data` must contain three required columns.
+The input data frame, `.data`, must contain three required columns.
 Optional columns can also be specified for better tax calculations. All
-columns must have the column names and data types listed below or in the
-help file for `taxsim_calculate_taxes`.
+columns must have the column names and data types listed in the
+[Description of Input
+Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html)
+vignette.
+
+`.data` can contain columns beyond those listed in the vignette. The
+additional columns will be ignored.
 
 ### Required columns
 

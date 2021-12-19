@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 The column names in `usincometaxes`, however, are not the same as TAXSIM 32's variable names. `usincometaxes`uses more descriptive column names and column names in `.data` must match the column names listed below exactly.
 
-.data` can contain columns beyond those listed below. These columns will be ignored.
+.data` can contain columns beyond those listed below. The additional columns will be ignored.
 
 ## Required columns
 

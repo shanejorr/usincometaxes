@@ -1,0 +1,99 @@
+---
+title: "Description of Output Columns"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Description of Output Columns}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`usincometaxes` returns tax results as a data frame, with each column representing tax information such as 
+federal and state income taxes owed or other line items. Each row corresponds to a row in the input data frame. 
+Users can specify the amount of output with the `return_all_information` parameter in `taxsim_calculate_taxes()`. 
+Setting `return_all_information` to `TRUE` returns a data frame with 42 columns of detailed tax information. 
+`FALSE` returns 9 columns of key information. `FALSE` leads to quicker calculations and downloads from the NBER's servers. 
+
+`usincometaxes` provides the same output as [TAXSIM 32](http://users.nber.org/~taxsim/taxsim32/). 
+Setting `return_all_information` to `FALSE` equates to setting `idtl` to 0 in TAXSIM, while `TRUE` corresponds to 2.
+
+## Standard columns
+
+Returned columns when `return_all_information` = `FALSE`.
+
+* **id_number**: ID number from the input data set, so users can match the tax information
+    with the input data set.
+* **federal_taxes**: Federal income tax liability including capital gains rates, surtaxes, AMT and 
+    refundable and non-refundable credits.
+* **state_taxes**: State income tax liability.
+* **fica_taxes**: Total FICA taxes, including the employers and employees share.
+* **federal_marginal_rate**: Marginal federal tax rate.
+* **state_marginal_rate**: Marginal state tax rate, if a state was identified.
+* **fica_rate**: FICA rate.
+
+## Detailed columns
+
+Returned columns when `return_all_information` = `TRUE`.
+
+* All standard columns.
+<br>
+* **federal_agi**: Federal AGI
+* **ui_age**: UI in AGI
+* **soc_sec_agi**: Social Security in AGI
+* **zero_bracket_amount**: Zero Bracket Amount
+* **personal_exemptions**: Personal Exemptions
+* **exemption_phaseout**: Exemption Phaseout
+* **deduction_phaseout**: Deduction Phaseout
+* **itemized_deductions**: Itemized Deductions Allowed (Zero for non-itemizers)
+* **federal_taxable_income**: Federal Taxable Income
+* **tax_on_taxable_income**: Tax on Taxable Income (no special capital gains rates)
+* **exemption_surtax**: Exemption Surtax
+* **general_tax_credit**: General Tax Credit
+* **child_tax_credit_adjusted**: Child Tax Credit (as adjusted)
+* **child_tax_credit_refundable**: Additional Child Tax Credit (refundable)
+* **child_care_credit**: Child Care Credit
+* **eitc**: Earned Income Credit (total federal)
+* **amt_income**: Income for the Alternative Minimum Tax
+* **amt_liability**: AMT Liability after credit for regular tax and other allowed credits.
+* **fed_income_tax_before_credit**:Federal Income Tax Before Credits (includes special treatment of Capital gains, 
+    exemption surtax (1988-1996) and 15% rate phaseout (1988-1990) but not AMT)
+* **fica**: FICA
+* **medicare_tax_unearned_income**: Medicare Tax on Unearned Income
+* **medicare_tax_earned_income**: Medicare Tax on Earned Income
+* **cares_recovery_rebate**: CARES act Recovery Rebates
+
+The following columns are zero if no state is specified:
+
+* **state_household_income**: State Household Income (imputation for property tax credit)
+* **state_rent_expense**: State Rent Expense (imputation for property tax credit)
+* **state_agi**: State AGI
+* **state_exemption_amount**: State Exemption amount
+* **state_std_deduction_amount**: State Standard Deduction
+* **state_itemized_deducation**: State Itemized Deductions
+* **state_taxable_income**: State Taxable Income
+* **state_property_tax_credit**: State Property Tax Credit
+* **state_child_care_credit**: State Child Care Credit
+* **state_eitc**: State EIC
+* **state_total_credits**: State Total Credits
+* **state_bracket_rate**: State Bracket Rate
+* **self_emp_income**: Earned Self-Employment Income for FICA
+
+## Mapping `usincometaxes` columns to TAXSIM 32 columns
+
+Results from `usincometaxes` include all output from TAXSIM 32. The table below maps `usincometaxes` 
+output column names to TAXSIM 32 output column names.
+
+```{r, echo = FALSE}
+package_to_taxsim <- data.frame(
+  usincometaxes = unname(usincometaxes:::from_taxsim_cols()),
+  TAXSIM = names(usincometaxes:::from_taxsim_cols())
+)
+
+knitr::kable(package_to_taxsim)
+```
