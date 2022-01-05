@@ -263,8 +263,10 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
 
         print("Downloading data from TAXSIM server via ftp.")
         from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 60)
-
-        from_taxsim <- vroom::vroom(from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE)
+        print(from_taxsim_curl)
+        from_taxsim <- vroom::vroom(
+          from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE
+        )
       },
       error = function(e){
         stop("There was a problem with ftp. Try ssh instead.")
@@ -286,8 +288,10 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
       expr = {
 
         system(ssh_command)
-
-        from_taxsim <- vroom::vroom(from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE)
+        print(from_taxsim_curl)
+        from_taxsim <- vroom::vroom(
+          from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE
+        )
 
       },
       error = function(e){
@@ -298,7 +302,9 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
   }
 
   # clean final output
+  # convert from tibble to data frame for consistency
   from_taxism_cleaned <- clean_from_taxsim(from_taxsim)
+  #from_taxism_cleaned <- data.frame(from_taxism_cleaned)
 
   return(from_taxism_cleaned)
 

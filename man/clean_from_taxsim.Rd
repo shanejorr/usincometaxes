@@ -7,7 +7,7 @@
 clean_from_taxsim(from_taxsim)
 }
 \arguments{
-\item{from_taxsim}{The data set received from TAXSIM}
+\item{from_taxsim}{The data set received from TAXSIM.}
 }
 \value{
 Data frame containing the row's \code{id_number} and tax calculations. This data frame can be

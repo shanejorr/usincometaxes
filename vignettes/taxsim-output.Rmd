@@ -44,7 +44,7 @@ Returned columns when `return_all_information` = `TRUE`.
 * All standard columns.
 <br>
 * **federal_agi**: Federal AGI
-* **ui_age**: UI in AGI
+* **ui_agi**: UI in AGI
 * **soc_sec_agi**: Social Security in AGI
 * **zero_bracket_amount**: Zero Bracket Amount
 * **personal_exemptions**: Personal Exemptions

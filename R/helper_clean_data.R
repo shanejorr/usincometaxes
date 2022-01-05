@@ -40,7 +40,7 @@ get_state_soi <- function(state_column) {
 #' Clean the data set received from TAXSIM by renaming columns and removing columns not needed in
 #'     the final output.
 #'
-#' @param from_taxsim The data set received from TAXSIM
+#' @param from_taxsim The data set received from TAXSIM.
 #'
 #' @return Data frame containing the row's `id_number` and tax calculations. This data frame can be
 #'     merged with the original input data frame by `id_number`.
@@ -104,7 +104,7 @@ from_taxsim_cols <- function() {
     'srate' = 'state_marginal_rate',  'ficar' = 'fica_rate',
 
     # extended output
-    'v10' = 'federal_agi', 'v11' = 'ui_age', 'v12' = 'soc_sec_agi', 'v13' = 'zero_bracket_amount',
+    'v10' = 'federal_agi', 'v11' = 'ui_agi', 'v12' = 'soc_sec_agi', 'v13' = 'zero_bracket_amount',
     'v14' = 'personal_exemptions', 'v15' = 'exemption_phaseout', 'v16' = 'deduction_phaseout',
     'v17' = 'itemized_deductions', 'v18' = 'federal_taxable_income', 'v19' = 'tax_on_taxable_income',
     'v20' = 'exemption_surtax', 'v21' = 'general_tax_credit', 'v22' = 'child_tax_credit_adjusted',
