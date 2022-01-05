@@ -262,8 +262,9 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
         taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
 
         print("Downloading data from TAXSIM server via ftp.")
+
         from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 60)
-        print(from_taxsim_curl)
+
         from_taxsim <- vroom::vroom(
           from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE
         )
@@ -287,8 +288,8 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
     tryCatch(
       expr = {
 
-        system(ssh_command)
-        print(from_taxsim_curl)
+        system(ssh_command, timeout = 120)
+
         from_taxsim <- vroom::vroom(
           from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE
         )
