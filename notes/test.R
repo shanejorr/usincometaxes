@@ -28,103 +28,20 @@ data.frame(
 ) %>%
   write_csv('test_df_short.csv')
 
-taxes <- taxsim_calculate_taxes(input_data, T,  "ssh")
-
-test_data <- create_dataset_for_taxsim(input_data)
-
-to_taxsim_tmp_filename <- "test_df_long.csv"
-
-from_taxsim_file <- 'from_taxsim_long.csv'
-
-ssh_command <- paste0("ssh -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org < ",
-                      to_taxsim_tmp_filename, " > ", from_taxsim_file)
-
-system(ssh_command)
-a <- read_csv(from_taxsim_file, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE)
-a <- read.table(from_taxsim_file, stringsAsFactors = FALSE,
-                sep=",", dec = '.', row.names = NULL, strip.white = TRUE)
-as.integer(a$row.names)
-# ssh --------------
-library('ssh')
-
-#ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <txpydata.raw > results.csv
-
-command <- "ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <txpydata.raw"
-shell
-
-px <- paste0(
-  system.file(package = "processx", "bin", "px"),
-  system.file(package = "processx", "bin", .Platform$r_arch, "px.exe")
+full_tax_input <- data.frame(
+  id_number = as.integer(1), tax_year = 2019, filing_status = 'married, jointly', state = 'AL', primary_age = 30, spouse_age = 30,
+  num_dependents = 3, num_dependents_thirteen = 3, num_dependents_seventeen = 3, num_dependents_eitc = 3,
+  primary_wages = 10000, spouse_wages = 10000, dividends = 10, interest = 10, short_term_capital_gains = 10,
+  long_term_capital_gains = 10, other_property_income = 10, other_non_property_income = 10, pensions = 10,
+  social_security = 10, unemployment = 10, other_transfer_income = 10, rent_paid = 10, property_taxes = 10,
+  other_itemized_deductions = 10, child_care_expenses = 500, misc_deductions = 1000, scorp_income = 10,
+  qualified_business_income = 10, specialized_service_trade = 10, spouse_qualified_business_income = 10,
+  spouse_specialized_service_trade = 10
 )
 
-processx::run(command)
-
-a <- shell(command)
-
-scp("remote.ssh.host.com", "/home/dir/file.txt", "My.SCP.Passphrase", user="username")
-
-session <- ssh_connect("taxsimssh@taxsimssh.nber.org")
-
-scp_upload(session, files = 'txpydata.raw', to = ".", verbose = TRUE)
-
-results <- ssh_exec_internal(session, "-T -o StrictHostKeyChecking=no <txpydata.raw")
-
-ssh_exec_wait(session, command = "-T -o StrictHostKeyChecking=no <txpydata.raw")
-scp StrictHostKeyChecking=no txpydata.raw taxsimssh@taxsimssh.nber.org:/txpydata.raw
-# https ---------------
-
-write_csv(test_data, "txpydata.raw")
-
-# curl -F txpydata.raw=@txpydata.raw "https://wwwdev.nber.org/uptest/webfile.cgi"
-
-##################
-taxes <- taxsim_calculate_taxes(input_data, "ssh")
-
-merge(.data, taxes, by = 'id_number')
-###
-
-.data <- create_dataset_for_taxsim(.data)
-
-cols <- colnames(.data)
-check_data(.data, cols, 'state')
-
-# send to taxsim --------------------------------------------
-
-required_variables <- c('taxsimid', 'mstat', 'year')
-
-to_taxsim <- data.frame(
-  taxsimid = rep(1, n),
-  mstat = rep(2, n),
-  year = rep(20, n),
-  ltcg = rep(100000, n)
+taxes <- taxsim_calculate_taxes(
+  .data = full_tax_input,
+  return_all_information = FALSE,
+  upload_method = 'ftp'
 )
 
-test_answer = 16700.04
-
-to_taxsim[] <- lapply(to_taxsim, round, digits = 0)
-to_taxsim[] <- lapply(to_taxsim, as.integer)
-
-#to_taxsim_filename <- 'to_taxsim.csv'
-
-to_taxsim_tmp_filename <- tempfile("to_taxsim_")
-utils::write.csv(to_taxsim, to_taxsim_tmp_filename, row.names = FALSE)
-read.csv(to_taxsim_tmp_filename)
-
-#write.csv(tax_df, to_taxsim_filename, row.names = FALSE)
-#read.csv(to_taxsim_filename)
-
-# random filename to uplaod to server
-fake_taxsim_filename <- sample(letters, 10, replace = T)
-fake_taxsim_filename <- paste(fake_taxsim_filename, collapse = "")
-fake_taxsim_filename <- paste0("ftp://taxsim:02138@taxsimftp.nber.org/tmp/", fake_taxsim_filename)
-
-RCurl::ftpUpload(
-  what = to_taxsim_tmp_filename,
-  to = fake_taxsim_filename
-)
-
-# FTP url to download results
-taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
-
-from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = "taxsim:02138", connecttimeout = 60)
-from_taxsim <- read.csv(text = from_taxsim_curl)

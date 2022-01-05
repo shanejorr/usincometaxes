@@ -10,6 +10,6 @@ check_id_number(id_number_col)
 \item{id_number_col}{Vector that id the \code{id_number} column. This will always be the column \code{id_number} in the input data frame.}
 }
 \description{
-The \code{id_number} column requires a data type of integer and unique value. Check to make sure this is true..
+The \code{id_number} column requires a whole number and unique value. Check to make sure this is true.
 }
 \keyword{internal}

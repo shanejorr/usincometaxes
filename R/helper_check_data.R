@@ -164,7 +164,7 @@ check_greater_zero <- function(.data, cols) {
 
 #' Check that the `id_number` column is an integer and every value is unique.
 #'
-#' The `id_number` column requires a data type of integer and unique value. Check to make sure this is true..
+#' The `id_number` column requires a whole number and unique value. Check to make sure this is true.
 #'
 #' @param id_number_col Vector that id the `id_number` column. This will always be the column `id_number` in the input data frame.
 #'
@@ -172,8 +172,12 @@ check_greater_zero <- function(.data, cols) {
 check_id_number <- function(id_number_col) {
 
   # make sure id_number is an integer
-  if (!is.integer(id_number_col)) {
-    stop("id_number must be an integer data type.", call. = FALSE)
+  id_remainders <- c(id_number_col) %% 1
+
+  all(id_remainders == 0)
+
+  if (!all(id_remainders == 0)) {
+    stop("id_number must be whole nummbers.", call. = FALSE)
   }
 
   # make sure every value is unique

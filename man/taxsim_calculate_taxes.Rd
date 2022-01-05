@@ -20,8 +20,7 @@ returning key information returns 9 columns. It is faster to download results wi
 
 \item{upload_method}{Either 'ftp' or 'ssh', can also use upper case. Defaults to 'ftp'. Determines whether ftp or ssh will be used to send data
 to TAXSIM and retrieve the results. SSH is faster, so use it when there are over 100,000 records.
-SSH is available in Windows 10 since autumn of 2019.
-If you run an earlier Windows, try the built-in ftp client instead.}
+SSH is available in Windows 10 since autumn of 2019.}
 }
 \value{
 Returns a data frame with the following columns:
@@ -49,8 +48,8 @@ See \url{https://users.nber.org/~taxsim/taxsim32/} for more information on TAXSI
 \section{Required columns}{
 
 
-\code{id_number} An arbitrary, non-negative, integer. This number links the results from TAXSIM
-32 to the original data frame with entries.
+\code{id_number} An arbitrary, non-negative, whole number. Each number must be unique.
+This number links the results from TAXSIM 32 to the original data frame with entries.
 
 \code{tax_year} Tax year ending Dec 31 (4 digits between 1960 and 2023). State must be zero if
 year is before 1977 or after 2023.
@@ -169,7 +168,7 @@ Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-19
 \examples{
 
 family_income <- data.frame(
-    id_number = as.integer(c(1, 2)),
+    id_number = c(1, 2),
      state = c('North Carolina', 'NY'),
      tax_year = c(2015, 2015),
      filing_status = c('single', 'married, jointly'),

@@ -99,14 +99,14 @@ The column names in `usincometaxes`, however, are not the same as TAXSIM 32's va
         * `otherprop` in TAXSIM 32
 <br>   
 * **other_non_property_income**: Other non-property income not subject to Medicare NIIT such as:
-      * Alimony; 
-      * Nonwage fellowships; 
-      * State income tax refunds (itemizers only);
-      * Alimony paid; 
-      * Keogh and IRA contributions; 
-      * Foreign income exclusion; and 
-      * NOLs.
-          * `nonprop` in TAXSIM 32
+    * Alimony; 
+    * Nonwage fellowships; 
+    * State income tax refunds (itemizers only);
+    * Alimony paid; 
+    * Keogh and IRA contributions; 
+    * Foreign income exclusion; and 
+    * NOLs.
+        * `nonprop` in TAXSIM 32
 <br>   
 * **pensions**: Taxable Pensions and IRA distributions.
     * `pensions` in TAXSIM 32
@@ -131,24 +131,23 @@ The column names in `usincometaxes`, however, are not the same as TAXSIM 32's va
       used to calculate state property tax rebates.
     * `proptax` in TAXSIM 32
 <br>   
-* **other_itemized_deductions**: Other Itemized deductions that are a preference for the Alternative
-      Minimum Tax. These would include: 
-      * Other state and local taxes (line 8 of Schedule A) plus local income tax; 
-      * Preference share of medical expenses; and 
-      * Miscellaneous (line 27).
-          * `otheritem` in TAXSIM 32
+* **other_itemized_deductions**: Other Itemized deductions that are a preference for the Alternative Minimum Tax. These would include: 
+    * Other state and local taxes (line 8 of Schedule A) plus local income tax; 
+    * Preference share of medical expenses; and 
+    * Miscellaneous (line 27).
+        * `otheritem` in TAXSIM 32
 <br>   
 * **child_care_expenses**: Child care expenses.
     * `childcare` in TAXSIM 32
 <br>   
- **misc_deductions**: Deductions not included in `other_itemized_deductions` and not a preference
+* **misc_deductions**: Deductions not included in `other_itemized_deductions` and not a preference
       for the AMT, including (on Schedule A for 2009):
-      * Deductible medical expenses not included in Line 16; 
-      * Motor Vehicle Taxes paid; 
-      * Home mortgage interest; 
-      * Charitable contributions; and 
-      * Casualty or Theft Losses.
-          * `mortgage` in TAXSIM 32
+    * Deductible medical expenses not included in Line 16; 
+    * Motor Vehicle Taxes paid; 
+    * Home mortgage interest; 
+    * Charitable contributions; and 
+    * Casualty or Theft Losses.
+        * `mortgage` in TAXSIM 32
 <br>   
 * **scorp_income**: Active S-Corp income (is SSTB).
     * `scorp` in TAXSIM 32
@@ -160,12 +159,12 @@ The column names in `usincometaxes`, however, are not the same as TAXSIM 32's va
 <br>   
 * **specialized_service_trade**: Primary Taxpayer's Specialized Service Trade or Business service
       (SSTB) with a preferential rate subject to claw-back. Subject to SECA and Medicare Additional Earnings Tax.
-      * `pprofinc` in TAXSIM 32
+    * `pprofinc` in TAXSIM 32
 <br>   
 * **spouse_qualified_business_income**: Spouse's QBI. Must be zero for non-joint returns, or the
       column should not exist.
-      * `sbusinc` in TAXSIM 32
+    * `sbusinc` in TAXSIM 32
 <br>   
 * **spouse_specialized_service_trade**: Spouse's SSTB. Must be zero for non-joint returns, or the
       column should not exist.
-      * `sprofinc`
+    * `sprofinc` in TAXSIM 32
