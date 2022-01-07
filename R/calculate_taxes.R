@@ -262,14 +262,15 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
         taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
 
         print("Downloading data from TAXSIM server via ftp.")
-        from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 60)
-        #print(from_taxsim_curl)
+
+        from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 120)
+
         from_taxsim <- vroom::vroom(
           from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE
         )
       },
       error = function(e){
-        stop("There was a problem with ftp. Try ssh instead.")
+        stop("There was a problem with ftp or the dataset is in the wrong format. Try ssh instead.")
       }
     )
 
@@ -287,15 +288,15 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
     tryCatch(
       expr = {
 
-        system(ssh_command)
-        #print(from_taxsim_curl)
+        system(ssh_command, timeout = 120)
+
         from_taxsim <- vroom::vroom(
           from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE
         )
 
       },
       error = function(e){
-        stop("There was a problem with ssh. Try ftp instead.")
+        stop("There was a problem with ssh or the dataset is in the wrong format. Try ftp instead.")
       }
     )
 
