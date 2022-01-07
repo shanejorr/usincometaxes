@@ -2,32 +2,33 @@ Package: usincometaxes
 Title: Calculate Federal and State Income Taxes in the United States
 Version: 0.0.1
 Authors@R: 
-    person(given = "Shane",
-           family = "Orr",
-           role = c("aut", "cre"),
-           email = "shane.j.orr@gmail.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Calculates federal and state income taxes in the United States. It acts as 
-    a wrapper to the NBER's TAXSIM 32 tax simulator. TAXSIM 32 conducts the calculations, while 
-    usincometaxes prepares the data for TAXSIM 32, sends the data to TAXSIM 32's server, retrieves 
-    the data, and places it into a data frame. All without the user worrying about this process.
+    person("Shane", "Orr", , "shane.j.orr@gmail.com", role = c("aut", "cre"))
+Description: Calculates federal and state income taxes in the United
+    States. It acts as a wrapper to the NBER's TAXSIM 32 tax simulator.
+    TAXSIM 32 conducts the calculations, while usincometaxes prepares the
+    data for TAXSIM 32, sends the data to TAXSIM 32's server, retrieves
+    the data, and places it into a data frame. All without the user
+    worrying about this process.
 License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
 URL: https://github.com/shanejorr/usincometaxes,
     https://shaneorr.io/r/usincometaxes
 BugReports: https://github.com/shanejorr/usincometaxes/issues
+Depends: 
+    R (>= 3.1)
 Imports: 
     RCurl,
     readr,
     vroom
 Suggests: 
-    rmarkdown,
+    dplyr,
+    ggplot2,
     knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
-Depends: 
-    R (>= 3.1)
+VignetteBuilder: 
+    knitr
 Config/testthat/edition: 3
-VignetteBuilder: knitr
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
