@@ -3,6 +3,7 @@
 library(tidyverse)
 library(vroom)
 library(RCurl)
+library(httr)
 library(ssh)
 library(glue)
 #library(usincometaxes)
@@ -10,6 +11,16 @@ library(glue)
 # testing -----------------------------------------
 
 devtools::load_all()
+
+taxsim_input <- data.frame(
+  id_number = as.integer(1),
+  filing_status = 'married, jointly',
+  tax_year = 1970,
+  long_term_capital_gains = 100000
+) %>%
+  create_dataset_for_taxsim()
+
+write_csv(taxsim_input, "test_main.csv")
 
 
 family_income <- data.frame(
@@ -61,11 +72,11 @@ taxsim_http_command <- paste0('curl -F txpydata.raw=@',to_taxsim_filename, ' "ht
 system(taxsim_http_command)
 
 
-a <- POST(
+POST(
   "https://wwwdev.nber.org/uptest/webfile.cgi",
     body = list(
       # send the file with mime type `"application/rds"` so the RDS parser is used
-      txpydata.raw = upload_file(to_taxsim_filename, 'application/csv')
+      txpydata.raw = upload_file('test_main.csv', 'application/csv')
     )
   ) %>%
   content(as = 'text', type = 'application/csv')
