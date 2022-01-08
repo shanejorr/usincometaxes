@@ -2,7 +2,8 @@
 
 library(tidyverse)
 library(vroom)
-#library(RCurl)
+library(RCurl)
+library(ssh)
 library(glue)
 #library(usincometaxes)
 
@@ -10,36 +11,62 @@ library(glue)
 
 devtools::load_all()
 
-full_test_input <- data.frame(
-  id_number = 1, tax_year = 2019, filing_status = 'married, jointly', state = 'AL', primary_age = 30, spouse_age = 30,
-  num_dependents = 3, num_dependents_thirteen = 3, num_dependents_seventeen = 3, num_dependents_eitc = 3,
-  primary_wages = 10000, spouse_wages = 10000, dividends = 10, interest = 10, short_term_capital_gains = 10,
-  long_term_capital_gains = 10, other_property_income = 10, other_non_property_income = 10, pensions = 10,
-  social_security = 10, unemployment = 10, other_transfer_income = 10, rent_paid = 10, property_taxes = 10,
-  other_itemized_deductions = 10, child_care_expenses = 500, misc_deductions = 1000, scorp_income = 10,
-  qualified_business_income = 10, specialized_service_trade = 10, spouse_qualified_business_income = 10,
-  spouse_specialized_service_trade = 10
+
+family_income <- data.frame(
+  id_number = as.integer(c(1, 2)),
+  state = c('North Carolina', 'NY'),
+  tax_year = c(2015, 2020),
+  filing_status = c('single', 'married, jointly'),
+  primary_wages = c(10000, 100000),
+  primary_age = c(26, 36)
 )
 
-full_test_output_hand <- tibble::tibble(
-  id_number = 1, federal_taxes = -9187.58, state_taxes = 326.05, fica_taxes = 3065.65, federal_marginal_rate = -15,
-  state_marginal_rate = 5.04, fica_rate = 15.3, federal_agi = 20127.18, ui_agi = 10, soc_sec_agi = 0,
-  zero_bracket_amount = 24400, personal_exemptions = 0, exemption_phaseout = 0, deduction_phaseout = 0,
-  itemized_deductions = 0, federal_taxable_income = 0, tax_on_taxable_income = 0, exemption_surtax = 0,
-  general_tax_credit =0, child_tax_credit_adjusted = 0, child_tax_credit_refundable = 2630.58, child_care_credit = 0,
-  eitc = 6557, amt_income = 20127.18, amt_liability = 0, fed_income_tax_before_credit = 0, fica = 3065.65,
-  state_household_income = 20130.01, state_rent_expense = 10, state_agi = 20120.01, state_exemption_amount = 4499.1,
-  state_std_deduction_amount = 7500, state_itemized_deducation = 2555.65, state_taxable_income = 8120.91,
-  state_property_tax_credit = 0, state_child_care_credit = 0, state_eitc = 0, state_total_credits = 0,
-  state_bracket_rate = 5, self_emp_income = 20036.94, medicare_tax_unearned_income = 0,
-  medicare_tax_earned_income = 0, cares_recovery_rebate = 0
+taxsim_calculate_taxes(
+  .data = family_income,
+  return_all_information = FALSE,
+  upload_method = 'ftp'
 )
 
-full_test_output_taxsim <- usincometaxes::taxsim_calculate_taxes(
-  .data = full_test_input,
-  return_all_information = TRUE,
-  upload_method = 'ssh'
+test_ssh <- 'ssh -q -o "BatchMode=yes" user@host "echo 2>&1" && echo "UP" || echo "DOWN"'
+system(taxsim_ssh_command)
+
+to_taxsim_filename <- 'test_to_taxsim.csv'
+
+taxsim_ssh_command <- paste0("ssh -T -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org <", to_taxsim_filename)
+
+to_taxsim <- create_dataset_for_taxsim(family_income)
+
+from_taxsim_curl <- 'test_from_taxsim.csv'
+
+readr::write_csv(to_taxsim, to_taxsim_filename)
+
+session <- ssh_connect("taxsimssh@taxsimssh.nber.org", verbose = 2)
+
+scp_upload(session, to_taxsim_filename)
+
+
+ssh_command <- paste0("ssh -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org < ",
+                      to_taxsim_filename, " > ", from_taxsim_curl)
+
+system(ssh_command)
+
+scp(
+  host = 'taxsimssh.nber.org',
+  user = 'taxsimssh'
 )
 
-testthat::expect_equal(full_test_output_taxsim, full_test_output_hand)
+#############################
+
+taxsim_http_command <- paste0('curl -F txpydata.raw=@',to_taxsim_filename, ' "https://wwwdev.nber.org/uptest/webfile.cgi" > "test_http.csv"')
+system(taxsim_http_command)
+
+
+a <- POST(
+  "https://wwwdev.nber.org/uptest/webfile.cgi",
+    body = list(
+      # send the file with mime type `"application/rds"` so the RDS parser is used
+      txpydata.raw = upload_file(to_taxsim_filename, 'application/csv')
+    )
+  ) %>%
+  content(as = 'text', type = 'application/csv')
 

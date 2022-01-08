@@ -58,7 +58,7 @@ family_income <- data.frame(
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
   return_all_information = FALSE,
-  upload_method = 'ftp'
+  upload_method = 'ssh'
 )
 ```
 
