@@ -13,7 +13,7 @@ log_norm <- function(n, log_mean, log_sd) {
 
 }
 
-n <- 1000
+n <- 2000
 
 years <- c(2000, 2020)
 
