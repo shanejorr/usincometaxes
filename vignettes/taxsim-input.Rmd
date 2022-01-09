@@ -1,5 +1,6 @@
 ---
 title: "Description of Input Columns"
+author: "Shane Orr"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Description of Input Columns}

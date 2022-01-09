@@ -1,0 +1,279 @@
+---
+title: "Calculating Federal and State Income Taxes"
+output: rmarkdown::html_vignette
+author: "Shane Orr"
+vignette: >
+  %\VignetteIndexEntry{Calculating Federal and State Income Taxes}
+  %\VignetteDepends{ggplot2}
+  %\VignetteDepends{dplyr}
+  %\VignetteDepends{kableExtra}
+  %\VignetteDepends{scales}
+  %\VignetteDepends{tidyr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = 'center',
+  fig.path = 'webimg/',
+  fig.width = 8,
+  fig.height = 5,
+  dpi = 72,
+  dev = 'png'
+)
+```
+
+```{r setup, include = FALSE}
+library(usincometaxes)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+```
+
+This article presents two use cases for `usincometaxes`. The first shows users how to estimate income taxes from a data frame containing financial information and other characteristics of tax payer units. This income could come from surveys such as the [Consumer Expenditure survey](https://www.bls.gov/cex/) or the [Panel Study of Income Dynamics survey](https://psidonline.isr.umich.edu/). The second use case focuses on running simulations.
+
+## Calculating income taxes from survey data
+
+For the first example we will use an internal data set called `taxpayer_finances`. The data is randomly generated and formatted for use with `usincometaxes`. Guidance on formatting data can be found in the [Description of Input Columns](taxsim-input.html) article.
+
+The data set contains financial and other household characteristics that help estimate income taxes.
+
+```{r import_data}
+data(taxpayer_finances)
+
+# with of scroll box for tables
+scroll_width <- "800px"
+
+taxpayer_finances %>%
+  head() %>%
+  kable() %>%
+  scroll_box(width = scroll_width)
+```
+
+Each row in the data set is a tax paying unit. Thus, each row files one tax return. Columns represent items reported on tax returns that impact taxes. Of course, the information in the data set does not represent everything people report on tax returns. For this reason, the income tax calculations are simply estimates.
+
+We call `taxsim_calculate_taxes()` to estimate federal and state income taxes for each tax paying unit. `taxsim_calculate_taxes()` sends the data to the [NBER's TAXSIM 32](https://users.nber.org/~taxsim/taxsim32/) program for calculation and returns the results as a data frame.
+
+We are only interested in federal and state tax liabilities, not line item credits and deduction, so we are using `return_all_information = FALSE`.
+
+```{r calcualte_survey_taxes}
+family_taxes <- taxsim_calculate_taxes(
+  .data = taxpayer_finances,
+  return_all_information = FALSE,
+  upload_method = 'ftp'
+)
+
+family_taxes %>%
+  head() %>%
+  kable()
+```
+
+The `id_number` column is required for any input data frame used in `taxsim_calculate_taxes`. This column is also returned in the output data frame containing tax calculations, allowing us to link the input and output data frames.
+
+```{r join_tax_data}
+income_and_taxes <- taxpayer_finances %>%
+  left_join(family_taxes, by = 'id_number')
+
+income_and_taxes %>%
+  head() %>%
+  kable() %>%
+  scroll_box(width = scroll_width)
+```
+
+Now we have a single data frame containing both wages and income tax liabilities. Let's take a look at the relationship between wages and estimated federal income taxes. The colors represent the number of children 18 or younger.
+
+```{r plot_family_taxes, fig.height = 7, fig.width = 9}
+# custom theme for all plots in the vignette
+plt_theme <- function() {
+  
+    theme_minimal() +
+    theme(
+      legend.text = element_text(size = 11),
+      axis.text = element_text(size = 10),
+      axis.title=element_text(size=11,face="bold"),
+      strip.text = element_text(size = 11),
+      panel.grid.minor = element_blank(),
+      plot.title = element_text(face = "bold"),
+      plot.subtitle = element_text(size = 12),
+      legend.position = 'bottom'
+    )
+}
+
+# color palettes for number of children
+dep_color_palette <- rev(c('#4B0055','#353E7C','#007094','#009B95','#00BE7D','#96D84B'))
+
+income_and_taxes %>%
+  mutate(
+    tax_unit_income = primary_wages + spouse_wages,
+    num_dependents_eitc = factor(num_dependents_eitc, levels = as.character(0:5)),
+    filing_status = tools::toTitleCase(filing_status)
+  ) %>%
+  ggplot(aes(tax_unit_income, federal_taxes, color = num_dependents_eitc)) +
+    geom_point(alpha = .5) +
+    scale_x_continuous(labels = scales::label_dollar(scale = .001, suffix = "K"), limits = c(0, 200000)) +
+    scale_y_continuous(labels = scales::label_dollar(scale = .001, suffix = "K"), limits = c(-10000, 50000)) +
+    scale_color_discrete(type = dep_color_palette) +
+    facet_grid(rows = vars(filing_status), cols = vars(tax_year)) +
+    labs(
+      title = "Federal Income Taxes by Filing Status, Year, and Number of Children",
+      x = "\nHousehold Wages",
+      y = "Federal Income Taxes"
+    ) +
+    plt_theme() +
+    guides(color = guide_legend(title = "Number of Childern 18 or Younger", title.position = "top", byrow = TRUE))
+```
+
+The plots shows what we would expect: higher income families pay more in taxes and households pay less the more children they have. We also see the reduction in federal marginal tax rates from 2000 to 2020, as shown by the decrease in income tax liabilities when comparing the two years.
+
+## Income tax simulations
+
+### Association between income taxes paid and hosuehold wages
+
+An additional use of `usincometaxes` is to run simulations. This could be as simple as plotting the relationship between wages and income taxes paid. To do this, we first need to create a data set that holds everything constant except for wages. The code block below does this, except it also creates different data sets for households with zero and four children 18 or younger, so we can compare differences on this characteristic as well. 
+
+```{r}
+# calculate taxes from 0 to 200,000 in wages
+wage_linespace <- seq(0, 200000, 100)
+
+n_kids <- 4
+
+base_family_income <- data.frame(
+  tax_year = 2020,
+  filing_status = 'married, jointly',
+  state = 'NC',
+  primary_age = 40,
+  spouse_age = 40,
+  num_dependents = n_kids,
+  num_dependents_thirteen = n_kids,
+  num_dependents_seventeen = n_kids,
+  num_dependents_eitc = n_kids,
+  primary_wages = wage_linespace,
+  spouse_wages = 0
+)
+
+# create an additional data se twith no dependents and add it to the original
+family_income <- base_family_income %>%
+  bind_rows(
+    # make all numeber of dependent columns 0
+    base_family_income %>%
+      mutate(across(starts_with('num'), ~0))
+  ) %>%
+  # add unique ID to each row
+  mutate(id_number = row_number()) %>%
+  select(id_number, everything())
+
+family_income %>%
+  head() %>%
+  kable() %>%
+  scroll_box(width = scroll_width)
+```
+
+Now, we will calculate federal and state income taxes for our simulated data set. Note that `return_all_information = TRUE`. This allows us to examine credit amounts like the Child Tax Credit and Earned Income Tax Credit (EITC).
+
+```{r}
+family_income_taxes <- taxsim_calculate_taxes(
+  .data = family_income,
+  return_all_information = TRUE,
+  upload_method = 'ftp'
+)
+
+family_income_taxes %>%
+  head() %>%
+  kable() %>%
+  scroll_box(width = scroll_width)
+```
+
+As before, let's merge our tax data with the original input data set.
+
+```{r}
+family_income <- family_income %>%
+  left_join(family_income_taxes, by = 'id_number')
+```
+
+Now, let's look at the relationship between household wages and estimated income tax liabilities. 
+
+```{r}
+family_income_long <- family_income %>%
+  select(primary_wages, num_dependents_eitc, federal_taxes, state_taxes) %>%
+  pivot_longer(cols = c('federal_taxes', 'state_taxes'), 
+               names_to = 'jurisdiction', values_to = 'taxes_paid') %>%
+  mutate(
+    jurisdiction = recode(jurisdiction, 'federal_taxes' = 'Federal Income Taxes', 'state_taxes' = 'NC State Income Taxes'),
+    num_dependents_eitc = factor(num_dependents_eitc, levels = as.character(0:5)),
+    post_tax_wages = primary_wages - taxes_paid
+  )
+# primary_wages, taxes_paid, color = as.character(num_dependents_eitc)
+taxes_line_plot <- function(.data, x_var, y_var, color_var) {
+
+  ggplot(.data, aes({{x_var}}, {{y_var}}, color = {{color_var}})) +
+    geom_line(size = 1, alpha = .8) +
+    geom_hline(yintercept = 0) +
+    scale_x_continuous(labels = scales::label_dollar(scale = .001, suffix = "K")) +
+    scale_y_continuous(labels = scales::label_dollar(scale = .001, suffix = "K")) +
+    scale_color_brewer(type = 'seq', palette = 'Set2')  +
+    plt_theme()
+  
+}
+
+taxes_line_plot(family_income_long, primary_wages, taxes_paid, num_dependents_eitc) +
+  facet_wrap(vars(jurisdiction)) +
+  labs(
+    title = "Relationship Between Wages and Income Taxes Paid",
+    subtitle = "Taxpayer is married, filing jointly, in 2020",
+    x = "\nPre-Tax Household Wages",
+    y = "Federal Income Taxes",
+    color = 'Number of Children 18 or Younger:'
+  )
+```
+
+Note that North Carolina had a flat tax of 5.25% in 2020. That's why their taxes increase linearly. 
+
+### Relationship Between Pre and Post-Tax Wages
+
+We'll create a additional plot comparing pre-tax and post-tax household wages.
+
+```{r}
+
+taxes_line_plot(family_income_long, primary_wages, post_tax_wages, num_dependents_eitc) +
+  facet_wrap(vars(jurisdiction)) +
+  labs(
+    title = "Relationship Between Pre and Post-Tax Wages",
+    subtitle = "Taxpayer is married, filing jointly, in 2020",
+    x = "\nPre-Tax Household Wages",
+    y = "Post-Tax Hosuehold Wages",
+    color = 'Number of Children 18 or Younger:'
+  )
+```
+
+### Child Tax Credit and Earned Income Tax Credit (EITC)
+
+As noted previously, setting `return_all_information = TRUE` lets us retrieve additional output. Included in this additional output are amounts for the Child Tax Credit and EITC. Let's look at the amounts for both credits, while varying household wages. The values reflect a household with four children 18 or younger.
+
+```{r}
+tax_items_mapping <- c(
+  eitc = 'Earned Income Tax Credit',
+  child_tax_credit = 'Child Tax Credit'
+)
+
+family_income %>%
+  filter(num_dependents_eitc == 4) %>%
+  mutate(child_tax_credit = child_tax_credit_adjusted + child_tax_credit_refundable) %>%
+  select(primary_wages, federal_taxes, eitc, child_tax_credit) %>%
+  pivot_longer(cols = names(tax_items_mapping), names_to = 'tax_item', values_to = 'amount') %>%
+  mutate(tax_item = recode(tax_item, !!!tax_items_mapping)) %>%
+  taxes_line_plot(primary_wages, amount, tax_item) +
+  labs(
+    title = "Relationship Between Wages and Credits",
+    subtitle = "Taxpayer is married, filing jointly, in 2020 and has four children under 19",
+    x = "\nPre-Tax Wages",
+    y = "Credit Amount",
+    color = NULL
+  )
+```
