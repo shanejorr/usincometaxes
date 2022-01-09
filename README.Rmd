@@ -47,7 +47,7 @@ library(knitr)
 library(usincometaxes)
 
 family_income <- data.frame(
-  id_number = as.integer(c(1, 2)),
+  id_number = c(1, 2),
   state = c('North Carolina', 'NY'),
   tax_year = c(2015, 2020),
   filing_status = c('single', 'married, jointly'),

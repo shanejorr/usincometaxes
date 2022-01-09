@@ -213,6 +213,9 @@ create_dataset_for_taxsim <- function(.data) {
 #' @export
 taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload_method = 'ftp') {
 
+  # save input ID numbers as object, so we can make sure the output ID numbers are the same
+  input_id_numbers <- .data$id_number
+
   # make ftp and ssh lower case so that FTP and SSH work also
   upload_method <- tolower(upload_method)
 
@@ -303,10 +306,22 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
   }
 
   # clean final output
-  # convert from tibble to data frame for consistency
   from_taxism_cleaned <- clean_from_taxsim(from_taxsim)
-  #from_taxism_cleaned <- data.frame(from_taxism_cleaned)
 
+  # inout and output data sets have the same unique ID numbers
+  output_id_numbers <- from_taxism_cleaned$id_number
+
+  if (!setequal(input_id_numbers, output_id_numbers)) {
+    stop(paste0(
+      "The input and output data sets should have the exact same numbers for `id_number` and they do not.",
+      "\nThis could mean that your input data was not in the proper format, producing problems in the output.",
+      "\nPlease check your input data.",
+      "\nSee the following link for formatting information: https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html"
+       )
+    )
+  }
+
+  #return(list(to_taxsim = input_id_numbers, from_taxsim = output_id_numbers))
   return(from_taxism_cleaned)
 
 }

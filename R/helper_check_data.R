@@ -180,7 +180,7 @@ check_id_number <- function(id_number_col) {
   all(id_remainders == 0)
 
   if (!all(id_remainders == 0)) {
-    stop("id_number must be whole nummbers.", call. = FALSE)
+    stop("id_number must be whole numbers.", call. = FALSE)
   }
 
   # make sure every value is unique

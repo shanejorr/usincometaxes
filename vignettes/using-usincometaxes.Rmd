@@ -16,46 +16,25 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  message = FALSE,
   collapse = TRUE,
   comment = "#>",
   fig.align = 'center',
   fig.path = 'webimg/',
-  fig.width = 6,
-  fig.height = 4,
+  fig.width = 8,
+  fig.height = 5,
   dpi = 72,
   dev = 'png'
 )
-
-get_os = function() {
-  sysinf = Sys.info()
-  if (!is.null(sysinf)) {
-    os = sysinf['sysname']
-    if (os == 'Darwin')
-      os = 'osx'
-  } else { ## mystery machine
-    os = .Platform$OS.type
-    if (grepl('^darwin', R.version$os))
-      os = 'osx'
-    if (grepl('linux-gnu', R.version$os))
-      os = 'linux'
-  }
-  tolower(os)
-}
-if(get_os() =='windows' & capabilities('cairo') | all(capabilities(c('cairo', 'X11')))) {
-  knitr::opts_chunk$set(dev.args = list(type='cairo'))
-}
 ```
 
-```{r setup, messages = FALSE}
+```{r setup, include = FALSE}
 library(usincometaxes)
 library(dplyr)
 library(tidyr)
 library(knitr)
 library(kableExtra)
 library(ggplot2)
-
-# with of scroll box for tables
-scroll_width <- "800px"
 ```
 
 This article presents two use cases for `usincometaxes`. The first shows users how to estimate income taxes from a data frame containing financial information and other characteristics of tax payer units. This income could come from surveys such as the [Consumer Expenditure survey](https://www.bls.gov/cex/) or the [Panel Study of Income Dynamics survey](https://psidonline.isr.umich.edu/). The second use case focuses on running simulations.
@@ -68,6 +47,9 @@ The data set contains financial and other household characteristics that help es
 
 ```{r import_data}
 data(taxpayer_finances)
+
+# with of scroll box for tables
+scroll_width <- "800px"
 
 taxpayer_finances %>%
   head() %>%
@@ -107,7 +89,7 @@ income_and_taxes %>%
 
 Now we have a single data frame containing both wages and income tax liabilities. Let's take a look at the relationship between wages and estimated federal income taxes. The colors represent the number of children 18 or younger.
 
-```{r plot_family_taxes, fig.height = 6, fig.width = 7}
+```{r plot_family_taxes, fig.height = 7, fig.width = 9}
 # custom theme for all plots in the vignette
 plt_theme <- function() {
   
