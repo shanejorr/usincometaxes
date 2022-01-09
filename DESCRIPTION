@@ -22,9 +22,12 @@ Imports:
 Suggests: 
     dplyr,
     ggplot2,
+    kableExtra,
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    scales,
+    testthat (>= 3.0.0),
+    tidyr
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

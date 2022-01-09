@@ -7,3 +7,11 @@ authors:
      href: https://shaneorr.io
 
 destination: '../shanes-site/static/R/usincometaxes'
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - using-usincometaxes
+  - taxsim-input
+  - taxsim-output

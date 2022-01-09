@@ -42,7 +42,7 @@ library(knitr)
 library(usincometaxes)
 
 family_income <- data.frame(
-  id_number = as.integer(c(1, 2)),
+  id_number = c(1, 2),
   state = c('North Carolina', 'NY'),
   tax_year = c(2015, 2020),
   filing_status = c('single', 'married, jointly'),
@@ -53,11 +53,10 @@ family_income <- data.frame(
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
   return_all_information = FALSE,
-  upload_method = 'ftp'
+  upload_method = 'ssh'
 )
 #> [1] "All required columns are present and the data is in the proper format!"
-#> [1] "Uploading data to TAXSIM server via ftp."
-#> [1] "Downloading data from TAXSIM server via ftp."
+#> [1] "Sending and retrieving data from TAXSIM server via SSH"
 ```
 
 ``` r

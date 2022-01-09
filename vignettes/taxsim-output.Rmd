@@ -1,5 +1,6 @@
 ---
 title: "Description of Output Columns"
+author: "Shane Orr"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Description of Output Columns}
