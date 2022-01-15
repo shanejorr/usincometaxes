@@ -321,7 +321,6 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
     )
   }
 
-  #return(list(to_taxsim = input_id_numbers, from_taxsim = output_id_numbers))
   return(from_taxism_cleaned)
 
 }
