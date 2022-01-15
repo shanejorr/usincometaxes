@@ -35,6 +35,14 @@ n_kids_sample <- sample(0:5, size = n, replace = TRUE, prob = c(.15, .3, .25, .1
 
 n_kids <- ifelse(p_age <= 40, n_kids_sample, 0)
 
+age_youngest <- sample(1:14, size = n, replace = TRUE)
+
+age_youngest <- ifelse(n_kids == 0, NA_integer_, age_youngest)
+
+age_second <- age_youngest + 1
+
+age_third <- age_second + 1
+
 p_wages <- log_norm(n, 30000, 2.5)
 
 s_wages <- log_norm(n, 30000, 2.5)
@@ -49,9 +57,9 @@ taxpayer_finances <- data.frame(
   primary_age = p_age,
   spouse_age = s_age,
   num_dependents = n_kids,
-  num_dependents_thirteen = n_kids,
-  num_dependents_seventeen = n_kids,
-  num_dependents_eitc = n_kids,
+  age_youngest_dependent = age_youngest,
+  age_second_youngest_dependent = age_second,
+  age_second_third_dependent = age_third,
   primary_wages = p_wages,
   spouse_wages = s_wages,
   dividends = log_norm(n, 2500, 2),

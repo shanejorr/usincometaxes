@@ -62,7 +62,7 @@ test_that("Full output is correct", {
   # data set for TAXSIM
   full_test_input <- data.frame(
     id_number = 1, tax_year = 2019, filing_status = 'married, jointly', state = 'AL', primary_age = 30, spouse_age = 30,
-    num_dependents = 3, num_dependents_thirteen = 3, num_dependents_seventeen = 3, num_dependents_eitc = 3,
+    num_dependents = 3, age_youngest_dependent = 3, age_second_youngest_dependent = 3, age_third_youngest_dependent = 3,
     primary_wages = 10000, spouse_wages = 10000, dividends = 10, interest = 10, short_term_capital_gains = 10,
     long_term_capital_gains = 10, other_property_income = 10, other_non_property_income = 10, pensions = 10,
     social_security = 10, unemployment = 10, other_transfer_income = 10, rent_paid = 10, property_taxes = 10,
