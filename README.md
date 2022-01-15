@@ -53,20 +53,21 @@ family_income <- data.frame(
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
   return_all_information = FALSE,
-  upload_method = 'ssh'
+  upload_method = 'ftp'
 )
 #> [1] "All required columns are present and the data is in the proper format!"
-#> [1] "Sending and retrieving data from TAXSIM server via SSH"
+#> [1] "Uploading data to TAXSIM server via ftp."
+#> [1] "Downloading data from TAXSIM server via ftp."
 ```
 
 ``` r
 kable(family_taxes)
 ```
 
-| id_number | federal_taxes | state_taxes | fica_taxes | federal_marginal_rate | state_marginal_rate | fica_rate |
-|----------:|--------------:|------------:|-----------:|----------------------:|--------------------:|----------:|
-|         1 |       -369.12 |      143.75 |       1530 |                  7.65 |                5.75 |        15 |
-|         2 |       5029.00 |     4586.76 |      15300 |                 12.00 |                6.09 |        15 |
+| id\_number | federal\_taxes | state\_taxes | fica\_taxes | federal\_marginal\_rate | state\_marginal\_rate | fica\_rate |
+|-----------:|---------------:|-------------:|------------:|------------------------:|----------------------:|-----------:|
+|          1 |        -369.12 |       143.75 |        1530 |                    7.65 |                  5.75 |         15 |
+|          2 |        5029.00 |      4586.76 |       15300 |                   12.00 |                  6.09 |         15 |
 
 Users can use the `id_number` column to join the tax data with the
 original data set. Every `id_number` in the input data is represented in
@@ -78,10 +79,10 @@ family_income %>%
   kable()
 ```
 
-| id_number | state          | tax_year | filing_status    | primary_wages | primary_age | federal_taxes | state_taxes | fica_taxes | federal_marginal_rate | state_marginal_rate | fica_rate |
-|----------:|:---------------|---------:|:-----------------|--------------:|------------:|--------------:|------------:|-----------:|----------------------:|--------------------:|----------:|
-|         1 | North Carolina |     2015 | single           |         1e+04 |          26 |       -369.12 |      143.75 |       1530 |                  7.65 |                5.75 |        15 |
-|         2 | NY             |     2020 | married, jointly |         1e+05 |          36 |       5029.00 |     4586.76 |      15300 |                 12.00 |                6.09 |        15 |
+| id\_number | state          | tax\_year | filing\_status   | primary\_wages | primary\_age | federal\_taxes | state\_taxes | fica\_taxes | federal\_marginal\_rate | state\_marginal\_rate | fica\_rate |
+|-----------:|:---------------|----------:|:-----------------|---------------:|-------------:|---------------:|-------------:|------------:|------------------------:|----------------------:|-----------:|
+|          1 | North Carolina |      2015 | single           |          1e+04 |           26 |        -369.12 |       143.75 |        1530 |                    7.65 |                  5.75 |         15 |
+|          2 | NY             |      2020 | married, jointly |          1e+05 |           36 |        5029.00 |      4586.76 |       15300 |                   12.00 |                  6.09 |         15 |
 
 ## Output
 
