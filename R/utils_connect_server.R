@@ -35,6 +35,8 @@ connect_server_single <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filena
 
   error_message <- "Could not connect to the TAXSIM server via ssh."
 
+  ssh_command <- create_ssh_command(to_taxsim_tmp_filename, from_taxsim_tmp_filename, port)
+
   tryCatch(
     warning = function(cnd) stop(error_message, call. = FALSE),
     error = function(cnd) stop(error_message, call. = FALSE),
@@ -43,10 +45,10 @@ connect_server_single <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filena
 
       # default to using the 'shell' function to run ssh command, but use 'ssytem' if shell is not present
       if (exists('shell', mode = "function")) {
-        shell(create_ssh_command(to_taxsim_tmp_filename, from_taxsim_tmp_filename, port))
+        shell(ssh_command)
 
       } else if (exists('system', mode = "function")) {
-        system(create_ssh_command(to_taxsim_tmp_filename, from_taxsim_tmp_filename, port))
+        system(ssh_command)
 
       } else {
         stop("Could not find the `shell` or `system` functions in R. These functions are needed to run SSH commands.", call. = FALSE)
