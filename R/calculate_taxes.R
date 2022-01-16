@@ -234,8 +234,8 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
   # send data set to taxsim server
 
   # save csv file of data set to a temp folder
-  to_taxsim_tmp_filename <- tempfile("to_taxsim_")
-  readr::write_csv(to_taxsim, to_taxsim_tmp_filename)
+  to_taxsim_tmp_filename <- tempfile(fileext = ".csv")
+  vroom::vroom_write(to_taxsim, to_taxsim_tmp_filename, ",", progress = FALSE)
 
   if (upload_method == 'ftp') {
 
@@ -258,7 +258,7 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
         # store data in temp folder
 
         # FTP url to download results
-        taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
+        taxsim_server_url <- paste0(fake_taxsim_filename, ".txm35")
 
         print("Downloading data from TAXSIM server via ftp.")
 
