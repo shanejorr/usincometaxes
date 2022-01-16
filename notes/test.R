@@ -23,7 +23,7 @@ taxsim_input <- data.frame(
 to_taxsim_filename <- 'test_to_taxsim.csv'
 
 to_taxsim_tmp_filename <- tempfile(fileext = ".csv")
-vroom_write(taxsim_input, to_taxsim_filename, ",", progress = FALSE)
+vroom_write(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
 
 vroom(to_taxsim_tmp_filename)
 
@@ -54,8 +54,79 @@ from_taxsim_filename <- 'test_from_taxsim.csv'
 
 ssh_cmd <- paste0("ssh -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no -p 443 taxsim35@taxsimssh.nber.org < ",
                   to_taxsim_tmp_filename, " > ", from_taxsim_filename)
-Sys.which('ssh')
-system(ssh_cmd)
+Sys.which('ss') == ""
+shell(ssh_cmd, shell = Sys.which('ssh'))
+
+#############
+
+create_ssh_command <- function(to_taxsim_tmp_filename, from_taxsim_filename, port) {
+
+  paste0(
+    "ssh -T -o ConnectTimeout=20 -o StrictHostKeyChecking=no -p ",
+    port, " taxsim35@taxsimssh.nber.org < ",
+    to_taxsim_tmp_filename, " > ", from_taxsim_filename
+  )
+
+}
+
+connect_server_single <- function(to_taxsim_tmp_filename, from_taxsim_filename, port) {
+
+  error_message <- "Could not connect to the TAXSIM server via ssh."
+
+  tryCatch(
+    warning = function(cnd) stop(error_message, call. = FALSE),
+    error = function(cnd) stop(error_message, call. = FALSE),
+    expr = {
+      message(paste0("Connecting to TAXSIM server via ssh on port ", port, "..."))
+
+      # default to using the 'shell' function to run ssh command, but use 'ssytem' if shell is not present
+      if (exists('shell', mode = "function")) {
+        shell(create_ssh_command(to_taxsim_tmp_filename, from_taxsim_filename, port))
+
+      } else if (exists('system', mode = "function")) {
+        system(create_ssh_command(to_taxsim_tmp_filename, from_taxsim_filename, port))
+
+      } else {
+        stop("Could not find the `shell` or `system` functions in R. These functions are needed to run SSH commands.", call. = FALSE)
+      }
+
+      message("Upload and download successful!")
+    }
+  )
+
+}
+
+connect_server_all <- function(to_taxsim_tmp_filename, from_taxsim_filename) {
+
+  error_message <- "Could not connect to the TAXSIM server via ssh."
+
+  tryCatch(
+    error = function(cnd) {
+      tryCatch(
+        error = function(cnd) {
+          tryCatch(
+            error = function(cnd) stop(error_message, call. = FALSE),
+            connect_server_single(to_taxsim_tmp_filename, from_taxsim_filename, '20')
+          )
+        },
+        connect_server_single(to_taxsim_tmp_filename, from_taxsim_filename, '80')
+      )
+    },
+    connect_server_single(to_taxsim_tmp_filename, from_taxsim_filename, '443')
+  )
+
+}
+
+# check to see if ssh is installed on the local machine
+# produce error message if it is not
+if (Sys.which('ssh') == "") {
+  stop("You do not have an SSH client installed on your computer. Please install SSH.\nUse Sys.which('ssh') to check if you have SSH installed.")
+}
+
+connect_server_all(to_taxsim_tmp_filename, from_taxsim_filename)
+
+
+##############
 
 # ftp
 
@@ -83,7 +154,7 @@ paste0('curl -F txpydata.raw=@txpydata.raw "https://wwwdev.nber.org/uptest/webfi
 # store data in temp folder
 
 # FTP url to download results
-taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
+taxsim_server_url <- paste0(fake_taxsim_filename, ".txm35")
 
 from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 120)
 
