@@ -20,7 +20,7 @@ taxsim_input <- data.frame(
 ) %>%
   create_dataset_for_taxsim()
 
-to_taxsim_filename <- 'txpydata.raw'
+to_taxsim_filename <- 'test_to_taxsim.csv'
 
 to_taxsim_tmp_filename <- tempfile(fileext = ".csv")
 vroom_write(taxsim_input, to_taxsim_filename, ",", progress = FALSE)
