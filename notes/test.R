@@ -23,7 +23,7 @@ taxsim_input <- data.frame(
 to_taxsim_filename <- 'test_to_taxsim.csv'
 
 to_taxsim_tmp_filename <- tempfile(fileext = ".csv")
-vroom_write(taxsim_input, to_taxsim_filename, ",", progress = FALSE)
+vroom_write(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
 
 vroom(to_taxsim_tmp_filename)
 
@@ -55,7 +55,7 @@ from_taxsim_filename <- 'test_from_taxsim.csv'
 ssh_cmd <- paste0("ssh -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no -p 443 taxsim35@taxsimssh.nber.org < ",
                   to_taxsim_tmp_filename, " > ", from_taxsim_filename)
 Sys.which('ssh')
-system(ssh_cmd)
+shell(ssh_cmd)
 
 # ftp
 
