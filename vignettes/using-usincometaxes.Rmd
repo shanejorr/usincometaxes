@@ -106,7 +106,9 @@ plt_theme <- function() {
 }
 
 # color palettes for number of children
-dep_color_palette <- rev(c('#4B0055','#353E7C','#007094','#009B95','#00BE7D')) #,'#96D84B'))
+dep_color_palette <- rev(c('#4B0055','#353E7C','#007094','#009B95','#00BE7D','#96D84B'))
+
+n_kids <- max(income_and_taxes$num_dependents)
 
 income_and_taxes %>%
   mutate(
@@ -141,15 +143,13 @@ An additional use of `usincometaxes` is to run simulations. This could be as sim
 # calculate taxes from 0 to 200,000 in wages
 wage_linespace <- seq(0, 200000, 100)
 
-n_kids <- 4
-
 base_family_income <- data.frame(
   tax_year = 2020,
   filing_status = 'married, jointly',
   state = 'NC',
   primary_age = 40,
   spouse_age = 40,
-  num_dependents = n_kids,
+  num_dependents = 4,
   age_youngest_dependent = 1, 
   age_second_youngest_dependent = 2, 
   age_third_youngest_dependent = 3,
@@ -160,9 +160,10 @@ base_family_income <- data.frame(
 # create an additional data se twith no dependents and add it to the original
 family_income <- base_family_income %>%
   bind_rows(
-    # make all numeber of dependent columns 0
+    # make all number of dependent columns 0
     base_family_income %>%
-      mutate(across(starts_with('num'), ~0))
+      mutate(across(starts_with('age'), ~0)) %>%
+      mutate(num_dependents = 0)
   ) %>%
   # add unique ID to each row
   mutate(id_number = row_number()) %>%

@@ -7,8 +7,8 @@
 
 `usincometaxes` is an R package that calculates federal and state income
 taxes in the United States. It relies on the National Bureau of Economic
-Research’s (NBER) [TAXSIM 32](https://users.nber.org/~taxsim/taxsim32/)
-tax simulator for calculations. The package takes care of the
+Research’s (NBER) [TAXSIM 35](http://taxsim.nber.org/taxsim35/) tax
+simulator for calculations. The package takes care of the
 behind-the-scenes work of getting the data in the proper format,
 converting it to the proper file type for uploading to the NBER server,
 uploading the data, downloading the results, and placing the results
@@ -52,22 +52,18 @@ family_income <- data.frame(
 
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
-  return_all_information = FALSE,
-  upload_method = 'ftp'
+  return_all_information = FALSE
 )
-#> [1] "All required columns are present and the data is in the proper format!"
-#> [1] "Uploading data to TAXSIM server via ftp."
-#> [1] "Downloading data from TAXSIM server via ftp."
 ```
 
 ``` r
 kable(family_taxes)
 ```
 
-| id\_number | federal\_taxes | state\_taxes | fica\_taxes | federal\_marginal\_rate | state\_marginal\_rate | fica\_rate |
-|-----------:|---------------:|-------------:|------------:|------------------------:|----------------------:|-----------:|
-|          1 |        -369.12 |       143.75 |        1530 |                    7.65 |                  5.75 |         15 |
-|          2 |        5029.00 |      4586.76 |       15300 |                   12.00 |                  6.09 |         15 |
+| id_number | federal_taxes | state_taxes | fica_taxes | federal_marginal_rate | state_marginal_rate | fica_rate |
+|----------:|--------------:|------------:|-----------:|----------------------:|--------------------:|----------:|
+|         1 |       -369.12 |      143.75 |       1530 |                  7.65 |                5.75 |        15 |
+|         2 |       5029.00 |     4586.76 |      15300 |                 12.00 |                6.09 |        15 |
 
 Users can use the `id_number` column to join the tax data with the
 original data set. Every `id_number` in the input data is represented in
@@ -79,10 +75,10 @@ family_income %>%
   kable()
 ```
 
-| id\_number | state          | tax\_year | filing\_status   | primary\_wages | primary\_age | federal\_taxes | state\_taxes | fica\_taxes | federal\_marginal\_rate | state\_marginal\_rate | fica\_rate |
-|-----------:|:---------------|----------:|:-----------------|---------------:|-------------:|---------------:|-------------:|------------:|------------------------:|----------------------:|-----------:|
-|          1 | North Carolina |      2015 | single           |          1e+04 |           26 |        -369.12 |       143.75 |        1530 |                    7.65 |                  5.75 |         15 |
-|          2 | NY             |      2020 | married, jointly |          1e+05 |           36 |        5029.00 |      4586.76 |       15300 |                   12.00 |                  6.09 |         15 |
+| id_number | state          | tax_year | filing_status    | primary_wages | primary_age | federal_taxes | state_taxes | fica_taxes | federal_marginal_rate | state_marginal_rate | fica_rate |
+|----------:|:---------------|---------:|:-----------------|--------------:|------------:|--------------:|------------:|-----------:|----------------------:|--------------------:|----------:|
+|         1 | North Carolina |     2015 | single           |         1e+04 |          26 |       -369.12 |      143.75 |       1530 |                  7.65 |                5.75 |        15 |
+|         2 | NY             |     2020 | married, jointly |         1e+05 |          36 |       5029.00 |     4586.76 |      15300 |                 12.00 |                6.09 |        15 |
 
 ## Output
 
@@ -116,18 +112,19 @@ vignette. The additional columns will be ignored.
 
 ## Upload and download method
 
-FTP or SSH can be used to upload and retrieve information to and from
-the TAXSIM server. This is set with the `upload_method` parameter to
-`taxsim_calculate_taxes()` and defaults to FTP. Behind the scenes, FTP
-uses the `RCurl` package and SSH issues an SSH command to the operating
-system. Large data sets should sue SSH since it is faster.
+`usincometaxes` connects to the TAXSIM server via SSH, which requires an
+SSH client on your computer. Mac and Linux computers should have an SSH
+client installed. Since 2019, Windows 10 has also included an SSH
+client. To see if you have an SSH client, run `Sys.which('ssh')` in R.
+You will either see the path to the client or a blank string, which
+indicates that an SSH client is not installed..
 
 ## Giving credit
 
-The NBER’s [TAXSIM 32](https://users.nber.org/~taxsim/taxsim32/) tax
-simulator does all tax calculations. This package simply lets users
-interact with the tax simulator through R. Therefore, users should cite
-the TAXSIM 32 tax simulator when they use this package in their work:
+The NBER’s [TAXSIM 35](http://taxsim.nber.org/taxsim35/) tax simulator
+does all tax calculations. This package simply lets users interact with
+the tax simulator through R. Therefore, users should cite the TAXSIM 35
+tax simulator when they use this package in their work:
 
           Feenberg, Daniel Richard, and Elizabeth Coutts, An
 Introduction to the TAXSIM Model, Journal of Policy Analysis and

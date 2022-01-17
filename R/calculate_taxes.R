@@ -252,10 +252,10 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE) {
   # send data set to taxsim server
 
   # save csv file of data set to a temp folder
-  to_taxsim_tmp_filename <- tempfile(patter = 'upload_', fileext = ".csv")
+  to_taxsim_tmp_filename <- tempfile(pattern = 'upload_', fileext = ".csv")
   vroom::vroom_write(to_taxsim, to_taxsim_tmp_filename, delim = ",", progress = FALSE)
 
-  from_taxsim_tmp_filename <- tempfile(patter = 'download_', fileext = ".csv")
+  from_taxsim_tmp_filename <- tempfile(pattern = 'download_', fileext = ".csv")
 
   # upload and download data
   connect_server_all(to_taxsim_tmp_filename, from_taxsim_tmp_filename)

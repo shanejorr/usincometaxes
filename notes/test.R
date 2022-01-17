@@ -22,6 +22,13 @@ taxsim_input <- data.frame(
 
 to_taxsim_filename <- 'test_to_taxsim.csv'
 
+data(taxpayer_finances)
+
+a <- taxpayer_finances %>%
+  filter(id_number == 72) %>%
+  taxsim_calculate_taxes() #%>%
+#vroom::vroom_write(file = 'test_upload.csv', delim = ',')
+
 to_taxsim_tmp_filename <- tempfile(fileext = ".csv")
 vroom_write(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
 
