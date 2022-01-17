@@ -1,14 +1,12 @@
 #' Convert a data frame to the TAXSIM 35 output.
 #'
-#' @description
-#' This function takes a data set that is in the format required for \code{\link{taxsim_calculate_taxes},
+#' This function takes a data set that is in the format required for \code{\link{taxsim_calculate_taxes}},
 #' checks it to make sure it is in the proper format for TAXSIM 35, and then cleans so it can be sent to TAXSIM 35.
-#'
 #' This function is useful for troubleshooting. It is not needed to calculate taxes. The function is useful
-#' if you continue receiving unreasonable errors from \code{\link{taxsim_calculate_taxes}. In such as case,
-#' you can run this function on the data frame used in \code{\link{taxsim_calculate_taxes}. You should then save
+#' if you continue receiving unreasonable errors from \code{\link{taxsim_calculate_taxes}}. In such as case,
+#' you can run this function on the data frame used in \code{\link{taxsim_calculate_taxes}}. You should then save
 #' this data frame as a csv file. Then, upload the file to \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
-#' If there are no errors with TAXSIM 35 then the issue lies in \code{\link{taxsim_calculate_taxes}.
+#' If there are no errors with TAXSIM 35 then the issue lies in \code{\link{taxsim_calculate_taxes}}.
 #'
 #' @param .data The data set used to calculate taxes from
 #'
@@ -117,11 +115,14 @@ create_dataset_for_taxsim <- function(.data) {
 #' \code{num_dependents} Total number of dependents (part of personal exemption calculation).
 #'
 #' \code{age_youngest_dependent} Age of youngest dependent. Used for EITC, CTC and CCC.
-#'      For 1991+ code students between 20 and 23 as 19 to get the EITC calculation correct. Use 'NA' for no dependents.
+#'      For 1991+ code students between 20 and 23 as 19 to get the EITC calculation correct. Use 'NA' or 0 for no dependents.
+#'      For children under 1, use 1.
 #'
-#' \code{age_second_youngest_dependent} Age of second youngest dependent. Use 'NA' if there is only one dependent.
+#' \code{age_second_youngest_dependent} Age of second youngest dependent. Use 'NA' or 0 if there is only one dependent.
+#'      For children under 1, use 1.
 #'
-#' \code{age_third_youngest_dependent} Age of third youngest dependent. Use 'NA' if there are only two dependent.
+#' \code{age_third_youngest_dependent} Age of third youngest dependent. Use 'NA' or 0 if there are only two dependent.
+#'      For children under 1, use 1.
 #'
 #' Ages of any additional dependents are not relevant for the tax calculation, but all dependents should be included in \code{num_dependents}.
 #'

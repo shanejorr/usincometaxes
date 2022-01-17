@@ -32,6 +32,8 @@ Corresponds to \code{fica} in TAXSIM.
 \code{state_marginal_rate} State marginal tax rate of taxpayer. Corresponds to \code{srate} in TAXSIM.
 
 \code{fica_rate} FICA rate. Corresponds to \code{ficar} in TAXSIM.
+
+Additional columns will be returned if \code{return_all_information = TRUE}
 }
 \description{
 This function calculates state and federal income taxes using the TAXSIM 35 tax simulator.
@@ -65,11 +67,14 @@ determine eligibility for additional standard deductions, personal exemption, EI
 \code{num_dependents} Total number of dependents (part of personal exemption calculation).
 
 \code{age_youngest_dependent} Age of youngest dependent. Used for EITC, CTC and CCC.
-For 1991+ code students between 20 and 23 as 19 to get the EITC calculation correct. Use 'NA' for no dependents.
+For 1991+ code students between 20 and 23 as 19 to get the EITC calculation correct. Use 'NA' or 0 for no dependents.
+For children under 1, use 1.
 
-\code{age_second_youngest_dependent} Age of second youngest dependent. Use 'NA' if there is only one dependent.
+\code{age_second_youngest_dependent} Age of second youngest dependent. Use 'NA' or 0 if there is only one dependent.
+For children under 1, use 1.
 
-\code{age_third_youngest_dependent} Age of third youngest dependent. Use 'NA' if there are only two dependent.
+\code{age_third_youngest_dependent} Age of third youngest dependent. Use 'NA' or 0 if there are only two dependent.
+For children under 1, use 1.
 
 Ages of any additional dependents are not relevant for the tax calculation, but all dependents should be included in \code{num_dependents}.
 
@@ -134,10 +139,6 @@ column should not exist.
 
 \code{spouse_specialized_service_trade} Spouse's SSTB. Must be zero for non-joint returns, or the
 column should not exist.
-}
-
-\section{Additional Output}{
-NA
 }
 
 \section{Giving credit where it is due}{

@@ -59,15 +59,14 @@ taxpayer_finances %>%
 
 Each row in the data set is a tax paying unit. Thus, each row files one tax return. Columns represent items reported on tax returns that impact taxes. Of course, the information in the data set does not represent everything people report on tax returns. For this reason, the income tax calculations are simply estimates.
 
-We call `taxsim_calculate_taxes()` to estimate federal and state income taxes for each tax paying unit. `taxsim_calculate_taxes()` sends the data to the [NBER's TAXSIM 32](https://users.nber.org/~taxsim/taxsim32/) program for calculation and returns the results as a data frame.
+We call `taxsim_calculate_taxes()` to estimate federal and state income taxes for each tax paying unit. `taxsim_calculate_taxes()` sends the data to the [NBER's TAXSIM 35](http://taxsim.nber.org/taxsim35/) program for calculation and returns the results as a data frame.
 
 We are only interested in federal and state tax liabilities, not line item credits and deduction, so we are using `return_all_information = FALSE`.
 
 ```{r calcualte_survey_taxes}
 family_taxes <- taxsim_calculate_taxes(
   .data = taxpayer_finances,
-  return_all_information = FALSE,
-  upload_method = 'ftp'
+  return_all_information = FALSE
 )
 
 family_taxes %>%
@@ -107,15 +106,15 @@ plt_theme <- function() {
 }
 
 # color palettes for number of children
-dep_color_palette <- rev(c('#4B0055','#353E7C','#007094','#009B95','#00BE7D','#96D84B'))
+dep_color_palette <- rev(c('#4B0055','#353E7C','#007094','#009B95','#00BE7D')) #,'#96D84B'))
 
 income_and_taxes %>%
   mutate(
     tax_unit_income = primary_wages + spouse_wages,
-    num_dependents_eitc = factor(num_dependents_eitc, levels = as.character(0:5)),
+    num_dependents = factor(num_dependents, levels = as.character(0:n_kids)),
     filing_status = tools::toTitleCase(filing_status)
   ) %>%
-  ggplot(aes(tax_unit_income, federal_taxes, color = num_dependents_eitc)) +
+  ggplot(aes(tax_unit_income, federal_taxes, color = num_dependents)) +
     geom_point(alpha = .5) +
     scale_x_continuous(labels = scales::label_dollar(scale = .001, suffix = "K"), limits = c(0, 200000)) +
     scale_y_continuous(labels = scales::label_dollar(scale = .001, suffix = "K"), limits = c(-10000, 50000)) +
@@ -151,9 +150,9 @@ base_family_income <- data.frame(
   primary_age = 40,
   spouse_age = 40,
   num_dependents = n_kids,
-  num_dependents_thirteen = n_kids,
-  num_dependents_seventeen = n_kids,
-  num_dependents_eitc = n_kids,
+  age_youngest_dependent = 1, 
+  age_second_youngest_dependent = 2, 
+  age_third_youngest_dependent = 3,
   primary_wages = wage_linespace,
   spouse_wages = 0
 )
@@ -180,8 +179,7 @@ Now, we will calculate federal and state income taxes for our simulated data set
 ```{r}
 family_income_taxes <- taxsim_calculate_taxes(
   .data = family_income,
-  return_all_information = TRUE,
-  upload_method = 'ftp'
+  return_all_information = TRUE
 )
 
 family_income_taxes %>%
@@ -201,15 +199,15 @@ Now, let's look at the relationship between household wages and estimated income
 
 ```{r}
 family_income_long <- family_income %>%
-  select(primary_wages, num_dependents_eitc, federal_taxes, state_taxes) %>%
+  select(primary_wages, num_dependents, federal_taxes, state_taxes) %>%
   pivot_longer(cols = c('federal_taxes', 'state_taxes'), 
                names_to = 'jurisdiction', values_to = 'taxes_paid') %>%
   mutate(
     jurisdiction = recode(jurisdiction, 'federal_taxes' = 'Federal Income Taxes', 'state_taxes' = 'NC State Income Taxes'),
-    num_dependents_eitc = factor(num_dependents_eitc, levels = as.character(0:5)),
+    num_dependents = factor(num_dependents, levels = as.character(0:n_kids)),
     post_tax_wages = primary_wages - taxes_paid
   )
-# primary_wages, taxes_paid, color = as.character(num_dependents_eitc)
+
 taxes_line_plot <- function(.data, x_var, y_var, color_var) {
 
   ggplot(.data, aes({{x_var}}, {{y_var}}, color = {{color_var}})) +
@@ -222,7 +220,7 @@ taxes_line_plot <- function(.data, x_var, y_var, color_var) {
   
 }
 
-taxes_line_plot(family_income_long, primary_wages, taxes_paid, num_dependents_eitc) +
+taxes_line_plot(family_income_long, primary_wages, taxes_paid, num_dependents) +
   facet_wrap(vars(jurisdiction)) +
   labs(
     title = "Relationship Between Wages and Income Taxes Paid",
@@ -241,7 +239,7 @@ We'll create a additional plot comparing pre-tax and post-tax household wages.
 
 ```{r}
 
-taxes_line_plot(family_income_long, primary_wages, post_tax_wages, num_dependents_eitc) +
+taxes_line_plot(family_income_long, primary_wages, post_tax_wages, num_dependents) +
   facet_wrap(vars(jurisdiction)) +
   labs(
     title = "Relationship Between Pre and Post-Tax Wages",
@@ -263,7 +261,7 @@ tax_items_mapping <- c(
 )
 
 family_income %>%
-  filter(num_dependents_eitc == 4) %>%
+  filter(num_dependents == 4) %>%
   mutate(child_tax_credit = child_tax_credit_adjusted + child_tax_credit_refundable) %>%
   select(primary_wages, federal_taxes, eitc, child_tax_credit) %>%
   pivot_longer(cols = names(tax_items_mapping), names_to = 'tax_item', values_to = 'amount') %>%
