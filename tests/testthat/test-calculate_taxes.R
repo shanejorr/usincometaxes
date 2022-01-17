@@ -10,17 +10,13 @@ test_that("Package output matches TAXSIM test file", {
     long_term_capital_gains = 100000
   )
 
-  # test with ftp and ssh
-  taxsim_output_ftp <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE, upload_method = 'ftp')
-  taxsim_output_ssh <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE, upload_method = 'ssh')
+  taxsim_output_ssh <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE)
 
-  federal_taxes_ftp <- taxsim_output_ftp$federal_taxes
   federal_taxes_ssh <- taxsim_output_ftp$federal_taxes
 
   # number from http://users.nber.org/~taxsim/taxsim32/low-level-remote.html
   test_result <- 16700.04
 
-  expect_equal(federal_taxes_ftp, test_result)
   expect_equal(federal_taxes_ssh, test_result)
 })
 
@@ -44,8 +40,8 @@ test_that("Output is correct", {
   n_col_short <- 7
   n_col_long <- 43
 
-  taxsim_output_short <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE, upload_method = 'ftp')
-  taxsim_output_long <- taxsim_calculate_taxes(taxsim_input, return_all_information = TRUE, upload_method = 'ftp')
+  taxsim_output_short <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE)
+  taxsim_output_long <- taxsim_calculate_taxes(taxsim_input, return_all_information = TRUE)
 
   # test that ID numbers are equal
   expect_equal(taxsim_input$id_number, taxsim_output_short$id_number)
@@ -89,8 +85,7 @@ test_that("Full output is correct", {
   # calculate taxes
   full_test_output_taxsim <- usincometaxes::taxsim_calculate_taxes(
     .data = full_test_input,
-    return_all_information = TRUE,
-    upload_method = 'ftp'
+    return_all_information = TRUE
   )
 
   testthat::expect_equal(data.frame(full_test_output_taxsim), full_test_output_hand)

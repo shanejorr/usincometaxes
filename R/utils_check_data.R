@@ -144,14 +144,15 @@ check_dependents <- function(.data) {
 
     if (dep_age_cols[i] %in% colnames(.data)) {
 
-      if (!is.numeric(.data[[dep_age_cols[i]]])) stop(paste0(dep_age_cols[i], "must be numeric."))
+      if (!is.numeric(.data[[dep_age_cols[i]]])) stop(paste0(dep_age_cols[i], "must be numeric."), call. = FALSE)
 
       # check that num_dependents column exists if an age column exists
       if (!'num_dependents' %in% colnames(.data)) {
 
         stop(
           paste0("You have a column of dependent ages `", dep_age_cols[i], "`, but no column for the number of dependents, `num_dependents`\n",
-                 "If there are dependents, you need the `num_dependents` column. If there are not, should not include the column", dep_age_cols[i])
+                 "If there are dependents, you need the `num_dependents` column. If there are not, should not include the column", dep_age_cols[i]),
+          call. = FALSE
         )
       }
 
@@ -159,7 +160,8 @@ check_dependents <- function(.data) {
       if (any(.data[['num_dependents']] == 0 & .data[[dep_age_cols[i]]] > 0)) {
         stop(
           paste0("You have a row with 0 for `num_dependents`, but an age listed for `", dep_age_cols[i], "`.\n",
-                 "Please either list the number of dependents for each row, or if there are not any change `", dep_age_cols[i], "` to 0.")
+                 "Please either list the number of dependents for each row, or if there are not any change `", dep_age_cols[i], "` to 0."),
+          call. = FALSE
         )
       }
 
@@ -244,9 +246,9 @@ check_id_number <- function(id_number_col) {
 #' @keywords internal
 check_parameters <- function(.data, all_columns) {
 
-  if (!is.data.frame(.data)) stop("`.data` parameter must be a data frame.")
+  if (!is.data.frame(.data)) stop("`.data` parameter must be a data frame.", call. = FALSE)
 
-  if (!(all_columns %in% c(T, F))) stop('`all_columns` parameter must be either TRUE or FALSE.')
+  if (!(all_columns %in% c(T, F))) stop('`all_columns` parameter must be either TRUE or FALSE.', call. = FALSE)
 
   NULL
 
@@ -262,22 +264,22 @@ check_spouse <- function(.data, cols) {
 
   if ('spouse_age' %in% cols) {
 
-    if (!('primary_age' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.")
+    if (!('primary_age' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.", call. = FALSE)
 
     if (any(.data[['filing_status']] == 'single' & .data[['spouse_age']] > 0)) {
 
-      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0")
+      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0", call. = FALSE)
 
     }
   }
 
   if ('spouse_wages' %in% cols) {
 
-    if (!('primary_wages' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.")
+    if (!('primary_wages' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.", call. = FALSE)
 
     if (any(.data[['filing_status']] == 'single' & .data[['spouse_age']] > 0)) {
 
-      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0")
+      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0", call. = FALSE)
 
     }
   }

@@ -71,6 +71,13 @@ connect_server_single <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filena
 #' @keywords internal
 connect_server_all <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename) {
 
+  # check to see if ssh is installed on the local machine
+  # produce error message if it is not
+  if (!Sys.which('ssh') == "") {
+    stop("You do not have an SSH client installed on your computer. Please install SSH.\nUse `Sys.which('ssh')` to check if you have SSH installed.",
+         call. = FALSE)
+  }
+
   error_message <- "Could not connect to the TAXSIM server via ssh."
 
   tryCatch(
