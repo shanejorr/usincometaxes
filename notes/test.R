@@ -54,8 +54,16 @@ from_taxsim_filename <- 'test_from_taxsim.csv'
 
 ssh_cmd <- paste0("ssh -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no -p 443 taxsim35@taxsimssh.nber.org < ",
                   to_taxsim_tmp_filename, " > ", from_taxsim_filename)
-Sys.which('ssh')
-shell(ssh_cmd)
+Sys.which('ss') == ""
+shell(ssh_cmd, shell = Sys.which('ssh'))
+
+# check to see if ssh is installed on the local machine
+# produce error message if it is not
+if (Sys.which('ssh') == "") {
+  stop("You do not have an SSH client installed on your computer. Please install SSH.\nUse Sys.which('ssh') to check if you have SSH installed.")
+}
+
+connect_server_all(to_taxsim_tmp_filename, from_taxsim_filename)
 
 # ftp
 
@@ -83,7 +91,7 @@ paste0('curl -F txpydata.raw=@txpydata.raw "https://wwwdev.nber.org/uptest/webfi
 # store data in temp folder
 
 # FTP url to download results
-taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
+taxsim_server_url <- paste0(fake_taxsim_filename, ".txm35")
 
 from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 120)
 

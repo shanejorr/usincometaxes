@@ -4,11 +4,7 @@
 \alias{taxsim_calculate_taxes}
 \title{Calculate state and federal taxes using TAXSIM 32.}
 \usage{
-taxsim_calculate_taxes(
-  .data,
-  return_all_information = FALSE,
-  upload_method = "ftp"
-)
+taxsim_calculate_taxes(.data, return_all_information = FALSE)
 }
 \arguments{
 \item{.data}{Data frame containing the information that will be used to calculate taxes.
@@ -17,10 +13,6 @@ This data set will be sent to TAXSIM. Data frame must have specified column name
 \item{return_all_information}{Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 or only key information (FALSE). Returning all information returns 42 columns of output, while only
 returning key information returns 9 columns. It is faster to download results with only key information.}
-
-\item{upload_method}{Either 'ftp' or 'ssh', can also use upper case. Defaults to 'ftp'. Determines whether ftp or ssh will be used to send data
-to TAXSIM and retrieve the results. SSH is faster, so use it when there are over 100,000 records.
-SSH is available in Windows 10 since autumn of 2019.}
 }
 \value{
 Returns a data frame with the following columns:
@@ -42,8 +34,8 @@ Corresponds to \code{fica} in TAXSIM.
 \code{fica_rate} FICA rate. Corresponds to \code{ficar} in TAXSIM.
 }
 \description{
-This function calculates state and federal income taxes using the TAXSIM 32 tax simulator.
-See \url{https://users.nber.org/~taxsim/taxsim32/} for more information on TAXSIM 32.
+This function calculates state and federal income taxes using the TAXSIM 35 tax simulator.
+See \url{http://taxsim.nber.org/taxsim35/} for more information on TAXSIM 35.
 }
 \section{Required columns}{
 
@@ -70,15 +62,16 @@ determine eligibility for additional standard deductions, personal exemption, EI
 
 \code{spouse_age} Age of spouse as of December 31st of tax year.
 
-\code{num_dependents} Total number of dependents.
+\code{num_dependents} Total number of dependents (part of personal exemption calculation).
 
-\code{num_dependents_thirteen} Number of children under 13 with eligible child care expenses (Dependent Care Credit).
+\code{age_youngest_dependent} Age of youngest dependent. Used for EITC, CTC and CCC.
+For 1991+ code students between 20 and 23 as 19 to get the EITC calculation correct. Use 'NA' for no dependents.
 
-\code{num_dependents_seventeen} Number of children under 17 for the entire tax year (Child Credit).
-This includes children under 13.
+\code{age_second_youngest_dependent} Age of second youngest dependent. Use 'NA' if there is only one dependent.
 
-\code{num_dependents_eitc} Number of qualifying children for EITC. (Typically younger than 19 or
-younger than 24 and a full-time student).
+\code{age_third_youngest_dependent} Age of third youngest dependent. Use 'NA' if there are only two dependent.
+
+Ages of any additional dependents are not relevant for the tax calculation, but all dependents should be included in \code{num_dependents}.
 
 \code{primary_wages} Wage and salary income of Primary Taxpayer (include self-employment but no QBI).
 
@@ -143,13 +136,6 @@ column should not exist.
 column should not exist.
 }
 
-\section{Note on number of dependents}{
-
-
-\code{num_dependents} columns are not mutually exclusive. For example, a family with a 13 year old
-can report the dependent in \code{num_dependents_thirteen} and also in \code{num_dependents_seventeen}.
-}
-
 \section{Additional Output}{
 NA
 }
@@ -157,7 +143,7 @@ NA
 \section{Giving credit where it is due}{
 
 
-The NBER's \href{http://users.nber.org/~taxsim/taxsim32/}{TAXSIM 32} tax simulator does all tax
+The NBER's \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35} tax simulator does all tax
 calculations. This package simply lets users interact with the tax simulator through R. Therefore,
 users should cite the TAXSIM 32 tax simulator when they use this package in their work:
 
@@ -176,7 +162,7 @@ family_income <- data.frame(
      primary_age = c(26, 36)
 )
 
-family_taxes <- taxsim_calculate_taxes(family_income, upload_method = 'ftp')
+family_taxes <- taxsim_calculate_taxes(family_income)
 
 merge(family_income, family_taxes, by = 'id_number')
 

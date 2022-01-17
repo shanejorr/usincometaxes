@@ -16,6 +16,9 @@ check_data <- function(.data, cols, state_column_name) {
   # ensure the id_number column is an integer and contains unique values
   check_id_number(.data[['id_number']])
 
+  # ensure the age columns do not conflict with the number of dependents column
+  check_dependents(.data)
+
   # some numeric columns must have all values greater than zero
   check_greater_zero(.data, cols)
 
@@ -31,7 +34,7 @@ check_data <- function(.data, cols, state_column_name) {
     stop("`tax_year` must be a numeric value between 1960 and 2023", call. = FALSE)
   }
 
-  print('All required columns are present and the data is in the proper format!')
+  message('All required columns are present and the data is in the proper format!')
 
   return(NULL)
 
@@ -128,6 +131,45 @@ check_numeric <- function(.data, cols) {
 
 }
 
+#' Ensure if there are dependent ages then there are also dependents
+#'
+#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#'
+#' @keywords internal
+check_dependents <- function(.data) {
+
+  dep_age_cols <- c('age_youngest_dependent', 'age_second_dependent', 'age_third_dependent')
+
+  for (i in seq_along(dep_age_cols)) {
+
+    if (dep_age_cols[i] %in% colnames(.data)) {
+
+      if (!is.numeric(.data[[dep_age_cols[i]]])) stop(paste0(dep_age_cols[i], "must be numeric."))
+
+      # check that num_dependents column exists if an age column exists
+      if (!'num_dependents' %in% colnames(.data)) {
+
+        stop(
+          paste0("You have a column of dependent ages `", dep_age_cols[i], "`, but no column for the number of dependents, `num_dependents`\n",
+                 "If there are dependents, you need the `num_dependents` column. If there are not, should not include the column", dep_age_cols[i])
+        )
+      }
+
+      # make sure that num_dependents is not 0 if an age is listed
+      if (any(.data[['num_dependents']] == 0 & .data[[dep_age_cols[i]]] > 0)) {
+        stop(
+          paste0("You have a row with 0 for `num_dependents`, but an age listed for `", dep_age_cols[i], "`.\n",
+                 "Please either list the number of dependents for each row, or if there are not any change `", dep_age_cols[i], "` to 0.")
+        )
+      }
+
+    }
+  }
+
+  NULL
+
+}
+
 #' Check that columns are greater than zero
 #'
 #' Some columns must have all values greater than zero. Check to make sure this is true.
@@ -142,7 +184,7 @@ check_greater_zero <- function(.data, cols) {
 
   greater_zero_cols_in_data <- intersect(cols_greater_zero, cols)
 
-  test_greater_zero <- function(test_data) all(test_data >= 0)
+  test_greater_zero <- function(test_data) all(test_data >= 0 | is.na(test_data))
 
   are_cols_greater_zero <- sapply(.data[greater_zero_cols_in_data], test_greater_zero)
 
@@ -200,15 +242,11 @@ check_id_number <- function(id_number_col) {
 #'    The paramters to this function should be the same as those to `taxsim_calcualte_taxes`
 #'
 #' @keywords internal
-check_parameters <- function(.data, all_columns, upload_method) {
+check_parameters <- function(.data, all_columns) {
 
   if (!is.data.frame(.data)) stop("`.data` parameter must be a data frame.")
 
   if (!(all_columns %in% c(T, F))) stop('`all_columns` parameter must be either TRUE or FALSE.')
-
-  if (!upload_method %in% c('ftp', 'ssh')) {
-    stop("`upload_method` parameter must be either 'ftp' or 'ssh'.")
-  }
 
   NULL
 
