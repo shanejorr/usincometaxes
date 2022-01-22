@@ -24,10 +24,6 @@ to_taxsim_filename <- 'test_to_taxsim.csv'
 
 data(taxpayer_finances)
 
-a <- taxpayer_finances %>%
-  filter(id_number == 72) %>%
-  taxsim_calculate_taxes() #%>%
-#vroom::vroom_write(file = 'test_upload.csv', delim = ',')
 
 to_taxsim_tmp_filename <- tempfile(fileext = ".csv")
 vroom_write(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
@@ -38,11 +34,23 @@ vroom(to_taxsim_tmp_filename)
 family_income <- data.frame(
   id_number = as.integer(c(1, 2)),
   state = c('North Carolina', 'NY'),
-  tax_year = c(2015, 2020),
+  tax_year = c(2020, 2020),
   filing_status = c('single', 'married, jointly'),
-  primary_wages = c(10000, 100000),
-  primary_age = c(26, 36)
+  primary_wages = c(10000, 15000),
+  primary_age = c(26, 36),
+  spouse_wages = c(0, 15000),
+  spouse_age = c(0, 36),
+  num_dependents = c(3,3),
+  age_youngest_dependent = c(3,3),
+  age_youngest_dependent = c(4,4),
+  age_second_youngest_dependent= c(5,5)
 )
+
+family_taxes <- taxsim_calculate_taxes(
+  .data = family_income,
+  return_all_information = TRUE
+)
+
 
 # 1) The ssh login is "taxsim35" rather than "taxsim32". Logins are accepted at ports 22, 80 and 443.
 # I would suggest defaulting to 80 or 443 as they are less likely to be firewalled.
