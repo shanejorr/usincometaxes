@@ -15,7 +15,6 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(usincometaxes)
-library(magrittr)
 ```
 
 `usincometaxes` sends data to the National Bureau of Economic Research's (NBER) [TAXSIM 32](http://taxsim.nber.org/taxsim32/) server. The data must meet TAXSIM 32's requirements for data types and column names. `usincometaxes` performs checks to ensure the data will be accepted by TAXSIM 32. It's possible, however, that issues will slip through. This can produce cryptic errors that might be hard to location. If you receive unresolveable errors, it could be helpful to manually upload your data to TAXSIM 32's servers.
@@ -27,19 +26,47 @@ data(taxpayer_finances)
 
 taxsim_dataset <- create_dataset_for_taxsim(taxpayer_finances)
 
-taxsim_dataset %>%
-  head() %>%
-  knitr::kable()
+knitr::kable(head(taxsim_dataset))
 ```
 
 Then, save this dataset as a csv file to your local computer. It is recommended to use `readr::read_csv()` to write out the dataset. `write.csv` tends to pose issues. Also note that you can name the `.csv` file anything you wish.
 
 ```{r eval = FALSE}
-readr::write_csv(taxsim_dataset, 'taxsim_dataset.csv')
+taxsim_filename <- 'taxsim_dataset.csv'
+
+readr::write_csv(taxsim_dataset, taxsim_filename)
 ```
 
-Now, manually upload the  file `taxsim_dataset.csv` to TAXSIM 32's server by going to (https://users.nber.org/~taxsim/taxsim32/), navigating to the following section of the page, and uploading the `.csv` file. Errors from the manual upload could guide you in solving any data formatting issues.
+Now, manually upload the  file `taxsim_dataset.csv` to TAXSIM 32's server by going to (https://users.nber.org/~taxsim/taxsim32/), navigating to the following section of the page, and uploading the `.csv` file:
 
-```{r pic, echo=FALSE, fig.cap="A caption", out.width = '75%'}
+```{r pic, echo=FALSE, fig.cap="", out.width = '75%'}
 knitr::include_graphics("webimg/taxsim.png")
 ```
+
+Errors from the manual upload could guide you in solving any data formatting issues.
+
+You can also upload and download the TAXSIM dataset created with `create_dataset_for_taxsim()` from within R via ftp by using the following commands. Note that `taxsim_filename` in the code below is the file name to the TAXSIM dataset that we exported in the previous code block.
+
+```{r, eval = FALSE}
+
+# create random user id for TAXSIM
+user_id <- paste0(sample(letters, 10), collapse = "")
+
+# username and password are publically listed, so we're not revealing private information
+user_pwd <- 'taxsim:02138'
+
+# ftp address to upload file
+upload_address <- paste0("ftp://", user_pwd, "@taxsimftp.nber.org/tmp/", user_id, collapse = "")
+
+# ftp address to download file
+download_address <- paste0("ftp://taxsimftp.nber.org/tmp/", user_id, ".txm32", collapse = "")
+
+# upload file
+RCurl::ftpUpload(what = taxsim_filename, to = upload_address)
+
+# retrieve results
+results <- RCurl::getURL(download_address, userpwd = user_pwd)
+
+# read in results
+vroom::vroom(results, show_col_types = FALSE)
+``
