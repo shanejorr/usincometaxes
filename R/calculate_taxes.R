@@ -258,11 +258,19 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE) {
 
   from_taxsim_tmp_filename <- tempfile(pattern = 'download_', fileext = ".csv")
 
-  # upload and download data
-  connect_server_all(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
+  # try uploading and downloading via ftp first,
+  # then use ssh if ftp does not work
+  from_taxsim <- tryCatch(
+    error = function(cnd) {
+      tryCatch(
+        error = function(cnd) stop('Could not connect to TAXSIM server via ftp or ssh', call. = FALSE),
+        import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
+      )
+    },
+    import_data_ftp(to_taxsim_tmp_filename)
+  )
 
-  # import downloaded data
-  from_taxsim <- vroom::vroom(from_taxsim_tmp_filename, show_col_types = FALSE, progress = FALSE)
+  #from_taxsim <- import_data_ftp(to_taxsim_tmp_filename)
 
   # clean final output
   from_taxism_cleaned <- clean_from_taxsim(from_taxsim)

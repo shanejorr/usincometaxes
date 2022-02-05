@@ -54,7 +54,7 @@ family_income <- data.frame(
   primary_wages = c(10000, 100000),
   primary_age = c(26, 36)
 )
-
+devtools::load_all()
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
   return_all_information = FALSE

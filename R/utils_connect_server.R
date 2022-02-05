@@ -15,9 +15,42 @@ create_ssh_command <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename,
 
   paste0(
     "ssh -T -o ConnectTimeout=20 -o StrictHostKeyChecking=no -p ",
-    port, " taxsim35@taxsimssh.nber.org < ",
+    port, " taxsimssh@taxsimssh.nber.org < ",
     to_taxsim_tmp_filename, " > ", from_taxsim_tmp_filename
   )
+
+}
+
+#' Upload and import TAXSIM results via ftp
+#'
+#' @param to_taxsim_tmp_filename Full file path and name to the temp file containing the data to upload to TAXSIM.
+#'
+#' @return A Dataframe of TAXSIM results.
+#'
+#' @keywords internal
+import_data_ftp <- function(to_taxsim_tmp_filename) {
+
+  message('Connecting to TAXSIM server via ftp ...')
+
+  # create random user id
+  user_id <- paste0(sample(letters, 10), collapse = "")
+
+  # username and password are publically listed, so we're not revealing private information
+  user_pwd <- 'taxsim:02138'
+
+  upload_address <- paste0("ftp://", user_pwd, "@taxsimftp.nber.org/tmp/", user_id, collapse = "")
+
+  download_address <- paste0("ftp://taxsimftp.nber.org/tmp/", user_id, ".txm32", collapse = "")
+
+  RCurl::ftpUpload(to_taxsim_tmp_filename, upload_address)
+
+  message('Data uploaded ...')
+
+  results <- RCurl::getURL(download_address, userpwd = user_pwd)
+
+  message('Data downloaded ...')
+
+  vroom::vroom(results, show_col_types = FALSE)
 
 }
 
@@ -31,7 +64,7 @@ create_ssh_command <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename,
 #' @param port String. The port to use when connecting to the TAXAIM server
 #'
 #' @keywords internal
-connect_server_single <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename, port) {
+connect_server_single_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename, port) {
 
   error_message <- "Could not connect to the TAXSIM server via ssh."
 
@@ -69,7 +102,7 @@ connect_server_single <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filena
 #' @param from_taxsim_tmp_filename Full file path and name to the temp file that will contain the downloaded data.
 #'
 #' @keywords internal
-connect_server_all <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename) {
+connect_server_all_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename) {
 
   # check to see if ssh is installed on the local machine
   # produce error message if it is not
@@ -86,13 +119,31 @@ connect_server_all <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
         error = function(cnd) {
           tryCatch(
             error = function(cnd) stop(error_message, call. = FALSE),
-            connect_server_single(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '20')
+            connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '20')
           )
         },
-        connect_server_single(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '80')
+        connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '80')
       )
     },
-    connect_server_single(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '443')
+    connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '443')
   )
 
+}
+
+#' Import data via ssh
+#'
+#' This function wraps all the other ssh functions to upload, download, and import TAXSIM results.
+#' It's the only function that need sto be ran to import data via ssh
+#'
+#' @param to_taxsim_tmp_filename Full file path and name to the temp file containing the data to upload to TAXSIM.
+#' @param from_taxsim_tmp_filename Full file path and name to the temp file that will contain the downloaded data.
+#'
+#' @keywords internal
+import_data_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename) {
+
+  # upload input data via ssh
+  connect_server_all_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
+
+  # import downloaded data
+  vroom::vroom(from_taxsim_tmp_filename, show_col_types = FALSE, progress = FALSE)
 }
