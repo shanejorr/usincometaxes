@@ -1,16 +1,16 @@
-#' Convert a data frame to the TAXSIM 32 output.
+#' Convert a data frame to the TAXSIM 35 output.
 #'
 #' This function takes a data set that is in the format required for \code{\link{taxsim_calculate_taxes}},
-#' checks it to make sure it is in the proper format for TAXSIM 32, and then cleans so it can be sent to TAXSIM 32.
+#' checks it to make sure it is in the proper format for TAXSIM 35, and then cleans so it can be sent to TAXSIM 35.
 #' This function is useful for troubleshooting. It is not needed to calculate taxes. The function is useful
 #' if you continue receiving unreasonable errors from \code{\link{taxsim_calculate_taxes}}. In such as case,
 #' you can run this function on the data frame used in \code{\link{taxsim_calculate_taxes}}. You should then save
-#' this data frame as a csv file. Then, upload the file to \href{http://taxsim.nber.org/taxsim32/}{TAXSIM 32}.
-#' If there are no errors with TAXSIM 32 then the issue lies in \code{\link{taxsim_calculate_taxes}}.
+#' this data frame as a csv file. Then, upload the file to \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
+#' If there are no errors with TAXSIM 35 then the issue lies in \code{\link{taxsim_calculate_taxes}}.
 #'
 #' @param .data The data set used to calculate taxes from
 #'
-#' @return A data frame that that can be manually uploaded to \href{http://taxsim.nber.org/taxsim32/}{TAXSIM 32}.
+#' @return A data frame that that can be manually uploaded to \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
 #'
 #' @examples
 #'
@@ -26,7 +26,7 @@
 #' family_taxes <- create_dataset_for_taxsim(family_income)
 #'
 #' \dontrun{
-#' # write out the data frame as a csv file for uploading to TAXSIM 32
+#' # write out the data frame as a csv file for uploading to TAXSIM 35
 #' vroom::vroom_write(family_taxes, delim = ",")
 #' }
 #'
@@ -258,65 +258,19 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE) {
 
   from_taxsim_tmp_filename <- tempfile(pattern = 'download_', fileext = ".csv")
 
-  # upload and download data
-  connect_server_all(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
+  # try uploading and downloading via ftp first,
+  # then use ssh if ftp does not work
+  from_taxsim <- tryCatch(
+    error = function(cnd) {
+      tryCatch(
+        error = function(cnd) stop('Could not connect to TAXSIM server via ftp or ssh', call. = FALSE),
+        import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
+      )
+    },
+    import_data_ftp(to_taxsim_tmp_filename)
+  )
 
-  # import downloaded data
-  from_taxsim <- vroom::vroom(from_taxsim_tmp_filename, show_col_types = FALSE, progress = FALSE)
-
-    tryCatch(
-      expr = {
-        RCurl::ftpUpload(
-          what = to_taxsim_tmp_filename,
-          to = fake_taxsim_filename
-        )
-
-        # download data set containing tax values from taxsim server
-        # store data in temp folder
-
-        # FTP url to download results
-        taxsim_server_url <- paste0(fake_taxsim_filename, ".txm32")
-
-        print("Downloading data from TAXSIM server via ftp.")
-
-        from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 120)
-
-        from_taxsim <- vroom::vroom(
-          from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE, col_types = cols()
-        )
-      },
-      error = function(e){
-        stop("There was a problem with ftp or the dataset is in the wrong format. Try ssh instead.")
-      }
-    )
-
-  } else if (upload_method == 'ssh') {
-
-    # tempfile to save csv results into
-    from_taxsim_curl <- paste0(tempfile("from_taxsim_"), ".csv")
-
-    ssh_command <- paste0("ssh -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no taxsimssh@taxsimssh.nber.org < ",
-                          to_taxsim_tmp_filename, " > ", from_taxsim_curl)
-
-    print("Sending and retrieving data from TAXSIM server via SSH")
-
-    # run ssh command with error handling
-    tryCatch(
-      expr = {
-
-        system(ssh_command, timeout = 120)
-
-        from_taxsim <- vroom::vroom(
-          from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE
-        )
-
-      },
-      error = function(e){
-        stop("There was a problem with ssh or the dataset is in the wrong format. Try ftp instead.")
-      }
-    )
-
-  }
+  #from_taxsim <- import_data_ftp(to_taxsim_tmp_filename)
 
   # clean final output
   from_taxism_cleaned <- clean_from_taxsim(from_taxsim)
