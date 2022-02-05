@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 ## Calculate Federal and State Income Taxes
 
 `usincometaxes` is an R package that calculates federal and state income taxes in the United States.
-It relies on the National Bureau of Economic Research's (NBER) [TAXSIM 35](http://taxsim.nber.org/taxsim35/) 
+It relies on the National Bureau of Economic Research's (NBER) [TAXSIM 32](http://taxsim.nber.org/taxsim32/) 
 tax simulator for calculations. The package takes care of the behind-the-scenes work of getting the 
 data in the proper format, converting it to the proper file type for uploading to the NBER server, 
 uploading the data, downloading the results, and placing the results into a tidy data frame.
@@ -102,7 +102,7 @@ All columns must have the column names and data types listed in the
 
 ## Giving credit
 
-The NBER's [TAXSIM 35](http://taxsim.nber.org/taxsim35/) tax simulator does all tax calculations. 
+The NBER's [TAXSIM 32](http://taxsim.nber.org/taxsim32/) tax simulator does all tax calculations. 
 This package simply lets users interact with the tax simulator through R. Therefore, users should 
 cite the TAXSIM 35 tax simulator when they use this package in their work:
 

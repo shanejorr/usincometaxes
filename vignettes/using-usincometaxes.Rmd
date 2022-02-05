@@ -63,8 +63,7 @@ We are only interested in federal and state tax liabilities, not line item credi
 ```{r calcualte_survey_taxes}
 family_taxes <- taxsim_calculate_taxes(
   .data = taxpayer_finances,
-  return_all_information = FALSE,
-  upload_method = 'ftp'
+  return_all_information = FALSE
 )
 family_taxes %>%
   head() %>%
@@ -127,7 +126,7 @@ The plots shows what we would expect: higher income families pay more in taxes a
 
 ## Income tax simulations
 
-### Association between income taxes paid and hosuehold wages
+### Association between income taxes paid and household wages
 
 An additional use of `usincometaxes` is to run simulations. This could be as simple as plotting the relationship between wages and income taxes paid. To do this, we first need to create a data set that holds everything constant except for wages. The code block below does this, except it also creates different data sets for households with zero and four children 18 or younger, so we can compare differences on this characteristic as well. 
 
@@ -169,8 +168,7 @@ Now, we will calculate federal and state income taxes for our simulated data set
 ```{r}
 family_income_taxes <- taxsim_calculate_taxes(
   .data = family_income,
-  return_all_information = TRUE,
-  upload_method = 'ftp'
+  return_all_information = TRUE
 )
 family_income_taxes %>%
   head() %>%

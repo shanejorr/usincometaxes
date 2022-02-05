@@ -1,0 +1,46 @@
+---
+title: "Manually Upload Data to TAXSIM32"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Manually Upload Data to TAXSIM32}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(usincometaxes)
+library(magrittr)
+```
+
+`usincometaxes` sends data to the National Bureau of Economic Research's (NBER) [TAXSIM 32](http://taxsim.nber.org/taxsim32/) server. The data must meet TAXSIM 32's requirements for data types and column names. `usincometaxes` performs checks to ensure the data will be accepted by TAXSIM 32. It's possible, however, that issues will slip through. This can produce cryptic errors that might be hard to location. If you receive unresolveable errors, it could be helpful to manually upload your data to TAXSIM 32's servers.
+
+`usincometaxes` provides a function, `create_dataset_for_taxsim()`,  to format your data for manual uploading. To use the function, prepare your dataset as you normally would to use `taxsim_calculate_taxes()`. For example, follow the formatting required for [input columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html). Then, supply the dataset to `create_dataset_for_taxsim()`.
+
+```{r}
+data(taxpayer_finances)
+
+taxsim_dataset <- create_dataset_for_taxsim(taxpayer_finances)
+
+taxsim_dataset %>%
+  head() %>%
+  knitr::kable()
+```
+
+Then, save this dataset as a csv file to your local computer. It is recommended to use `readr::read_csv()` to write out the dataset. `write.csv` tends to pose issues. Also note that you can name the `.csv` file anything you wish.
+
+```{r eval = FALSE}
+readr::write_csv(taxsim_dataset, 'taxsim_dataset.csv')
+```
+
+Now, manually upload the  file `taxsim_dataset.csv` to TAXSIM 32's server by going to (https://users.nber.org/~taxsim/taxsim32/), navigating to the following section of the page, and uploading the `.csv` file. Errors from the manual upload could guide you in solving any data formatting issues.
+
+```{r pic, echo=FALSE, fig.cap="A caption", out.width = '75%'}
+knitr::include_graphics("webimg/taxsim.png")
+```
