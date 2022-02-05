@@ -4,9 +4,9 @@ Version: 0.0.1
 Authors@R: 
     person("Shane", "Orr", , "shane.j.orr@gmail.com", role = c("aut", "cre"))
 Description: Calculates federal and state income taxes in the United
-    States. It acts as a wrapper to the NBER's TAXSIM 32 tax simulator.
-    TAXSIM 32 conducts the calculations, while usincometaxes prepares the
-    data for TAXSIM 32, sends the data to TAXSIM 32's server, retrieves
+    States. It acts as a wrapper to the NBER's TAXSIM 35 tax simulator.
+    TAXSIM 35 conducts the calculations, while usincometaxes prepares the
+    data for TAXSIM 35, sends the data to TAXSIM 35's server, retrieves
     the data, and places it into a data frame. All without the user
     worrying about this process.
 License: MIT + file LICENSE
@@ -17,7 +17,6 @@ Depends:
     R (>= 3.1)
 Imports: 
     RCurl,
-    readr,
     vroom
 Suggests: 
     dplyr,

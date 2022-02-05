@@ -35,6 +35,14 @@ n_kids_sample <- sample(0:5, size = n, replace = TRUE, prob = c(.15, .3, .25, .1
 
 n_kids <- ifelse(p_age <= 40, n_kids_sample, 0)
 
+age_youngest <- sample(1:14, size = n, replace = TRUE)
+
+age_youngest <- ifelse(n_kids == 0, NA_integer_, age_youngest)
+
+age_second <- age_youngest + 1
+
+age_third <- age_second + 1
+
 p_wages <- log_norm(n, 30000, 2.5)
 
 s_wages <- log_norm(n, 30000, 2.5)

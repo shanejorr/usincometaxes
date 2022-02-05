@@ -21,7 +21,7 @@ Users can specify the amount of output with the `return_all_information` paramet
 Setting `return_all_information` to `TRUE` returns a data frame with 42 columns of detailed tax information. 
 `FALSE` returns 9 columns of key information. `FALSE` leads to quicker calculations and downloads from the NBER's servers. 
 
-`usincometaxes` provides the same output as [TAXSIM 32](http://users.nber.org/~taxsim/taxsim32/). 
+`usincometaxes` provides the same output as [TAXSIM 35](http://taxsim.nber.org/taxsim35/). 
 Setting `return_all_information` to `FALSE` equates to setting `idtl` to 0 in TAXSIM, while `TRUE` corresponds to 2.
 
 ## Standard columns

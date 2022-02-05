@@ -11,7 +11,6 @@ vignette: >
   %\VignetteDepends{tidyr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-
 ---
 
 ```{r, include = FALSE}
@@ -47,10 +46,8 @@ The data set contains financial and other household characteristics that help es
 
 ```{r import_data}
 data(taxpayer_finances)
-
 # with of scroll box for tables
 scroll_width <- "800px"
-
 taxpayer_finances %>%
   head() %>%
   kable() %>%
@@ -66,10 +63,8 @@ We are only interested in federal and state tax liabilities, not line item credi
 ```{r calcualte_survey_taxes}
 family_taxes <- taxsim_calculate_taxes(
   .data = taxpayer_finances,
-  return_all_information = FALSE,
-  upload_method = 'ftp'
+  return_all_information = FALSE
 )
-
 family_taxes %>%
   head() %>%
   kable()
@@ -80,7 +75,6 @@ The `id_number` column is required for any input data frame used in `taxsim_calc
 ```{r join_tax_data}
 income_and_taxes <- taxpayer_finances %>%
   left_join(family_taxes, by = 'id_number')
-
 income_and_taxes %>%
   head() %>%
   kable() %>%
@@ -105,10 +99,8 @@ plt_theme <- function() {
       legend.position = 'bottom'
     )
 }
-
 # color palettes for number of children
 dep_color_palette <- rev(c('#4B0055','#353E7C','#007094','#009B95','#00BE7D','#96D84B'))
-
 income_and_taxes %>%
   mutate(
     tax_unit_income = primary_wages + spouse_wages,
@@ -134,16 +126,14 @@ The plots shows what we would expect: higher income families pay more in taxes a
 
 ## Income tax simulations
 
-### Association between income taxes paid and hosuehold wages
+### Association between income taxes paid and household wages
 
 An additional use of `usincometaxes` is to run simulations. This could be as simple as plotting the relationship between wages and income taxes paid. To do this, we first need to create a data set that holds everything constant except for wages. The code block below does this, except it also creates different data sets for households with zero and four children 18 or younger, so we can compare differences on this characteristic as well. 
 
 ```{r}
 # calculate taxes from 0 to 200,000 in wages
 wage_linespace <- seq(0, 200000, 100)
-
 n_kids <- 4
-
 base_family_income <- data.frame(
   tax_year = 2020,
   filing_status = 'married, jointly',
@@ -157,7 +147,6 @@ base_family_income <- data.frame(
   primary_wages = wage_linespace,
   spouse_wages = 0
 )
-
 # create an additional data se twith no dependents and add it to the original
 family_income <- base_family_income %>%
   bind_rows(
@@ -168,7 +157,6 @@ family_income <- base_family_income %>%
   # add unique ID to each row
   mutate(id_number = row_number()) %>%
   select(id_number, everything())
-
 family_income %>%
   head() %>%
   kable() %>%
@@ -180,10 +168,8 @@ Now, we will calculate federal and state income taxes for our simulated data set
 ```{r}
 family_income_taxes <- taxsim_calculate_taxes(
   .data = family_income,
-  return_all_information = TRUE,
-  upload_method = 'ftp'
+  return_all_information = TRUE
 )
-
 family_income_taxes %>%
   head() %>%
   kable() %>%
@@ -211,7 +197,6 @@ family_income_long <- family_income %>%
   )
 # primary_wages, taxes_paid, color = as.character(num_dependents_eitc)
 taxes_line_plot <- function(.data, x_var, y_var, color_var) {
-
   ggplot(.data, aes({{x_var}}, {{y_var}}, color = {{color_var}})) +
     geom_line(size = 1, alpha = .8) +
     geom_hline(yintercept = 0) +
@@ -221,7 +206,6 @@ taxes_line_plot <- function(.data, x_var, y_var, color_var) {
     plt_theme()
   
 }
-
 taxes_line_plot(family_income_long, primary_wages, taxes_paid, num_dependents_eitc) +
   facet_wrap(vars(jurisdiction)) +
   labs(
@@ -240,7 +224,6 @@ Note that North Carolina had a flat tax of 5.25% in 2020. That's why their taxes
 We'll create a additional plot comparing pre-tax and post-tax household wages.
 
 ```{r}
-
 taxes_line_plot(family_income_long, primary_wages, post_tax_wages, num_dependents_eitc) +
   facet_wrap(vars(jurisdiction)) +
   labs(
@@ -261,7 +244,6 @@ tax_items_mapping <- c(
   eitc = 'Earned Income Tax Credit',
   child_tax_credit = 'Child Tax Credit'
 )
-
 family_income %>%
   filter(num_dependents_eitc == 4) %>%
   mutate(child_tax_credit = child_tax_credit_adjusted + child_tax_credit_refundable) %>%

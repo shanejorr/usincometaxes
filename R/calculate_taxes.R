@@ -81,17 +81,14 @@ create_dataset_for_taxsim <- function(.data) {
 #' Calculate state and federal taxes using TAXSIM 32.
 #'
 #' @description
-#' This function calculates state and federal income taxes using the TAXSIM 32 tax simulator.
-#' See \url{https://users.nber.org/~taxsim/taxsim32/} for more information on TAXSIM 32.
+#' This function calculates state and federal income taxes using the TAXSIM 35 tax simulator.
+#' See \url{http://taxsim.nber.org/taxsim35/} for more information on TAXSIM 35.
 #'
 #' @param .data Data frame containing the information that will be used to calculate taxes.
 #'    This data set will be sent to TAXSIM. Data frame must have specified column names and data types.
 #' @param return_all_information Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 #'     or only key information (FALSE). Returning all information returns 42 columns of output, while only
 #'     returning key information returns 9 columns. It is faster to download results with only key information.
-#' @param upload_method Either 'ftp' or 'ssh', can also use upper case. Defaults to 'ftp'. Determines whether ftp or ssh will be used to send data
-#'    to TAXSIM and retrieve the results. SSH is faster, so use it when there are over 100,000 records.
-#'    SSH is available in Windows 10 since autumn of 2019.
 #'
 #' @section Required columns:
 #'
@@ -210,7 +207,7 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' \code{fica_rate} FICA rate. Corresponds to \code{ficar} in TAXSIM.
 #'
-#' @section Additional Output
+#' Additional columns will be returned if \code{return_all_information = TRUE}
 #'
 #'
 #' @examples
@@ -224,13 +221,13 @@ create_dataset_for_taxsim <- function(.data) {
 #'      primary_age = c(26, 36)
 #' )
 #'
-#' family_taxes <- taxsim_calculate_taxes(family_income, upload_method = 'ftp')
+#' family_taxes <- taxsim_calculate_taxes(family_income)
 #'
 #' merge(family_income, family_taxes, by = 'id_number')
 #'
 #' @section Giving credit where it is due:
 #'
-#' The NBER's \href{http://users.nber.org/~taxsim/taxsim32/}{TAXSIM 32} tax simulator does all tax
+#' The NBER's \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35} tax simulator does all tax
 #' calculations. This package simply lets users interact with the tax simulator through R. Therefore,
 #' users should cite the TAXSIM 32 tax simulator when they use this package in their work:
 #'
@@ -238,23 +235,14 @@ create_dataset_for_taxsim <- function(.data) {
 #' Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
 #'
 #' @export
-taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload_method = 'ftp') {
+taxsim_calculate_taxes <- function(.data, return_all_information = FALSE) {
 
   # save input ID numbers as object, so we can make sure the output ID numbers are the same
   input_id_numbers <- .data$id_number
 
-  # make ftp and ssh lower case so that FTP and SSH work also
-  upload_method <- tolower(upload_method)
-
   # check parameter options
   # must change this function if parameters are added
-  check_parameters(.data, return_all_information, upload_method)
-
-  # TAXSIM username and password are publicly listed
-  # that's why they are hard-coded
-  taxsim_user <- 'taxsim'
-  taxsim_pass <- '02138'
-  taxsim_user_pass <- paste0(taxsim_user, ":", taxsim_pass)
+  check_parameters(.data, return_all_information)
 
   # create data set to send to taxsim
   to_taxsim <- create_dataset_for_taxsim(.data)
@@ -265,18 +253,16 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
   # send data set to taxsim server
 
   # save csv file of data set to a temp folder
-  to_taxsim_tmp_filename <- tempfile("to_taxsim_")
-  readr::write_csv(to_taxsim, to_taxsim_tmp_filename)
+  to_taxsim_tmp_filename <- tempfile(pattern = 'upload_', fileext = ".csv")
+  vroom::vroom_write(to_taxsim, to_taxsim_tmp_filename, delim = ",", progress = FALSE)
 
-  if (upload_method == 'ftp') {
+  from_taxsim_tmp_filename <- tempfile(pattern = 'download_', fileext = ".csv")
 
-    # create random filename to upload to server
-    fake_taxsim_filename <- sample(letters, 10, replace = T)
-    fake_taxsim_filename <- paste(fake_taxsim_filename, collapse = "")
-    fake_taxsim_filename <- paste0("ftp://", taxsim_user_pass, "@taxsimftp.nber.org/tmp/", fake_taxsim_filename)
+  # upload and download data
+  connect_server_all(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
 
-    # upload TAXSIM csv file to server
-    print("Uploading data to TAXSIM server via ftp.")
+  # import downloaded data
+  from_taxsim <- vroom::vroom(from_taxsim_tmp_filename, show_col_types = FALSE, progress = FALSE)
 
     tryCatch(
       expr = {
@@ -335,7 +321,7 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
   # clean final output
   from_taxism_cleaned <- clean_from_taxsim(from_taxsim)
 
-  # inout and output data sets have the same unique ID numbers
+  # check that input and output data sets have the same unique ID numbers
   output_id_numbers <- from_taxism_cleaned$id_number
 
   if (!setequal(input_id_numbers, output_id_numbers)) {

@@ -31,7 +31,7 @@ check_data <- function(.data, cols, state_column_name) {
     stop("`tax_year` must be a numeric value between 1960 and 2023", call. = FALSE)
   }
 
-  print('All required columns are present and the data is in the proper format!')
+  message('All required columns are present and the data is in the proper format!')
 
   return(NULL)
 
@@ -142,7 +142,7 @@ check_greater_zero <- function(.data, cols) {
 
   greater_zero_cols_in_data <- intersect(cols_greater_zero, cols)
 
-  test_greater_zero <- function(test_data) all(test_data >= 0)
+  test_greater_zero <- function(test_data) all(test_data >= 0 | is.na(test_data))
 
   are_cols_greater_zero <- sapply(.data[greater_zero_cols_in_data], test_greater_zero)
 
@@ -200,15 +200,11 @@ check_id_number <- function(id_number_col) {
 #'    The paramters to this function should be the same as those to `taxsim_calcualte_taxes`
 #'
 #' @keywords internal
-check_parameters <- function(.data, all_columns, upload_method) {
+check_parameters <- function(.data, all_columns) {
 
-  if (!is.data.frame(.data)) stop("`.data` parameter must be a data frame.")
+  if (!is.data.frame(.data)) stop("`.data` parameter must be a data frame.", call. = FALSE)
 
-  if (!(all_columns %in% c(T, F))) stop('`all_columns` parameter must be either TRUE or FALSE.')
-
-  if (!upload_method %in% c('ftp', 'ssh')) {
-    stop("`upload_method` parameter must be either 'ftp' or 'ssh'.")
-  }
+  if (!(all_columns %in% c(T, F))) stop('`all_columns` parameter must be either TRUE or FALSE.', call. = FALSE)
 
   NULL
 
@@ -224,22 +220,22 @@ check_spouse <- function(.data, cols) {
 
   if ('spouse_age' %in% cols) {
 
-    if (!('primary_age' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.")
+    if (!('primary_age' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.", call. = FALSE)
 
     if (any(.data[['filing_status']] == 'single' & .data[['spouse_age']] > 0)) {
 
-      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0")
+      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0", call. = FALSE)
 
     }
   }
 
   if ('spouse_wages' %in% cols) {
 
-    if (!('primary_wages' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.")
+    if (!('primary_wages' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.", call. = FALSE)
 
     if (any(.data[['filing_status']] == 'single' & .data[['spouse_age']] > 0)) {
 
-      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0")
+      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0", call. = FALSE)
 
     }
   }
