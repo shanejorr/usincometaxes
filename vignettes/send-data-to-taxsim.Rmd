@@ -1,4 +1,3 @@
----
 title: "Manually Upload Data to TAXSIM32"
 output: rmarkdown::html_vignette
 vignette: >
