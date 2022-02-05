@@ -55,24 +55,23 @@ The column names in `usincometaxes`, however, are not the same as TAXSIM 35's va
     * `sage` in TAXSIM 35
 <br>    
 * **num_dependents**: Total number of dependents (part of personal exemption calculation).
-    * `depx` in TAXSIM 35
+    * `depx` in TAXSIM 32
 <br>    
-* **age_youngest_dependent**: Age of youngest dependent. Used for EITC, CTC and CCC.
-    * For 1991+ code students between 20 and 23 as 19 to get the EITC calculation correct. 
-    * Use 'NA' or 0 for no dependents.
-    * For children under 1, use 1.
-    * `age1` in TAXSIM 35
+* **num_dependents_thirteen**: Number of children under 13 with eligible child care expenses (Dependent Care Credit).
+    * `dep13` in TAXSIM 32
 <br>   
-* **age_second_youngest_dependent**: Age of second youngest dependent. 
-    * Use 'NA' or 0 if there is only one dependent.
-    * For children under 1, use 1.
-    * `age2` in TAXSIM 35
+* **num_dependents_seventeen**: Number of children under 17 for the entire tax year (Child Credit).
+      This includes children under 13.
+    * `dep17` in TAXSIM 32
 <br>   
-* **age_third_youngest_dependent**: Age of third youngest dependent. 
-    * Use 'NA' or 0 if there are only two dependent.
-    * For children under 1, use 1.
-    * `age3` in TAXSIM 35
-<br>   
+* **num_dependents_eitc**: Number of qualifying children for EITC. (Typically younger than 19 or
+      younger than 24 and a full-time student).
+    * `dep18` in TAXSIM 32
+<br>  
+
+*`num_dependents_` columns are not mutually exclusive. For example, a family with a 13 year old
+ can report the dependent in `num_dependents_thirteen` and also in `num_dependents_seventeen`.* 
+ 
 * **primary_wages**: Wage and salary income of Primary Taxpayer (include self-employment but no QBI).
     * `pwages` in TAXSIM 35
 <br>   

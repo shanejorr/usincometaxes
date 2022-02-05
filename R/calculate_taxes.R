@@ -112,19 +112,15 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' \code{spouse_age} Age of spouse as of December 31st of tax year.
 #'
-#' \code{num_dependents} Total number of dependents (part of personal exemption calculation).
+#' \code{num_dependents} Total number of dependents.
 #'
-#' \code{age_youngest_dependent} Age of youngest dependent. Used for EITC, CTC and CCC.
-#'      For 1991+ code students between 20 and 23 as 19 to get the EITC calculation correct. Use 'NA' or 0 for no dependents.
-#'      For children under 1, use 1.
+#' \code{num_dependents_thirteen} Number of children under 13 with eligible child care expenses (Dependent Care Credit).
 #'
-#' \code{age_second_youngest_dependent} Age of second youngest dependent. Use 'NA' or 0 if there is only one dependent.
-#'      For children under 1, use 1.
+#' \code{num_dependents_seventeen} Number of children under 17 for the entire tax year (Child Credit).
+#'      This includes children under 13.
 #'
-#' \code{age_third_youngest_dependent} Age of third youngest dependent. Use 'NA' or 0 if there are only two dependent.
-#'      For children under 1, use 1.
-#'
-#' Ages of any additional dependents are not relevant for the tax calculation, but all dependents should be included in \code{num_dependents}.
+#' \code{num_dependents_eitc} Number of qualifying children for EITC. (Typically younger than 19 or
+#'      younger than 24 and a full-time student).
 #'
 #' \code{primary_wages} Wage and salary income of Primary Taxpayer (include self-employment but no QBI).
 #'
@@ -187,6 +183,11 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' \code{spouse_specialized_service_trade} Spouse's SSTB. Must be zero for non-joint returns, or the
 #'      column should not exist.
+#'
+#' @section Note on number of dependents:
+#'
+#' \code{num_dependents} columns are not mutually exclusive. For example, a family with a 13 year old
+#' can report the dependent in \code{num_dependents_thirteen} and also in \code{num_dependents_seventeen}.
 #'
 #' @return Returns a data frame with the following columns:
 #'

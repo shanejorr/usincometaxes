@@ -74,8 +74,8 @@ taxsim_cols <- function() {
   c(
     'id_number' = 'taxsimid', 'tax_year' = 'year', 'filing_status' = 'mstat', # required
     'state' = 'state', 'primary_age' = 'page', 'spouse_age' = 'sage',
-    'num_dependents' = 'depx', 'age_youngest_dependent' = 'age1',
-    'age_second_youngest_dependent' = 'age2', 'age_third_youngest_dependent' = 'age3',
+    'num_dependents' = 'depx', 'num_dependents_thirteen' = 'dep13',
+    'num_dependents_seventeen' = 'dep17', 'num_dependents_eitc' = 'dep18',
     'primary_wages' = 'pwages', 'spouse_wages' = 'swages', 'dividends' = 'dividends', 'interest' = 'intrec',
     'short_term_capital_gains' = 'stcg', 'long_term_capital_gains' = 'ltcg',
     'other_property_income' = 'otherprop', 'other_non_property_income' = 'nonprop',

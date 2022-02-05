@@ -131,47 +131,6 @@ check_numeric <- function(.data, cols) {
 
 }
 
-#' Ensure if there are dependent ages then there are also dependents
-#'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
-#'
-#' @keywords internal
-check_dependents <- function(.data) {
-
-  dep_age_cols <- c('age_youngest_dependent', 'age_second_dependent', 'age_third_dependent')
-
-  for (i in seq_along(dep_age_cols)) {
-
-    if (dep_age_cols[i] %in% colnames(.data)) {
-
-      if (!is.numeric(.data[[dep_age_cols[i]]])) stop(paste0(dep_age_cols[i], "must be numeric."), call. = FALSE)
-
-      # check that num_dependents column exists if an age column exists
-      if (!'num_dependents' %in% colnames(.data)) {
-
-        stop(
-          paste0("You have a column of dependent ages `", dep_age_cols[i], "`, but no column for the number of dependents, `num_dependents`\n",
-                 "If there are dependents, you need the `num_dependents` column. If there are not, should not include the column", dep_age_cols[i]),
-          call. = FALSE
-        )
-      }
-
-      # make sure that num_dependents is not 0 if an age is listed
-      if (any(.data[['num_dependents']] == 0 & .data[[dep_age_cols[i]]] > 0)) {
-        stop(
-          paste0("You have a row with 0 for `num_dependents`, but an age listed for `", dep_age_cols[i], "`.\n",
-                 "Please either list the number of dependents for each row, or if there are not any change `", dep_age_cols[i], "` to 0."),
-          call. = FALSE
-        )
-      }
-
-    }
-  }
-
-  NULL
-
-}
-
 #' Check that columns are greater than zero
 #'
 #' Some columns must have all values greater than zero. Check to make sure this is true.
