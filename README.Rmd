@@ -98,7 +98,7 @@ All columns must have the column names and data types listed in the
 
 ## Upload and download method
 
-`usincometaxes` connects to the TAXSIM server via SSH, which requires an SSH client on your computer. Mac and Linux computers should have an SSH client installed. Since 2019, Windows 10 has also included an SSH client. To see if you have an SSH client, run `Sys.which('ssh')` in R. You will either see the path to the client or a blank string, which indicates that an SSH client is not installed..
+`usincometaxes` connects to the TAXSIM server via SSH, which requires an SSH client on your computer. Mac and Linux computers should have an SSH client installed. Since 2019, Windows 10 has also included an SSH client. To see if you have an SSH client, run `Sys.which('ssh')` in R. You will either see the path to the client or a blank string, which indicates that an SSH client is not installed.
 
 ## Giving credit
 

@@ -16,9 +16,6 @@ check_data <- function(.data, cols, state_column_name) {
   # ensure the id_number column is an integer and contains unique values
   check_id_number(.data[['id_number']])
 
-  # ensure the age columns do not conflict with the number of dependents column
-  check_dependents(.data)
-
   # some numeric columns must have all values greater than zero
   check_greater_zero(.data, cols)
 
