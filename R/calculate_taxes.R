@@ -1,14 +1,36 @@
-#' @title
-#' Create a data set to send to TAXSIM 32.
+#' Convert a data frame to the TAXSIM 32 output.
+#'
+#' This function takes a data set that is in the format required for \code{\link{taxsim_calculate_taxes}},
+#' checks it to make sure it is in the proper format for TAXSIM 32, and then cleans so it can be sent to TAXSIM 32.
+#' This function is useful for troubleshooting. It is not needed to calculate taxes. The function is useful
+#' if you continue receiving unreasonable errors from \code{\link{taxsim_calculate_taxes}}. In such as case,
+#' you can run this function on the data frame used in \code{\link{taxsim_calculate_taxes}}. You should then save
+#' this data frame as a csv file. Then, upload the file to \href{http://taxsim.nber.org/taxsim32/}{TAXSIM 32}.
+#' If there are no errors with TAXSIM 32 then the issue lies in \code{\link{taxsim_calculate_taxes}}.
 #'
 #' @param .data The data set used to calculate taxes from
 #'
-#' @description
-#' This function takes a data set, checks it to make sure it is in the proper format for TAXSIM 32,
-#' and then cleans so it can be sent to TAXSIM 32.
+#' @return A data frame that that can be manually uploaded to \href{http://taxsim.nber.org/taxsim32/}{TAXSIM 32}.
 #'
-#' @details None
-#' @keywords internal
+#' @examples
+#'
+#' family_income <- data.frame(
+#'     id_number = c(1, 2),
+#'      state = c('North Carolina', 'NY'),
+#'      tax_year = c(2015, 2015),
+#'      filing_status = c('single', 'married, jointly'),
+#'      primary_wages = c(10000, 100000),
+#'      primary_age = c(26, 36)
+#' )
+#'
+#' family_taxes <- create_dataset_for_taxsim(family_income)
+#'
+#' \dontrun{
+#' # write out the data frame as a csv file for uploading to TAXSIM 32
+#' vroom::vroom_write(family_taxes, delim = ",")
+#' }
+#'
+#' @export
 create_dataset_for_taxsim <- function(.data) {
 
   state_colname <- 'state'
@@ -19,6 +41,11 @@ create_dataset_for_taxsim <- function(.data) {
   # only keep TAXSIM columns
   cols_in_taxsim_and_df <- intersect(cols, names(taxsim_cols()))
   .data <- .data[cols_in_taxsim_and_df]
+
+  # convert all NA values to 0 for non-required items
+  non_req_cols <- names(taxsim_cols()[4:length(taxsim_cols())])
+  non_req_cols <- intersect(colnames(.data), non_req_cols)
+  .data[non_req_cols][is.na(.data[non_req_cols])] <- 0
 
   # make sure all the data is of the proper type
   # function will either stop the running of a function with text of the error
@@ -269,7 +296,7 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE, upload
         from_taxsim_curl <- RCurl::getURL(taxsim_server_url, userpwd = taxsim_user_pass, connecttimeout = 120)
 
         from_taxsim <- vroom::vroom(
-          from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE
+          from_taxsim_curl, trim_ws = TRUE, show_col_types = FALSE, progress = FALSE, col_types = cols()
         )
       },
       error = function(e){
