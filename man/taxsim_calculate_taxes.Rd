@@ -14,8 +14,8 @@ taxsim_calculate_taxes(
 \item{.data}{Data frame containing the information that will be used to calculate taxes.
 This data set will be sent to TAXSIM. Data frame must have specified column names and data types.}
 
-\item{marginal_tax_rates}{Variable to use when calculating marginal tax rates. One of 'Wage's, 'Long Term Capital Gains',
-'Primary Wage Earner', or 'Secondary Wage Earner'.}
+\item{marginal_tax_rates}{Variable to use when calculating marginal tax rates. One of 'Wages', 'Long Term Capital Gains',
+'Primary Wage Earner', or 'Secondary Wage Earner'. Default is 'Wages'.}
 
 \item{return_all_information}{Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 or only key information (FALSE). Returning all information returns 42 columns of output, while only

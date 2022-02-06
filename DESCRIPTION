@@ -21,7 +21,6 @@ Imports:
 Suggests: 
     dplyr,
     ggplot2,
-    kableExtra,
     knitr,
     rmarkdown,
     scales,
