@@ -35,7 +35,7 @@ Then, save this dataset as a csv file to your local computer. It is recommended 
 ```{r eval = FALSE}
 taxsim_filename <- 'taxsim_dataset.csv'
 
-readr::write_csv(taxsim_dataset, taxsim_filename)
+vroom::vroom_write(taxsim_dataset, taxsim_filename)
 ```
 
 Now, manually upload the  file `taxsim_dataset.csv` to TAXSIM 32's server by going to (https://users.nber.org/~taxsim/taxsim32/), navigating to the following section of the page, and uploading the `.csv` file:
@@ -69,5 +69,6 @@ RCurl::ftpUpload(what = taxsim_filename, to = upload_address)
 results <- RCurl::getURL(download_address, userpwd = user_pwd)
 
 # read in results
-vroom::vroom(results, show_col_types = FALSE)
-``
+vroom::problems(vroom::vroom(results)) #, show_col_types = FALSE))
+
+```

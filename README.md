@@ -7,7 +7,7 @@
 
 `usincometaxes` is an R package that calculates federal and state income
 taxes in the United States. It relies on the National Bureau of Economic
-Research’s (NBER) [TAXSIM 35](http://taxsim.nber.org/taxsim35/) tax
+Research’s (NBER) [TAXSIM 32](http://taxsim.nber.org/taxsim32/) tax
 simulator for calculations. The package takes care of the
 behind-the-scenes work of getting the data in the proper format,
 converting it to the proper file type for uploading to the NBER server,
@@ -46,13 +46,14 @@ family_income <- data.frame(
   state = c('North Carolina', 'NY'),
   tax_year = c(2015, 2020),
   filing_status = c('single', 'married, jointly'),
-  primary_wages = c(10000, 100000),
+  primary_wages = c(50000, 100000),
   primary_age = c(26, 36)
 )
 
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
-  return_all_information = FALSE
+  marginal_tax_rates = 'Wages',
+  return_all_information = TRUE
 )
 ```
 
@@ -60,10 +61,10 @@ family_taxes <- taxsim_calculate_taxes(
 kable(family_taxes)
 ```
 
-| id\_number | federal\_taxes | state\_taxes | fica\_taxes | federal\_marginal\_rate | state\_marginal\_rate | fica\_rate |
-|-----------:|---------------:|-------------:|------------:|------------------------:|----------------------:|-----------:|
-|          1 |        -369.12 |       143.75 |        1530 |                    7.65 |                  5.75 |         15 |
-|          2 |        5029.00 |      4586.76 |       15300 |                   12.00 |                  6.09 |         15 |
+| id\_number | federal\_taxes | state\_taxes | fica\_taxes | federal\_marginal\_rate | state\_marginal\_rate | fica\_rate | federal\_agi | ui\_agi | soc\_sec\_agi | zero\_bracket\_amount | personal\_exemptions | exemption\_phaseout | deduction\_phaseout | itemized\_deductions | federal\_taxable\_income | tax\_on\_taxable\_income | exemption\_surtax | general\_tax\_credit | child\_tax\_credit\_adjusted | child\_tax\_credit\_refundable | child\_care\_credit | eitc | amt\_income | amt\_liability | fed\_income\_tax\_before\_credit |  fica | state\_household\_income | state\_rent\_expense | state\_agi | state\_exemption\_amount | state\_std\_deduction\_amount | state\_itemized\_deducation | state\_taxable\_income | state\_property\_tax\_credit | state\_child\_care\_credit | state\_eitc | state\_total\_credits | state\_bracket\_rate | self\_emp\_income | medicare\_tax\_unearned\_income | medicare\_tax\_earned\_income | cares\_recovery\_rebate |
+|-----------:|---------------:|-------------:|------------:|------------------------:|----------------------:|-----------:|-------------:|--------:|--------------:|----------------------:|---------------------:|--------------------:|--------------------:|---------------------:|-------------------------:|-------------------------:|------------------:|---------------------:|-----------------------------:|-------------------------------:|--------------------:|-----:|------------:|---------------:|---------------------------------:|------:|-------------------------:|---------------------:|-----------:|-------------------------:|------------------------------:|----------------------------:|-----------------------:|-----------------------------:|---------------------------:|------------:|----------------------:|---------------------:|------------------:|--------------------------------:|------------------------------:|------------------------:|
+|          1 |        5718.75 |      2443.75 |        7650 |                      25 |                  5.75 |       15.3 |        5e+04 |       0 |             0 |                  6300 |                 4000 |                   0 |                   0 |                    0 |                    39700 |                  5718.75 |                 0 |                    0 |                            0 |                              0 |                   0 |    0 |       5e+04 |              0 |                          5718.75 |  7650 |                 50000.01 |                    0 |   50000.01 |                        0 |                          7500 |                           0 |               42500.01 |                            0 |                          0 |           0 |                     0 |                 0.00 |             5e+04 |                               0 |                             0 |                       0 |
+|          2 |        5029.00 |      4586.76 |       15300 |                      12 |                  6.09 |       15.3 |        1e+05 |       0 |             0 |                 24800 |                    0 |                   0 |                   0 |                    0 |                    75200 |                  8629.00 |                 0 |                    0 |                            0 |                              0 |                   0 |    0 |       1e+05 |              0 |                          8629.00 | 15300 |                100001.01 |                    0 |  100000.01 |                        0 |                         16050 |                           0 |               83950.01 |                            0 |                          0 |           0 |                     0 |                 6.09 |             1e+05 |                               0 |                             0 |                    3600 |
 
 Users can use the `id_number` column to join the tax data with the
 original data set. Every `id_number` in the input data is represented in
@@ -75,10 +76,10 @@ family_income %>%
   kable()
 ```
 
-| id\_number | state          | tax\_year | filing\_status   | primary\_wages | primary\_age | federal\_taxes | state\_taxes | fica\_taxes | federal\_marginal\_rate | state\_marginal\_rate | fica\_rate |
-|-----------:|:---------------|----------:|:-----------------|---------------:|-------------:|---------------:|-------------:|------------:|------------------------:|----------------------:|-----------:|
-|          1 | North Carolina |      2015 | single           |          1e+04 |           26 |        -369.12 |       143.75 |        1530 |                    7.65 |                  5.75 |         15 |
-|          2 | NY             |      2020 | married, jointly |          1e+05 |           36 |        5029.00 |      4586.76 |       15300 |                   12.00 |                  6.09 |         15 |
+| id\_number | state          | tax\_year | filing\_status   | primary\_wages | primary\_age | federal\_taxes | state\_taxes | fica\_taxes | federal\_marginal\_rate | state\_marginal\_rate | fica\_rate | federal\_agi | ui\_agi | soc\_sec\_agi | zero\_bracket\_amount | personal\_exemptions | exemption\_phaseout | deduction\_phaseout | itemized\_deductions | federal\_taxable\_income | tax\_on\_taxable\_income | exemption\_surtax | general\_tax\_credit | child\_tax\_credit\_adjusted | child\_tax\_credit\_refundable | child\_care\_credit | eitc | amt\_income | amt\_liability | fed\_income\_tax\_before\_credit |  fica | state\_household\_income | state\_rent\_expense | state\_agi | state\_exemption\_amount | state\_std\_deduction\_amount | state\_itemized\_deducation | state\_taxable\_income | state\_property\_tax\_credit | state\_child\_care\_credit | state\_eitc | state\_total\_credits | state\_bracket\_rate | self\_emp\_income | medicare\_tax\_unearned\_income | medicare\_tax\_earned\_income | cares\_recovery\_rebate |
+|-----------:|:---------------|----------:|:-----------------|---------------:|-------------:|---------------:|-------------:|------------:|------------------------:|----------------------:|-----------:|-------------:|--------:|--------------:|----------------------:|---------------------:|--------------------:|--------------------:|---------------------:|-------------------------:|-------------------------:|------------------:|---------------------:|-----------------------------:|-------------------------------:|--------------------:|-----:|------------:|---------------:|---------------------------------:|------:|-------------------------:|---------------------:|-----------:|-------------------------:|------------------------------:|----------------------------:|-----------------------:|-----------------------------:|---------------------------:|------------:|----------------------:|---------------------:|------------------:|--------------------------------:|------------------------------:|------------------------:|
+|          1 | North Carolina |      2015 | single           |          5e+04 |           26 |        5718.75 |      2443.75 |        7650 |                      25 |                  5.75 |       15.3 |        5e+04 |       0 |             0 |                  6300 |                 4000 |                   0 |                   0 |                    0 |                    39700 |                  5718.75 |                 0 |                    0 |                            0 |                              0 |                   0 |    0 |       5e+04 |              0 |                          5718.75 |  7650 |                 50000.01 |                    0 |   50000.01 |                        0 |                          7500 |                           0 |               42500.01 |                            0 |                          0 |           0 |                     0 |                 0.00 |             5e+04 |                               0 |                             0 |                       0 |
+|          2 | NY             |      2020 | married, jointly |          1e+05 |           36 |        5029.00 |      4586.76 |       15300 |                      12 |                  6.09 |       15.3 |        1e+05 |       0 |             0 |                 24800 |                    0 |                   0 |                   0 |                    0 |                    75200 |                  8629.00 |                 0 |                    0 |                            0 |                              0 |                   0 |    0 |       1e+05 |              0 |                          8629.00 | 15300 |                100001.01 |                    0 |  100000.01 |                        0 |                         16050 |                           0 |               83950.01 |                            0 |                          0 |           0 |                     0 |                 6.09 |             1e+05 |                               0 |                             0 |                    3600 |
 
 ## Output
 
@@ -110,18 +111,21 @@ Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html)
 vignette. `.data` can contain columns beyond those listed in the
 vignette. The additional columns will be ignored.
 
-## Upload and download method
+## Marginal tax rates
 
-`usincometaxes` connects to the TAXSIM server via SSH, which requires an
-SSH client on your computer. Mac and Linux computers should have an SSH
-client installed. Since 2019, Windows 10 has also included an SSH
-client. To see if you have an SSH client, run `Sys.which('ssh')` in R.
-You will either see the path to the client or a blank string, which
-indicates that an SSH client is not installed.
+By default, marginal tax rates are calculated using wages. The default
+can be changed with the `return_all_information` parameter to
+`taxsim_calculate_taxes()`. Possible options are: ‘Wages’ (default),
+‘Long Term Capital Gains’, ‘Primary Wage Earner’, or ‘Secondary Wage
+Earner’.
+
+Go to the Marginal Tax Rates section of the [TAXSIM 32
+documentation](https://users.nber.org/~taxsim/taxsim32/) for more
+information.
 
 ## Giving credit
 
-The NBER’s [TAXSIM 35](http://taxsim.nber.org/taxsim35/) tax simulator
+The NBER’s [TAXSIM 32](http://taxsim.nber.org/taxsim32/) tax simulator
 does all tax calculations. This package simply lets users interact with
 the tax simulator through R. Therefore, users should cite the TAXSIM 35
 tax simulator when they use this package in their work:

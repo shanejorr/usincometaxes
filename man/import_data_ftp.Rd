@@ -4,7 +4,7 @@
 \alias{import_data_ftp}
 \title{Upload and import TAXSIM results via ftp}
 \usage{
-import_data_ftp(to_taxsim_tmp_filename)
+import_data_ftp(to_taxsim_tmp_filename, idtl)
 }
 \arguments{
 \item{to_taxsim_tmp_filename}{Full file path and name to the temp file containing the data to upload to TAXSIM.}

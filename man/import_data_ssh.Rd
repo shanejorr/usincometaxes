@@ -4,7 +4,7 @@
 \alias{import_data_ssh}
 \title{Import data via ssh}
 \usage{
-import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
+import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, idtl)
 }
 \arguments{
 \item{to_taxsim_tmp_filename}{Full file path and name to the temp file containing the data to upload to TAXSIM.}

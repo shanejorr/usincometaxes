@@ -51,13 +51,14 @@ family_income <- data.frame(
   state = c('North Carolina', 'NY'),
   tax_year = c(2015, 2020),
   filing_status = c('single', 'married, jointly'),
-  primary_wages = c(10000, 100000),
+  primary_wages = c(50000, 100000),
   primary_age = c(26, 36)
 )
-devtools::load_all()
+
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
-  return_all_information = FALSE
+  marginal_tax_rates = 'Wages',
+  return_all_information = TRUE
 )
 ```
 
@@ -96,9 +97,11 @@ All columns must have the column names and data types listed in the
 [Description of Input Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html) vignette.
 `.data` can contain columns beyond those listed in the vignette. The additional columns will be ignored.
 
-## Upload and download method
+## Marginal tax rates
 
-`usincometaxes` connects to the TAXSIM server via SSH, which requires an SSH client on your computer. Mac and Linux computers should have an SSH client installed. Since 2019, Windows 10 has also included an SSH client. To see if you have an SSH client, run `Sys.which('ssh')` in R. You will either see the path to the client or a blank string, which indicates that an SSH client is not installed.
+By default, marginal tax rates are calculated using wages. The default can be changed with the `return_all_information` parameter to `taxsim_calculate_taxes()`. Possible options are: 'Wages' (default), 'Long Term Capital Gains', 'Primary Wage Earner', or 'Secondary Wage Earner'.
+
+Go to the Marginal Tax Rates section of the [TAXSIM 32 documentation](https://users.nber.org/~taxsim/taxsim32/) for more information.
 
 ## Giving credit
 

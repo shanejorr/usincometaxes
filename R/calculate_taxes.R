@@ -8,7 +8,8 @@
 #' this data frame as a csv file. Then, upload the file to \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
 #' If there are no errors with TAXSIM 35 then the issue lies in \code{\link{taxsim_calculate_taxes}}.
 #'
-#' @param .data The data set used to calculate taxes from
+#' @param .data Data frame containing the information that will be used to calculate taxes.
+#'    This data set will be sent to TAXSIM. Data frame must have specified column names and data types.
 #'
 #' @return A data frame that that can be manually uploaded to \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
 #'
@@ -86,6 +87,8 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' @param .data Data frame containing the information that will be used to calculate taxes.
 #'    This data set will be sent to TAXSIM. Data frame must have specified column names and data types.
+#' @param marginal_tax_rates Variable to use when calculating marginal tax rates. One of 'Wages', 'Long Term Capital Gains',
+#'     'Primary Wage Earner', or 'Secondary Wage Earner'. Default is 'Wages'.
 #' @param return_all_information Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 #'     or only key information (FALSE). Returning all information returns 42 columns of output, while only
 #'     returning key information returns 9 columns. It is faster to download results with only key information.
@@ -235,20 +238,25 @@ create_dataset_for_taxsim <- function(.data) {
 #' Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
 #'
 #' @export
-taxsim_calculate_taxes <- function(.data, return_all_information = FALSE) {
+taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_all_information = FALSE) {
 
   # save input ID numbers as object, so we can make sure the output ID numbers are the same
   input_id_numbers <- .data$id_number
+
+  # create data set to send to taxsim
+  to_taxsim <- create_dataset_for_taxsim(.data)
 
   # check parameter options
   # must change this function if parameters are added
   check_parameters(.data, return_all_information)
 
-  # create data set to send to taxsim
-  to_taxsim <- create_dataset_for_taxsim(.data)
-
   # add 2 to column if we need all columns, otherwise add 0 for only the default columns
-  to_taxsim$idtl <- if (return_all_information) 2 else 0
+  idtl <- if (return_all_information) 2 else 0
+
+  to_taxsim[['idtl']] <- idtl
+
+  # add marginal tax rate calculation
+  to_taxsim[['mtr']] <- convert_marginal_tax_rates(marginal_tax_rates)
 
   # send data set to taxsim server
 
@@ -264,13 +272,11 @@ taxsim_calculate_taxes <- function(.data, return_all_information = FALSE) {
     error = function(cnd) {
       tryCatch(
         error = function(cnd) stop('Could not connect to TAXSIM server via ftp or ssh', call. = FALSE),
-        import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
+        import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, idtl)
       )
     },
-    import_data_ftp(to_taxsim_tmp_filename)
+    import_data_ftp(to_taxsim_tmp_filename, idtl)
   )
-
-  #from_taxsim <- import_data_ftp(to_taxsim_tmp_filename)
 
   # clean final output
   from_taxism_cleaned <- clean_from_taxsim(from_taxsim)

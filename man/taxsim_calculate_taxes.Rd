@@ -4,11 +4,18 @@
 \alias{taxsim_calculate_taxes}
 \title{Calculate state and federal taxes using TAXSIM 32.}
 \usage{
-taxsim_calculate_taxes(.data, return_all_information = FALSE)
+taxsim_calculate_taxes(
+  .data,
+  marginal_tax_rates = "Wages",
+  return_all_information = FALSE
+)
 }
 \arguments{
 \item{.data}{Data frame containing the information that will be used to calculate taxes.
 This data set will be sent to TAXSIM. Data frame must have specified column names and data types.}
+
+\item{marginal_tax_rates}{Variable to use when calculating marginal tax rates. One of 'Wage's, 'Long Term Capital Gains',
+'Primary Wage Earner', or 'Secondary Wage Earner'.}
 
 \item{return_all_information}{Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 or only key information (FALSE). Returning all information returns 42 columns of output, while only

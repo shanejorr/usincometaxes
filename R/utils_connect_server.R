@@ -28,7 +28,7 @@ create_ssh_command <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename,
 #' @return A Dataframe of TAXSIM results.
 #'
 #' @keywords internal
-import_data_ftp <- function(to_taxsim_tmp_filename) {
+import_data_ftp <- function(to_taxsim_tmp_filename, idtl) {
 
   message('Connecting to TAXSIM server via ftp ...')
 
@@ -49,8 +49,10 @@ import_data_ftp <- function(to_taxsim_tmp_filename) {
   results <- RCurl::getURL(download_address, userpwd = user_pwd)
 
   message('Data downloaded ...')
+  message("Upload and download successful!")
 
-  vroom::vroom(results, show_col_types = FALSE)
+  #vroom::vroom(results, show_col_types = FALSE)
+  import_data_helper(I(results), idtl)
 
 }
 
@@ -139,11 +141,49 @@ connect_server_all_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filen
 #' @param from_taxsim_tmp_filename Full file path and name to the temp file that will contain the downloaded data.
 #'
 #' @keywords internal
-import_data_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename) {
+import_data_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename, idtl) {
 
   # upload input data via ssh
   connect_server_all_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
 
   # import downloaded data
-  vroom::vroom(from_taxsim_tmp_filename, show_col_types = FALSE, progress = FALSE)
+  #vroom::vroom(from_taxsim_tmp_filename, show_col_types = FALSE, progress = FALSE)
+  import_data_helper(from_taxsim_tmp_filename, idtl)
+
+}
+
+#' Import data helper
+#'
+#' When returning all columns, the data retrieved from TAXSIM contains an extra column. This function
+#' trims the extra column if we are returning all information.
+#'
+#' @param raw_data The raw data from TAXSIM thatwe want to load into R.
+#'
+#' @keywords internal
+import_data_helper <- function(raw_data, idtl) {
+
+  if (idtl == 2) {
+
+    col_headers <- vroom::vroom(raw_data, col_names = FALSE, n_max = 1, progress = FALSE, show_col_types = FALSE)
+
+    raw_data <- vroom::vroom(raw_data, col_names = FALSE, skip = 1, progress = FALSE, show_col_types = FALSE)
+
+    if (ncol(raw_data) == 46 & all(is.na(raw_data$X46))) {
+
+      raw_data <- raw_data[-46]
+
+    }
+
+    col_names <- t(col_headers[1, ])
+
+    colnames(raw_data) <- col_names
+
+  } else if (idtl == 0) {
+
+    raw_data <- vroom::vroom(raw_data, progress = FALSE, show_col_types = FALSE)
+
+  }
+
+  return(raw_data)
+
 }

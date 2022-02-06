@@ -7,7 +7,8 @@
 create_dataset_for_taxsim(.data)
 }
 \arguments{
-\item{.data}{The data set used to calculate taxes from}
+\item{.data}{Data frame containing the information that will be used to calculate taxes.
+This data set will be sent to TAXSIM. Data frame must have specified column names and data types.}
 }
 \value{
 A data frame that that can be manually uploaded to \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.

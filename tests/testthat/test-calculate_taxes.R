@@ -8,14 +8,36 @@ test_that("Package output matches TAXSIM test file", {
     long_term_capital_gains = 100000
   )
 
-  taxsim_output_ssh <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE)
+  taxsim_output <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE)
 
-  federal_taxes_ssh <- taxsim_output_ssh$federal_taxes
+  federal_taxes <- taxsim_output$federal_taxes
 
   # number from http://users.nber.org/~taxsim/taxsim32/low-level-remote.html
   test_result <- 16700.04
 
-  expect_equal(federal_taxes_ssh, test_result)
+  expect_equal(federal_taxes, test_result)
+})
+
+test_that("Package creates the dataset correctly for TAXSIM", {
+
+  # example test from TAXSIM http://users.nber.org/~taxsim/taxsim32/low-level-remote.html
+  taxsim_input <- data.frame(
+    id_number = 1,
+    filing_status = 'married, jointly',
+    tax_year = 1970,
+    long_term_capital_gains = 100000
+  )
+
+  taxsim_expectation <- data.frame(
+    taxsimid = 1,
+    mstat = 2,
+    year = 1970,
+    ltcg = 100000
+  )
+
+  taxsim_output <- create_dataset_for_taxsim(taxsim_input)
+
+  expect_equal(taxsim_output, taxsim_expectation)
 })
 
 test_that("Output is correct", {
