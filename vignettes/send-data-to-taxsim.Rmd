@@ -69,6 +69,6 @@ RCurl::ftpUpload(what = taxsim_filename, to = upload_address)
 results <- RCurl::getURL(download_address, userpwd = user_pwd)
 
 # read in results
-vroom::problems(vroom::vroom(results)) #, show_col_types = FALSE))
-
+# wrap text in I to properly read in
+vroom::vroom(results)
 ```

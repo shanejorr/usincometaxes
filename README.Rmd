@@ -99,7 +99,7 @@ All columns must have the column names and data types listed in the
 
 ## Marginal tax rates
 
-By default, marginal tax rates are calculated using wages. The default can be changed with the `return_all_information` parameter to `taxsim_calculate_taxes()`. Possible options are: 'Wages' (default), 'Long Term Capital Gains', 'Primary Wage Earner', or 'Secondary Wage Earner'.
+By default, marginal tax rates are calculated using wages. The default can be changed with the `marginal_tax_rates` parameter to `taxsim_calculate_taxes()`. Possible options are: 'Wages' (default), 'Long Term Capital Gains', 'Primary Wage Earner', or 'Secondary Wage Earner'.
 
 Go to the Marginal Tax Rates section of the [TAXSIM 32 documentation](https://users.nber.org/~taxsim/taxsim32/) for more information.
 

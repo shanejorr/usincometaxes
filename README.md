@@ -61,10 +61,10 @@ family_taxes <- taxsim_calculate_taxes(
 kable(family_taxes)
 ```
 
-| id\_number | federal\_taxes | state\_taxes | fica\_taxes | federal\_marginal\_rate | state\_marginal\_rate | fica\_rate |
-|-----------:|---------------:|-------------:|------------:|------------------------:|----------------------:|-----------:|
-|          1 |        5718.75 |      2443.75 |        7650 |                      25 |                  5.75 |         15 |
-|          2 |        5029.00 |      4586.76 |       15300 |                      12 |                  6.09 |         15 |
+| id_number | federal_taxes | state_taxes | fica_taxes | federal_marginal_rate | state_marginal_rate | fica_rate |
+|----------:|--------------:|------------:|-----------:|----------------------:|--------------------:|----------:|
+|         1 |       5718.75 |     2443.75 |       7650 |                    25 |                5.75 |        15 |
+|         2 |       5029.00 |     4586.76 |      15300 |                    12 |                6.09 |        15 |
 
 Users can use the `id_number` column to join the tax data with the
 original data set. Every `id_number` in the input data is represented in
@@ -76,10 +76,10 @@ family_income %>%
   kable()
 ```
 
-| id\_number | state          | tax\_year | filing\_status   | primary\_wages | primary\_age | federal\_taxes | state\_taxes | fica\_taxes | federal\_marginal\_rate | state\_marginal\_rate | fica\_rate |
-|-----------:|:---------------|----------:|:-----------------|---------------:|-------------:|---------------:|-------------:|------------:|------------------------:|----------------------:|-----------:|
-|          1 | North Carolina |      2015 | single           |          5e+04 |           26 |        5718.75 |      2443.75 |        7650 |                      25 |                  5.75 |         15 |
-|          2 | NY             |      2020 | married, jointly |          1e+05 |           36 |        5029.00 |      4586.76 |       15300 |                      12 |                  6.09 |         15 |
+| id_number | state          | tax_year | filing_status    | primary_wages | primary_age | federal_taxes | state_taxes | fica_taxes | federal_marginal_rate | state_marginal_rate | fica_rate |
+|----------:|:---------------|---------:|:-----------------|--------------:|------------:|--------------:|------------:|-----------:|----------------------:|--------------------:|----------:|
+|         1 | North Carolina |     2015 | single           |         5e+04 |          26 |       5718.75 |     2443.75 |       7650 |                    25 |                5.75 |        15 |
+|         2 | NY             |     2020 | married, jointly |         1e+05 |          36 |       5029.00 |     4586.76 |      15300 |                    12 |                6.09 |        15 |
 
 ## Output
 
@@ -114,7 +114,7 @@ vignette. The additional columns will be ignored.
 ## Marginal tax rates
 
 By default, marginal tax rates are calculated using wages. The default
-can be changed with the `return_all_information` parameter to
+can be changed with the `marginal_tax_rates` parameter to
 `taxsim_calculate_taxes()`. Possible options are: ‘Wages’ (default),
 ‘Long Term Capital Gains’, ‘Primary Wage Earner’, or ‘Secondary Wage
 Earner’.
