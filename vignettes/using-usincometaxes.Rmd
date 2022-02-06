@@ -6,7 +6,6 @@ vignette: >
   %\VignetteIndexEntry{Calculating Federal and State Income Taxes}
   %\VignetteDepends{ggplot2}
   %\VignetteDepends{dplyr}
-  %\VignetteDepends{kableExtra}
   %\VignetteDepends{scales}
   %\VignetteDepends{tidyr}
   %\VignetteEngine{knitr::rmarkdown}
@@ -32,7 +31,6 @@ library(usincometaxes)
 library(dplyr)
 library(tidyr)
 library(knitr)
-library(kableExtra)
 library(ggplot2)
 ```
 
@@ -46,12 +44,10 @@ The data set contains financial and other household characteristics that help es
 
 ```{r import_data}
 data(taxpayer_finances)
-# with of scroll box for tables
-scroll_width <- "800px"
+
 taxpayer_finances %>%
   head() %>%
-  kable() %>%
-  scroll_box(width = scroll_width)
+  kable()
 ```
 
 Each row in the data set is a tax paying unit. Thus, each row files one tax return. Columns represent items reported on tax returns that impact taxes. Of course, the information in the data set does not represent everything people report on tax returns. For this reason, the income tax calculations are simply estimates.
@@ -75,10 +71,10 @@ The `id_number` column is required for any input data frame used in `taxsim_calc
 ```{r join_tax_data}
 income_and_taxes <- taxpayer_finances %>%
   left_join(family_taxes, by = 'id_number')
+
 income_and_taxes %>%
   head() %>%
-  kable() %>%
-  scroll_box(width = scroll_width)
+  kable()
 ```
 
 Now we have a single data frame containing both wages and income tax liabilities. Let's take a look at the relationship between wages and estimated federal income taxes. The colors represent the number of children 18 or younger.
@@ -157,10 +153,10 @@ family_income <- base_family_income %>%
   # add unique ID to each row
   mutate(id_number = row_number()) %>%
   select(id_number, everything())
+
 family_income %>%
   head() %>%
-  kable() %>%
-  scroll_box(width = scroll_width)
+  kable()
 ```
 
 Now, we will calculate federal and state income taxes for our simulated data set. Note that `return_all_information = TRUE`. This allows us to examine credit amounts like the Child Tax Credit and Earned Income Tax Credit (EITC).
@@ -170,10 +166,10 @@ family_income_taxes <- taxsim_calculate_taxes(
   .data = family_income,
   return_all_information = TRUE
 )
+
 family_income_taxes %>%
   head() %>%
-  kable() %>%
-  scroll_box(width = scroll_width)
+  kable()
 ```
 
 As before, let's merge our tax data with the original input data set.
