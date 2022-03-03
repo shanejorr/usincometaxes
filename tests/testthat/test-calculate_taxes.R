@@ -73,6 +73,27 @@ test_that("Output is correct", {
 
 })
 
+test_that("All states work", {
+
+  states <- state.abb
+
+  id_nums <- seq(1, length(states))
+
+  taxsim_input <- data.frame(
+    id_number = id_nums,
+    filing_status = 'married, jointly',
+    tax_year = 2020,
+    primary_wages = 50000,
+    state = states
+  )
+
+  taxsim_output <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE)
+
+  # test that all states were returned
+  expect_equal(nrow(taxsim_output), 50)
+
+})
+
 # test_that("Full output is correct", {
 #
 #   # data set for TAXSIM

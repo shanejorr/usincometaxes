@@ -17,6 +17,7 @@ soi_and_states_crosswalk <- c(
   "HI" = 12,
   "ID" = 13,
   "IL" = 14,
+  'IN' = 15,
   "IA" = 16,
   "KS" = 17,
   "KY" = 18,
