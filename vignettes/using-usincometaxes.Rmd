@@ -240,6 +240,7 @@ tax_items_mapping <- c(
   eitc = 'Earned Income Tax Credit',
   child_tax_credit = 'Child Tax Credit'
 )
+
 family_income %>%
   filter(num_dependents_eitc == 4) %>%
   mutate(child_tax_credit = child_tax_credit_adjusted + child_tax_credit_refundable) %>%
