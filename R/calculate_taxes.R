@@ -266,16 +266,16 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
 
   from_taxsim_tmp_filename <- tempfile(pattern = 'download_', fileext = ".csv")
 
-  # try uploading and downloading via ftp first,
-  # then use ssh if ftp does not work
+  # try uploading and downloading via ssh first,
+  # then use ftp if ftp does not work
   from_taxsim <- tryCatch(
     error = function(cnd) {
       tryCatch(
         error = function(cnd) stop('Could not connect to TAXSIM server via ftp or ssh', call. = FALSE),
-        import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, idtl)
+        import_data_ftp(to_taxsim_tmp_filename, idtl)
       )
     },
-    import_data_ftp(to_taxsim_tmp_filename, idtl)
+    import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, idtl)
   )
 
   # clean final output
