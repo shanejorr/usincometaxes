@@ -1,15 +1,12 @@
-#' Get state SOI from name.
+#' Get state SOI from state name.
 #'
-#' Return the integer number state SOI of a state based on either its two letter abbreviation or
-#'     full name.
+#' Converts state names or state abbreviations to numeric SOI codes, which are required for TAXSIM.
 #'
 #' @param state_column Vectors containing the states to calculate taxes for. Generally, this is the
 #'     state column from the data set that will be sent to TAXSIM.
 #'
 #' @return Named integer vector with each number between 1 and 51 representing the state's SOI.
 #'     Names are the state's two letter abbreviation.
-#'
-#' @keywords internal
 get_state_soi <- function(state_column) {
 
   # the SOI crosswalk has two letter abbreviation
@@ -72,20 +69,13 @@ clean_from_taxsim <- function(from_taxsim) {
 taxsim_cols <- function() {
 
   c(
-    'id_number' = 'taxsimid', 'tax_year' = 'year', 'filing_status' = 'mstat', # required
-    'state' = 'state', 'primary_age' = 'page', 'spouse_age' = 'sage',
-    'num_dependents' = 'depx', 'num_dependents_thirteen' = 'dep13',
-    'num_dependents_seventeen' = 'dep17', 'num_dependents_eitc' = 'dep18',
-    'primary_wages' = 'pwages', 'spouse_wages' = 'swages', 'dividends' = 'dividends', 'interest' = 'intrec',
-    'short_term_capital_gains' = 'stcg', 'long_term_capital_gains' = 'ltcg',
-    'other_property_income' = 'otherprop', 'other_non_property_income' = 'nonprop',
-    'pensions' = 'pensions', 'social_security' = 'gssi', 'unemployment' = 'ui',
-    'other_transfer_income' = 'transfers', 'rent_paid' = 'rentpaid',
-    'property_taxes' = 'proptax', 'other_itemized_deductions' = 'otheritem',
-    'child_care_expenses' = 'childcare', 'misc_deductions' = 'mortgage',
-    'scorp_income' = 'scorp', 'qualified_business_income' = 'pbusinc', 'specialized_service_trade' = 'pprofinc',
-    'spouse_qualified_business_income' = 'sbusinc', 'spouse_specialized_service_trade' = 'sprofinc',
-    'mtr' = 'mtr', 'idtl'= 'idtl'
+    'taxsimid', 'year', 'mstat', # required
+    'state', 'page', 'sage',
+    'depx', 'age1', 'age2', 'age3', # dependents
+    'pwages', 'swages', 'dividends', 'intrec', 'stcg', 'ltcg', 'otherprop', 'nonprop',
+    'pensions', 'gssi', 'ui', 'transfers', 'rentpaid', 'proptax', 'otheritem',
+    'childcare', 'mortgage', 'scorp', 'pbusinc', 'pprofinc', 'sbusinc', 'sprofinc',
+    'mtr', 'idtl'
   )
 
 }
@@ -130,7 +120,7 @@ non_numeric_col <- function() {
 
   # filing status and state are the only non-numeric column
   # integer numbers represent the number in taxsim_cols
-  c(3, 4)
+  c(4)
 }
 
 #' @keywords internal
@@ -138,23 +128,19 @@ greater_zero_cols <- function() {
 
   # columns that must have all values greater than zero
   # integer numbers represent the number in taxsim_cols
-  c(1, 2, 5, 6, 7, 8, 9, 10, 23, 24)
+  c(1, 2, 3, 5, 6, 7, 8, 9, 10, 23, 24)
 
 }
 
-#' Recode filing status.
-#'
-#' Check to make sure the strings in `filing_status` are correct and recode from a string to an integer.
+#' Ensure values for filing status 'mstat' are proper.
 #'
 #' @param filing_status_colname Column, as a vector, containing filing status
 #'
-#' @return Vector with integers reflecting numeric value of filing status.
-#'
 #' @keywords internal
-recode_filing_status <- function(filing_status_colname) {
+check_filing_status <- function(filing_status_colname) {
 
   # mapping of strings to integers
-  filing_status_mappings <- c(
+  filing_status_values <- c(
     'single' = '1',
     'married, jointly' = '2',
     'married, separately' = '6',
@@ -163,21 +149,10 @@ recode_filing_status <- function(filing_status_colname) {
   )
 
   # make sure that all values are one of the valid options
-  diff_names <- setdiff(unique(filing_status_colname), names(filing_status_mappings))
+  diff_names <- setdiff(unique(filing_status_colname), filing_status_mappings)
 
   if (length(diff_names) > 0) {
-    stop(paste0(
-      'Invalid filing status. Acceptable values are:  ',
-      paste0(names(filing_status_mappings), collapse = "; ")
-    ))
-  }
-
-  # change strings to integers
-  for (i in seq_along(filing_status_mappings)) {
-
-    string_filing_status <- names(filing_status_mappings)[i]
-    filing_status_colname[filing_status_colname == string_filing_status] <- as.integer(filing_status_mappings[i])
-
+    stop(paste('The following filing status (mstat) are in your data, but are not legitimate values: ', paste0(diff_names, collapse = " "), collapse = " "))
   }
 
   filing_status_colname <- as.integer(filing_status_colname)

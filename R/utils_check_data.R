@@ -218,26 +218,21 @@ check_parameters <- function(.data, all_columns) {
 #' @keywords internal
 check_spouse <- function(.data, cols) {
 
-  if ('spouse_age' %in% cols) {
+  if ('sage' %in% cols) {
 
-    if (!('primary_age' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.", call. = FALSE)
+    if (!('page' %in% cols)) stop("You have `sage` column, but not `page`. You need to add `page`.", call. = FALSE)
 
-    if (any(.data[['filing_status']] == 'single' & .data[['spouse_age']] > 0)) {
+    if (any(.data[['mstat']] == 1 & .data[['sage']] > 0)) {
 
-      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0", call. = FALSE)
+      stop("You have a 'single' filer with a `sage` greater than 0. All single filers must have spouse ages of 0", call. = FALSE)
 
     }
   }
 
-  if ('spouse_wages' %in% cols) {
+  if ('swages' %in% cols) {
 
-    if (!('primary_wages' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.", call. = FALSE)
+    if (!('pwages' %in% cols)) stop("You have `swages` column, but not `pwages`. You need to add `pwages`.", call. = FALSE)
 
-    if (any(.data[['filing_status']] == 'single' & .data[['spouse_age']] > 0)) {
-
-      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0", call. = FALSE)
-
-    }
   }
 
   NULL

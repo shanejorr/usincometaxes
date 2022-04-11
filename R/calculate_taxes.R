@@ -35,7 +35,7 @@
 create_dataset_for_taxsim <- function(.data) {
 
   state_colname <- 'state'
-  filing_status_colname <- 'filing_status'
+  filing_status_colname <- 'mstat'
 
   cols <- colnames(.data)
 
@@ -57,21 +57,28 @@ create_dataset_for_taxsim <- function(.data) {
   # if so, also convert them to integer
   .data <- check_numeric(.data, cols)
 
-  # get the state SOI if the state column is present
+  # if state is character, convert to SOI codes
+  # if state is numeric, ensure all values are SOI codes
   if (state_colname %in% cols) {
-    .data[[state_colname]] <- get_state_soi(.data[[state_colname]])
+
+    if (is.character(.data[[state_colname]])) {
+      .data[[state_colname]] <- get_state_soi(.data[[state_colname]])
+    } else if (is.numeric(.data[[state_colname]])) {
+
+      # identify SOI codes in the data that are not actual SOI codes
+      not_soi_codes <- setdiff(unique(.data[[state_colname]]), soi_and_states_crosswalk)
+
+      # stop function if we find SOI codes in the data that are not actual SOI codes
+      if (length(not_soi_codes) > 0) {
+        stop(paste('The following SOI codes are in your data, but are not actual SOI codes: ', paste0(not_soi_codes, collapse = " "), collapse = " "))
+      }
+    }
+
   }
 
-  # make sure all filing_status values are proper and recode filing_status to integer,
-  # which is needed for taxsim
+  # make sure all filing_status values are proper
   if (filing_status_colname %in% cols) {
     .data[[filing_status_colname]] <- recode_filing_status(.data[[filing_status_colname]])
-  }
-
-  # change column names to the required TAXSIM column names
-  for (col in cols_in_taxsim_and_df) {
-    new_colname_for_taxsim <- taxsim_cols()[[col]]
-    names(.data)[names(.data) == col] <- new_colname_for_taxsim
   }
 
   return(.data)
@@ -244,7 +251,7 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
   input_id_numbers <- .data$id_number
 
   # create data set to send to taxsim
-  to_taxsim <- create_dataset_for_taxsim(.data)
+  # to_taxsim <- create_dataset_for_taxsim(.data)
 
   # check parameter options
   # must change this function if parameters are added
