@@ -112,7 +112,7 @@ from_taxsim_cols <- function() {
 #' @keywords internal
 non_numeric_col <- function() {
 
-  # filing status and state are the only non-numeric column
+  # state is the only non-numeric column
   # integer numbers represent the number in taxsim_cols
   c(4)
 }
@@ -123,35 +123,6 @@ greater_zero_cols <- function() {
   # columns that must have all values greater than zero
   # integer numbers represent the number in taxsim_cols
   c(1, 2, 3, 5, 6, 7, 8, 9, 10, 23, 24)
-
-}
-
-#' Ensure values for filing status 'mstat' are proper.
-#'
-#' @param filing_status_colname Column, as a vector, containing filing status
-#'
-#' @keywords internal
-check_filing_status <- function(filing_status_colname) {
-
-  # mapping of strings to integers
-  filing_status_values <- c(
-    'single' = '1',
-    'married, jointly' = '2',
-    'married, separately' = '6',
-    'dependent child' = '8',
-    'head of household' = '1'
-  )
-
-  # make sure that all values are one of the valid options
-  diff_names <- setdiff(unique(filing_status_colname), filing_status_mappings)
-
-  if (length(diff_names) > 0) {
-    stop(paste('The following filing status (mstat) are in your data, but are not legitimate values: ', paste0(diff_names, collapse = " "), collapse = " "))
-  }
-
-  filing_status_colname <- as.integer(filing_status_colname)
-
-  return(filing_status_colname)
 
 }
 

@@ -73,7 +73,7 @@ check_state <- function(.data, cols, state_column_name) {
 #' @keywords internal
 check_required_cols <- function(cols) {
 
-  required_columns <- names(taxsim_cols())[1:3]
+  required_columns <- taxsim_cols()[1:3]
   required_cols_present <- sort(intersect(required_columns, cols))
   all_required_present <- isTRUE(all.equal(sort(required_columns), sort(required_cols_present)))
 
@@ -87,6 +87,34 @@ check_required_cols <- function(cols) {
     return(NULL)
 
   }
+
+}
+
+
+#' Ensure values for filing status 'mstat' are proper.
+#'
+#' @param filing_status_colname Column, as a vector, containing filing status
+#'
+#' @keywords internal
+check_filing_status <- function(filing_status_colname) {
+
+  # mapping of strings to integers
+  filing_status_values <- c(
+    'single' = '1',
+    'married, jointly' = '2',
+    'married, separately' = '6',
+    'dependent child' = '8',
+    'head of household' = '1'
+  )
+
+  # make sure that all values are one of the valid options
+  diff_names <- setdiff(unique(filing_status_colname), filing_status_values)
+
+  if (length(diff_names) > 0) {
+    stop(paste('The following filing status (mstat) are in your data, but are not legitimate values: ', paste0(diff_names, collapse = " "), collapse = " "))
+  }
+
+  NULL
 
 }
 

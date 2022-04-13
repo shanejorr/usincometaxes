@@ -40,7 +40,7 @@ create_dataset_for_taxsim <- function(.data) {
   cols <- colnames(.data)
 
   # only keep TAXSIM columns
-  cols_in_taxsim_and_df <- intersect(cols, names(taxsim_cols()))
+  cols_in_taxsim_and_df <- intersect(cols, taxsim_cols())
   .data <- .data[cols_in_taxsim_and_df]
 
   # convert all NA values to 0 for non-required items
@@ -79,7 +79,7 @@ create_dataset_for_taxsim <- function(.data) {
 
   # make sure all filing_status values are proper
   if (filing_status_colname %in% cols) {
-    .data[[filing_status_colname]] <- recode_filing_status(.data[[filing_status_colname]])
+    check_filing_status(.data[[filing_status_colname]])
   }
 
   return(.data)
@@ -252,7 +252,7 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
   input_id_numbers <- .data$taxsimid
 
   # create data set to send to taxsim
-  # to_taxsim <- create_dataset_for_taxsim(.data)
+  .data <- create_dataset_for_taxsim(.data)
 
   # check parameter options
   # must change this function if parameters are added
