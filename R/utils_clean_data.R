@@ -51,12 +51,6 @@ clean_from_taxsim <- function(from_taxsim) {
     names(from_taxsim)[names(from_taxsim) == col] <- new_colname_output
   }
 
-  # year and state will be in the original dataset, so they are not needed
-  # find what column number they are and remove that column number
-  cols_to_remove <- which(colnames(from_taxsim) %in% c('year', 'state'))
-
-  from_taxsim <- from_taxsim[-cols_to_remove]
-
   return(from_taxsim)
 
 }
@@ -90,25 +84,25 @@ from_taxsim_cols <- function() {
   # named vector to rename the columns of the data set received from TAXSIM
   col_names_output <- c(
     # primary output
-    'taxsimid' = 'id_number', 'year' = 'year', 'state' = 'state',  'fiitax' = 'federal_taxes',
-    'siitax' = 'state_taxes',  'fica' = 'fica_taxes',  'frate' = 'federal_marginal_rate',
-    'srate' = 'state_marginal_rate',  'ficar' = 'fica_rate',
+    'taxsimid' = 'taxsimid', 'year' = 'year', 'state' = 'state',  'fiitax' = 'fiitax',
+    'siitax' = 'siitax',  'fica' = 'fica',  'frate' = 'frate',
+    'srate' = 'srate',  'ficar' = 'ficar', 'tfica' = 'tfica',
 
     # extended output
-    'v10' = 'federal_agi', 'v11' = 'ui_agi', 'v12' = 'soc_sec_agi', 'v13' = 'zero_bracket_amount',
-    'v14' = 'personal_exemptions', 'v15' = 'exemption_phaseout', 'v16' = 'deduction_phaseout',
-    'v17' = 'itemized_deductions', 'v18' = 'federal_taxable_income', 'v19' = 'tax_on_taxable_income',
-    'v20' = 'exemption_surtax', 'v21' = 'general_tax_credit', 'v22' = 'child_tax_credit_adjusted',
-    'v23' = 'child_tax_credit_refundable', 'v24' = 'child_care_credit', 'v25' = 'eitc',
-    'v26' = 'amt_income', 'v27' = 'amt_liability', 'v28' = 'fed_income_tax_before_credit', 'v29' = 'fica',
+    'v10' = 'v10_federal_agi', 'v11' = 'v11_ui_agi', 'v12' = 'v12_soc_sec_agi', 'v13' = 'v13_zero_bracket_amount',
+    'v14' = 'v14_personal_exemptions', 'v15' = 'v15_exemption_phaseout', 'v16' = 'v16_deduction_phaseout',
+    'v17' = 'v17_itemized_deductions', 'v18' = 'v18_federal_taxable_income', 'v19' = 'v19_tax_on_taxable_income',
+    'v20' = 'v20_exemption_surtax', 'v21' = 'v21_general_tax_credit', 'v22' = 'v22_child_tax_credit_adjusted',
+    'v23' = 'v23_child_tax_credit_refundable', 'v24' = 'v24_child_care_credit', 'v25' = 'v25_eitc',
+    'v26' = 'v26_amt_income', 'v27' = 'v27_amt_liability', 'v28' = 'v28_fed_income_tax_before_credit', 'v29' = 'v29_fica',
 
     # columns are zero if no state is specified
-    'v30' = 'state_household_income', 'v31' = 'state_rent_expense',
-    'v32' = 'state_agi', 'v33' = 'state_exemption_amount', 'v34' = 'state_std_deduction_amount',
-    'v35' = 'state_itemized_deducation', 'v36' = 'state_taxable_income', 'v37' = 'state_property_tax_credit',
-    'v38' = 'state_child_care_credit', 'v39' = 'state_eitc', 'v40' = 'state_total_credits',
-    'v41' = 'state_bracket_rate', 'v42' = 'self_emp_income', 'v43' = 'medicare_tax_unearned_income',
-    'v44' = 'medicare_tax_earned_income', 'v45' = 'cares_recovery_rebate'
+    'v30' = 'v30_state_household_income', 'v31' = 'v31_state_rent_expense',
+    'v32' = 'v32_state_agi', 'v33' = 'v33_state_exemption_amount', 'v34' = 'v34_state_std_deduction_amount',
+    'v35' = 'v35_state_itemized_deducation', 'v36' = 'v36_state_taxable_income', 'v37' = 'v37_state_property_tax_credit',
+    'v38' = 'v38_state_child_care_credit', 'v39' = 'v39_state_eitc', 'v40' = 'v40_state_total_credits',
+    'v41' = 'v41_state_bracket_rate', 'v42' = 'v42_self_emp_income', 'v43' = 'v43_medicare_tax_unearned_income',
+    'v44' = 'v44_medicare_tax_earned_income', 'v45' = 'v45_cares_recovery_rebate'
   )
 
   return(col_names_output)
@@ -164,7 +158,7 @@ check_filing_status <- function(filing_status_colname) {
 #' Recode marginal tax rates.
 #'
 #' Marginal tax rates are specified with the \code{marginal_tax_rates} parameter. The possible values are
-#' descriptive strings. But,TAXSIM requires integers. Convert descriptice strings to integers.
+#' descriptive strings. But,TAXSIM requires integers. Convert descriptive strings to integers.
 #'
 #' @param marginal_tax_rate String representing the \code{marginal_tax_rate} parameter in \code{taxsim_calculate_taxes}
 #'

@@ -13,12 +13,11 @@ library(glue)
 devtools::load_all()
 
 taxsim_input <- data.frame(
-  id_number = as.integer(1),
-  filing_status = 'married, jointly',
-  tax_year = 1970,
-  long_term_capital_gains = 100000
-) #%>%
-  #create_dataset_for_taxsim()
+  taxsimid = 1,
+  mstat = 2,
+  year = 1970,
+  ltcg = 100000
+)
 
 taxsim_output <- taxsim_calculate_taxes(
   .data = taxsim_input,

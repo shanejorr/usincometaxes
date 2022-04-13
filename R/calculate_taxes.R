@@ -63,6 +63,7 @@ create_dataset_for_taxsim <- function(.data) {
 
     if (is.character(.data[[state_colname]])) {
       .data[[state_colname]] <- get_state_soi(.data[[state_colname]])
+
     } else if (is.numeric(.data[[state_colname]])) {
 
       # identify SOI codes in the data that are not actual SOI codes
@@ -248,7 +249,7 @@ create_dataset_for_taxsim <- function(.data) {
 taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_all_information = FALSE) {
 
   # save input ID numbers as object, so we can make sure the output ID numbers are the same
-  input_id_numbers <- .data$id_number
+  input_id_numbers <- .data$taxsimid
 
   # create data set to send to taxsim
   # to_taxsim <- create_dataset_for_taxsim(.data)
@@ -260,16 +261,16 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
   # add 2 to column if we need all columns, otherwise add 0 for only the default columns
   idtl <- if (return_all_information) 2 else 0
 
-  to_taxsim[['idtl']] <- idtl
+  .data[['idtl']] <- idtl
 
   # add marginal tax rate calculation
-  to_taxsim[['mtr']] <- convert_marginal_tax_rates(marginal_tax_rates)
+  .data[['mtr']] <- convert_marginal_tax_rates(marginal_tax_rates)
 
   # send data set to taxsim server
 
   # save csv file of data set to a temp folder
   to_taxsim_tmp_filename <- tempfile(pattern = 'upload_', fileext = ".csv")
-  vroom::vroom_write(to_taxsim, to_taxsim_tmp_filename, delim = ",", progress = FALSE)
+  vroom::vroom_write(.data, to_taxsim_tmp_filename, delim = ",", progress = FALSE)
 
   from_taxsim_tmp_filename <- tempfile(pattern = 'download_', fileext = ".csv")
 
@@ -285,11 +286,11 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
     import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, idtl)
   )
 
-  # clean final output
-  from_taxism_cleaned <- clean_from_taxsim(from_taxsim)
+  # add column names to the TAXSIM columns that do not have names
+  from_taxsim <- clean_from_taxsim(from_taxsim)
 
   # check that input and output data sets have the same unique ID numbers
-  output_id_numbers <- from_taxism_cleaned$id_number
+  output_id_numbers <- from_taxsim$taxsimid
 
   if (!setequal(input_id_numbers, output_id_numbers)) {
     stop(paste0(
@@ -301,6 +302,6 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
     )
   }
 
-  return(from_taxism_cleaned)
+  return(from_taxsim)
 
 }
