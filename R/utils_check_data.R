@@ -88,7 +88,6 @@ check_required_cols <- function(cols) {
 
 }
 
-
 #' Ensure values for filing status 'mstat' are proper.
 #'
 #' @param filing_status_vector Column, as a vector, containing filing status
@@ -97,7 +96,8 @@ check_required_cols <- function(cols) {
 check_filing_status <- function(filing_status_vector) {
 
   # mapping of strings to integers
-  filing_status_values <- c(
+  # if this changes, need to change test
+  filing_status_values <-   c(
     'single' = 1,
     'married, jointly' = 2,
     'married, separately' = 6,

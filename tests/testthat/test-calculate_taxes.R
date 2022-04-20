@@ -18,7 +18,7 @@ test_that("Package output matches TAXSIM test file", {
   expect_equal(federal_taxes, test_result)
 })
 
-test_that("Output is correct", {
+test_that("Output is correct (including marital status)", {
 
   # make sure ID numbers are properly returned
 
@@ -30,7 +30,7 @@ test_that("Output is correct", {
 
   taxsim_input <- data.frame(
     taxsimid = id_nums,
-    mstat = rep(2, n),
+    mstat = c(names(filing_status_values), names(filing_status_values)[1:n_additional_filing_status]),
     year = years,
     pwages = rep(50000, n)
   )
