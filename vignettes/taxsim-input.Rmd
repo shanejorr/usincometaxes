@@ -17,15 +17,20 @@ knitr::opts_chunk$set(
 
 `usincometaxes` calculates taxes through the function `taxsim_calculate_taxes(.data)`. The key parameter in this function is `.data`, which is a data frame containing the information used to calculate income taxes. Each column in `.data` contains financial or household information and maps to the variables in [TAXSIM 35](http://taxsim.nber.org/taxsim35/) . All variables in TAXSIM 35 can be used in `usincometaxes`. 
 
-The column names in `usincometaxes`, however, are not the same as TAXSIM 35's variable names. `usincometaxes`uses more descriptive column names and column names in `.data` must match the column names listed below exactly.
+The column names in `usincometaxes` are the same as TAXSIM 35's variable names. The data types for inputs are also the same as what is noted in the [TAXSIM 35 documentation](http://taxsim.nber.org/taxsim35/), except for two exceptions.
 
-.data` can contain columns beyond those listed below. The additional columns will be ignored.
+1. For filing status, `mstat` users can either enter a description of the filing status (shown below) or the number required by TAXSIM.
+2. For state, `state`, users can enter the two letter state abbreviation or the SOI code, as required by TAXSIM.
+
+`usincometaxes` will convert descriptions of filing statuses or state abbreviations to the numbers required by TAXSIM.
+
+`.data` can contain columns beyond those listed below. The additional columns will be ignored.
 
 ## Required columns
 
-* **id_number**: An arbitrary, non-negative, *integer*. This number links the results from TAXSIM
-    32 to the original input data frame specified with `.data`.
-    * `taxsimid` in TAXSIM 35
+* **taxsimid**: An arbitrary, non-negative, *whole number* greater than zero. This number links the results from TAXSIM
+    35 to the original input data frame specified with `.data`.
+
 <br>       
 * **tax_year**: Tax year ending Dec 31 (4 digits between 1960 and 2023). State must be zero if
       year is before 1977 or after 2023.
