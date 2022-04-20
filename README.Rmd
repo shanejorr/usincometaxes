@@ -50,8 +50,7 @@ family_income <- data.frame(
   taxsimid = c(1, 2),
   state = c('North Carolina', 'NY'),
   year = c(2015, 2020),
-  # for mstat (filing status) 1 is single and 2 is married, filing jointly
-  mstat = c(1, 2),
+  mstat = c('married, jointly', 'single'),
   pwages = c(50000, 100000), # primary wages
   page = c(26, 36) # primary age
 )

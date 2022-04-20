@@ -78,8 +78,9 @@ create_dataset_for_taxsim <- function(.data) {
   }
 
   # make sure all filing_status values are proper
+  # and if character descriptions are used for filing status, convert to number
   if (filing_status_colname %in% cols) {
-    check_filing_status(.data[[filing_status_colname]])
+    .data[[filing_status_colname]] <- check_filing_status(.data[[filing_status_colname]])
   }
 
   return(.data)

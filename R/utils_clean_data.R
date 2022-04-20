@@ -118,7 +118,7 @@ non_numeric_col <- function() {
 
   # state is the only non-numeric column
   # integer numbers represent the number in taxsim_cols
-  c(4)
+  c(3, 4)
 }
 
 #' @keywords internal
@@ -126,7 +126,7 @@ greater_zero_cols <- function() {
 
   # columns that must have all values greater than zero
   # integer numbers represent the number in taxsim_cols
-  c(1, 2, 3, 5, 6, 7, 8, 9, 10, 23, 24)
+  c(1, 2, 5, 6, 7, 8, 9, 10, 23, 24)
 
 }
 

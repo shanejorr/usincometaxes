@@ -31,8 +31,6 @@ check_data <- function(.data, cols, state_column_name) {
     stop("`tax_year` must be a numeric value between 1960 and 2023", call. = FALSE)
   }
 
-  message('All required columns are present and the data is in the proper format!')
-
   return(NULL)
 
 }
@@ -93,28 +91,49 @@ check_required_cols <- function(cols) {
 
 #' Ensure values for filing status 'mstat' are proper.
 #'
-#' @param filing_status_colname Column, as a vector, containing filing status
+#' @param filing_status_vector Column, as a vector, containing filing status
 #'
 #' @keywords internal
-check_filing_status <- function(filing_status_colname) {
+check_filing_status <- function(filing_status_vector) {
 
   # mapping of strings to integers
   filing_status_values <- c(
-    'single' = '1',
-    'married, jointly' = '2',
-    'married, separately' = '6',
-    'dependent child' = '8',
-    'head of household' = '1'
+    'single' = 1,
+    'married, jointly' = 2,
+    'married, separately' = 6,
+    'dependent child' = 8,
+    'head of household' = 1
   )
 
-  # make sure that all values are one of the valid options
-  diff_names <- setdiff(unique(filing_status_colname), filing_status_values)
+  if (is.numeric(filing_status_vector)) {
 
-  if (length(diff_names) > 0) {
-    stop(paste('The following filing status (mstat) are in your data, but are not legitimate values: ', paste0(diff_names, collapse = " "), collapse = " "))
+    # make sure that all values are one of the valid options
+    diff_names <- setdiff(unique(filing_status_vector), filing_status_values)
+
+    if (length(diff_names) > 0) {
+      stop(paste('The following filing status (mstat) are in your data, but are not legitimate values: ', paste0(diff_names, collapse = " "), collapse = " "))
+    }
+
+  } else if (is.character(filing_status_vector)) {
+
+    # make sure that all values are one of the valid options
+    diff_names <- setdiff(unique(tolower(filing_status_vector)), names(filing_status_values))
+
+    if (length(diff_names) > 0) {
+      stop(paste('The following filing status (mstat) are in your data, but are not legitimate values: ', paste0(diff_names, collapse = " "), collapse = " "))
+    }
+
+    filing_status_vector <- tolower(filing_status_vector)
+
+    filing_status_vector[filing_status_vector %in% c('single', 'head of household')] <- 1
+    filing_status_vector[filing_status_vector == 'married, jointly'] <- 2
+    filing_status_vector[filing_status_vector == 'married, separately'] <- 6
+    filing_status_vector[filing_status_vector == 'dependent child'] <- 8
+    filing_status_vector[filing_status_vector == 'head of household'] <- 1
+
   }
 
-  NULL
+  return(filing_status_vector)
 
 }
 
