@@ -51,6 +51,10 @@ clean_from_taxsim <- function(from_taxsim) {
     names(from_taxsim)[names(from_taxsim) == col] <- new_colname_output
   }
 
+  # remove state and year because they are also in the input data
+  # since they are in the input data, when you join input and output by taxsimid, they will appear twice
+  from_taxsim[c('state', 'year')] <- NULL
+
   return(from_taxsim)
 
 }

@@ -11,6 +11,6 @@ convert_marginal_tax_rates(marginal_tax_rate_specification)
 }
 \description{
 Marginal tax rates are specified with the \code{marginal_tax_rates} parameter. The possible values are
-descriptive strings. But,TAXSIM requires integers. Convert descriptice strings to integers.
+descriptive strings. But,TAXSIM requires integers. Convert descriptive strings to integers.
 }
 \keyword{internal}

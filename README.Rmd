@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 ## Calculate Federal and State Income Taxes
 
 `usincometaxes` is an R package that calculates federal and state income taxes in the United States.
-It relies on the National Bureau of Economic Research's (NBER) [TAXSIM 32](http://taxsim.nber.org/taxsim32/) 
+It relies on the National Bureau of Economic Research's (NBER) [TAXSIM 35](http://taxsim.nber.org/taxsim35/) 
 tax simulator for calculations. The package takes care of the behind-the-scenes work of getting the 
 data in the proper format, converting it to the proper file type for uploading to the NBER server, 
 uploading the data, downloading the results, and placing the results into a tidy data frame.
@@ -39,7 +39,7 @@ devtools::install_github("shanejorr/usincometaxes")
 
 `usincometaxes` helps users estimate household income taxes from data sets containing financial and household data. This allows users to estimate income taxes from surveys with financial information, as the United States Census Public Use Micro Data (PUMS).
 
-`usincometaxes` contains one function: `taxsim_calculate_taxes()`. Below is a simple example of its use.
+The short example below uses `taxsim_calculate_taxes()` to calculate income taxes.
 
 ```{r quickExample}
 library(dplyr)
@@ -47,12 +47,13 @@ library(knitr)
 library(usincometaxes)
 
 family_income <- data.frame(
-  id_number = c(1, 2),
+  taxsimid = c(1, 2),
   state = c('North Carolina', 'NY'),
-  tax_year = c(2015, 2020),
-  filing_status = c('single', 'married, jointly'),
-  primary_wages = c(50000, 100000),
-  primary_age = c(26, 36)
+  year = c(2015, 2020),
+  # for mstat (filing status) 1 is single and 2 is married, filing jointly
+  mstat = c(1, 2),
+  pwages = c(50000, 100000), # primary wages
+  page = c(26, 36) # primary age
 )
 
 family_taxes <- taxsim_calculate_taxes(
@@ -66,26 +67,36 @@ family_taxes <- taxsim_calculate_taxes(
 kable(family_taxes)
 ```
 
-Users can use the `id_number` column to join the tax data with the original data set. Every `id_number` in
+Users can use the `taxsimid` column to join the tax data with the original data set. Every `taxsimid` in
 the input data is represented in the output tax data.
 
 ```{r joinData}
 family_income %>%
-  left_join(family_taxes, by = 'id_number') %>%
+  left_join(family_taxes, by = 'taxsimid') %>%
   kable()
 ```
 
 ## Output
 
 `taxsim_calculate_taxes()` returns a data frame where each row corresponds to a row in `.data` and
-each column is a piece of tax information. The output and `.data` can be linked by the `id_number` column.
+each column is a piece of tax information. The output and `.data` can be linked by the `taxsimid` column.
 
 The amount of output (tax information) received is controlled by the `return_all_information` parameter 
 to `taxsim_calculate_taxes()`. Setting `return_all_information` to `FALSE` returns minimal information such as 
-federal and state tax liabilities and FICA taxes. When `return_all_information` is `TRUE` 45 different tax 
+federal and state tax liabilities and FICA taxes. When `return_all_information` is `TRUE` 44 different tax 
 items are returned.
 
 See the [Description of Output Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-output.html) vignette for output information.
+
+```{r}
+family_taxes_full_output <- taxsim_calculate_taxes(
+  .data = family_income,
+  marginal_tax_rates = 'Wages',
+  return_all_information = TRUE
+)
+
+kable(family_taxes_full_output)
+```
 
 ## Input
 
@@ -94,18 +105,21 @@ found in the data frame represented by the `.data` parameter. Each column is a d
 and each row contains a tax payer unit.
 
 All columns must have the column names and data types listed in the 
-[Description of Input Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html) vignette.
-`.data` can contain columns beyond those listed in the vignette. The additional columns will be ignored.
+[Description of Input Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html) vignette. 
+These are the same column names found in the [TAXSIM 35](http://taxsim.nber.org/taxsim35/) documentation.
+Therefore, you can consult the package documentation or TAXSIM 35 documentation for more information on input columns.
+The only difference between `usincometaxes` and TAXSIM 35 is that `usincometaxes` allows users to specify the state
+with either the two letter abbreviation or SOI code. `usincometaxes` will convert the abbreviation to an SOI code for TAXSIM 35.
+
+The input data frame, `.data`, can contain columns beyond those listed in the vignette. The additional columns will be ignored.
 
 ## Marginal tax rates
 
 By default, marginal tax rates are calculated using wages. The default can be changed with the `marginal_tax_rates` parameter to `taxsim_calculate_taxes()`. Possible options are: 'Wages' (default), 'Long Term Capital Gains', 'Primary Wage Earner', or 'Secondary Wage Earner'.
 
-Go to the Marginal Tax Rates section of the [TAXSIM 32 documentation](https://users.nber.org/~taxsim/taxsim32/) for more information.
-
 ## Giving credit
 
-The NBER's [TAXSIM 32](http://taxsim.nber.org/taxsim32/) tax simulator does all tax calculations. 
+The NBER's [TAXSIM 35](http://taxsim.nber.org/taxsim35/) tax simulator does all tax calculations. 
 This package simply lets users interact with the tax simulator through R. Therefore, users should 
 cite the TAXSIM 35 tax simulator when they use this package in their work:
 
