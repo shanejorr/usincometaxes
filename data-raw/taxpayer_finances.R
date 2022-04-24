@@ -4,6 +4,8 @@
 #
 #############################################################################
 
+library(tidyr)
+
 # add to checks: single returns cannot have age or income
 
 # function to create log-normal distributions
@@ -67,5 +69,7 @@ taxpayer_finances <- data.frame(
   stcg = log_norm(n, 1000, 2),
   ltcg = log_norm(n, 2000, 2)
 )
+
+taxpayer_finances <- dplyr::mutate(taxpayer_finances, dplyr::across(everything(), ~tidyr::replace_na(.x, 0)))
 
 usethis::use_data(taxpayer_finances, internal = FALSE, overwrite = TRUE)

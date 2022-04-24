@@ -66,6 +66,8 @@ clean_from_taxsim <- function(from_taxsim) {
 #' @keywords internal
 taxsim_cols <- function() {
 
+  # NOTE: You need to change replace_missing() and check_required_cols() if you change this function.
+
   c(
     'taxsimid', 'year', 'mstat', # required
     'state', 'page', 'sage',

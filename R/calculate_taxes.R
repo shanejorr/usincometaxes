@@ -43,8 +43,13 @@ create_dataset_for_taxsim <- function(.data) {
   cols_in_taxsim_and_df <- intersect(cols, taxsim_cols())
   .data <- .data[cols_in_taxsim_and_df]
 
+  # return an error is any required columns have missing values (except for state)
+  for (col in c('taxsim', 'year', 'mstat')) {
+    if (any(is.na(.data[[col]]))) stop(paste0("No", col, "values can be NA."))
+  }
+
   # convert all NA values to 0 for non-required items
-  non_req_cols <- names(taxsim_cols()[4:length(taxsim_cols())])
+  non_req_cols <- taxsim_cols()[5:length(taxsim_cols())]
   non_req_cols <- intersect(colnames(.data), non_req_cols)
   .data[non_req_cols][is.na(.data[non_req_cols])] <- 0
 
@@ -74,6 +79,9 @@ create_dataset_for_taxsim <- function(.data) {
         stop(paste('The following SOI codes are in your data, but are not actual SOI codes: ', paste0(not_soi_codes, collapse = " "), collapse = " "))
       }
     }
+
+    # convert missing state values to 0
+    .data[[state_colname]][is.na(.data[[state_colname]])] <- 0
 
   }
 

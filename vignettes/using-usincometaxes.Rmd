@@ -61,6 +61,7 @@ family_taxes <- taxsim_calculate_taxes(
   .data = taxpayer_finances,
   return_all_information = FALSE
 )
+
 family_taxes %>%
   head() %>%
   kable()

@@ -20,15 +20,18 @@ check_data <- function(.data, cols, state_column_name) {
   check_greater_zero(.data, cols)
 
   # make sure state names are either two letter abbreviations or full name of state
-  check_state(.data, cols, state_column_name)
+  # only if state si a character
+  if (is.character(.data[['state']])) {
+    check_state(.data, cols, state_column_name)
+  }
 
   # make sure that no single tax filers have spouse ages or income
   check_spouse(.data, cols)
 
   # tax year must be between the following two values
   # tax year is required, so we don't need to check whether it exists
-  if (!all(.data$tax_year >= 1960 & .data$tax_year <= 2024)) {
-    stop("`tax_year` must be a numeric value between 1960 and 2023", call. = FALSE)
+  if (!all(.data$year >= 1960 & .data$year <= 2024)) {
+    stop("`year` must be a numeric value between 1960 and 2023", call. = FALSE)
   }
 
   return(NULL)
@@ -47,7 +50,8 @@ check_data <- function(.data, cols, state_column_name) {
 check_state <- function(.data, cols, state_column_name) {
 
   # state should either be the two letter abbreviation or full name
-  if (state_column_name %in% cols) {
+  # if state is a character
+  if (is.character(.data[[state_column_name]])) {
 
     proper_states <- c(datasets::state.abb, datasets::state.name, "DC", "District of Columbia")
 
@@ -56,8 +60,20 @@ check_state <- function(.data, cols, state_column_name) {
     entered_states <- tolower(.data[[state_column_name]])
 
     if (!all(entered_states %in% proper_states)) {
-      stop("One of your state names is unrecognizable. Names should either be the full name or two letter abbreviation.", call. = FALSE)
+      stop("One of your state names is unrecognizable. Names should either be the full name, two letter abbreviation, or SOI code.", call. = FALSE)
     }
+
+  } else if (is.numeric(.data[[state_column_name]])) {
+
+    # check input SOIs against crosswalk
+    wrong_soi <- setdiff(.data[[state_column_name]], soi_and_states_crosswalk)
+
+    # produce an error if there are any wrong SOIs
+    if (length(wrong_soi) > 0) {
+      soi_string <- paste0(wrong_soi, collapse = ", ")
+      stop(paste0("The following state SOI code is nto a valid SOI: ", soi_string), call. = FALSE)
+    }
+
   }
 
   return(NULL)
@@ -104,6 +120,9 @@ check_filing_status <- function(filing_status_vector) {
     'dependent child' = 8,
     'head of household' = 1
   )
+
+  # return an error if any of marital status are NA
+  if (any(is.na(filing_status_vector))) stop("No 'mstat' values can be NA.")
 
   if (is.numeric(filing_status_vector)) {
 
