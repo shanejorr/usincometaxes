@@ -84,17 +84,3 @@ The following columns are zero if no state is specified:
 * **state_total_credits**: State Total Credits
 * **state_bracket_rate**: State Bracket Rate
 * **self_emp_income**: Earned Self-Employment Income for FICA
-
-## Mapping `usincometaxes` columns to TAXSIM 32 columns
-
-Results from `usincometaxes` include all output from TAXSIM 32. The table below maps `usincometaxes` 
-output column names to TAXSIM 32 output column names.
-
-```{r, echo = FALSE}
-package_to_taxsim <- data.frame(
-  usincometaxes = unname(usincometaxes:::from_taxsim_cols()),
-  TAXSIM = names(usincometaxes:::from_taxsim_cols())
-)
-
-knitr::kable(package_to_taxsim)
-```
