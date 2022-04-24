@@ -4,10 +4,10 @@
 \alias{check_filing_status}
 \title{Ensure values for filing status 'mstat' are proper.}
 \usage{
-check_filing_status(filing_status_colname)
+check_filing_status(filing_status_vector)
 }
 \arguments{
-\item{filing_status_colname}{Column, as a vector, containing filing status}
+\item{filing_status_vector}{Column, as a vector, containing filing status}
 }
 \description{
 Ensure values for filing status 'mstat' are proper.

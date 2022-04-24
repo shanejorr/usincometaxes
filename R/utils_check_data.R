@@ -112,7 +112,7 @@ check_required_cols <- function(cols) {
 check_filing_status <- function(filing_status_vector) {
 
   # mapping of strings to integers
-  # if this changes, need to change test
+  # if this changes, need to change test in test-calculate_taxes, where we copy and paste this
   filing_status_values <-   c(
     'single' = 1,
     'married, jointly' = 2,

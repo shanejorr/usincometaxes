@@ -20,13 +20,21 @@ test_that("Package output matches TAXSIM test file", {
 
 test_that("Output is correct (including marital status)", {
 
-  # make sure ID numbers are properly returned
+  filing_status_values <-   c(
+    'single' = 1,
+    'married, jointly' = 2,
+    'married, separately' = 6,
+    'dependent child' = 8,
+    'head of household' = 1
+  )
 
   # program can calculate taxes for the current year and previous years
   id_nums <- as.integer(seq(1, 10))
   n <- length(id_nums)
   current_year <- as.numeric(format(Sys.Date(), "%Y"))
   years <- seq(current_year, current_year - n + 1)
+
+  n_additional_filing_status <- n - length(filing_status_values)
 
   taxsim_input <- data.frame(
     taxsimid = id_nums,
@@ -35,8 +43,8 @@ test_that("Output is correct (including marital status)", {
     pwages = rep(50000, n)
   )
 
-  n_col_short <- 10
-  n_col_long <- 46
+  n_col_short <- 8
+  n_col_long <- 44
 
   taxsim_output_short <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE)
   taxsim_output_long <- taxsim_calculate_taxes(taxsim_input, return_all_information = TRUE)

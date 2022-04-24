@@ -67,11 +67,11 @@ family_taxes %>%
   kable()
 ```
 
-The `id_number` column is required for any input data frame used in `taxsim_calculate_taxes`. This column is also returned in the output data frame containing tax calculations, allowing us to link the input and output data frames.
+The `taxsimid` column is required for any input data frame used in `taxsim_calculate_taxes`. This column is also returned in the output data frame containing tax calculations, allowing us to link the input and output data frames.
 
 ```{r join_tax_data}
 income_and_taxes <- taxpayer_finances %>%
-  left_join(family_taxes, by = 'id_number')
+  left_join(family_taxes, by = 'taxsimid')
 
 income_and_taxes %>%
   head() %>%
@@ -98,18 +98,19 @@ plt_theme <- function() {
 }
 # color palettes for number of children
 dep_color_palette <- rev(c('#4B0055','#353E7C','#007094','#009B95','#00BE7D','#96D84B'))
+
 income_and_taxes %>%
   mutate(
-    tax_unit_income = primary_wages + spouse_wages,
-    num_dependents_eitc = factor(num_dependents_eitc, levels = as.character(0:5)),
-    filing_status = tools::toTitleCase(filing_status)
+    tax_unit_income = pwages + swages,
+    num_dependents_eitc = factor(depx, levels = as.character(0:5)),
+    filing_status = tools::toTitleCase(mstat)
   ) %>%
-  ggplot(aes(tax_unit_income, federal_taxes, color = num_dependents_eitc)) +
+  ggplot(aes(tax_unit_income, fiitax, color = num_dependents_eitc)) +
     geom_point(alpha = .5) +
     scale_x_continuous(labels = scales::label_dollar(scale = .001, suffix = "K"), limits = c(0, 200000)) +
     scale_y_continuous(labels = scales::label_dollar(scale = .001, suffix = "K"), limits = c(-10000, 50000)) +
     scale_color_discrete(type = dep_color_palette) +
-    facet_grid(rows = vars(filing_status), cols = vars(tax_year)) +
+    facet_grid(rows = vars(mstat), cols = vars(year)) +
     labs(
       title = "Federal Income Taxes by Filing Status, Year, and Number of Children",
       x = "\nHousehold Wages",
@@ -130,30 +131,33 @@ An additional use of `usincometaxes` is to run simulations. This could be as sim
 ```{r}
 # calculate taxes from 0 to 200,000 in wages
 wage_linespace <- seq(0, 200000, 100)
+
 n_kids <- 4
+
 base_family_income <- data.frame(
-  tax_year = 2020,
-  filing_status = 'married, jointly',
+  year = 2020,
+  mstat = 'married, jointly',
   state = 'NC',
-  primary_age = 40,
-  spouse_age = 40,
-  num_dependents = n_kids,
-  num_dependents_thirteen = n_kids,
-  num_dependents_seventeen = n_kids,
-  num_dependents_eitc = n_kids,
-  primary_wages = wage_linespace,
-  spouse_wages = 0
+  page = 40,
+  sage = 40,
+  depx = n_kids,
+  age1 = n_kids,
+  age2 = n_kids,
+  age3 = n_kids,
+  pwages = wage_linespace,
+  swages = 0
 )
-# create an additional data se twith no dependents and add it to the original
+
+# create an additional data set with no dependents and add it to the original
 family_income <- base_family_income %>%
   bind_rows(
     # make all numeber of dependent columns 0
     base_family_income %>%
-      mutate(across(starts_with('num'), ~0))
+      mutate(across(c(depx, age1, age2, age3), ~0))
   ) %>%
   # add unique ID to each row
-  mutate(id_number = row_number()) %>%
-  select(id_number, everything())
+  mutate(taxsimid = row_number()) %>%
+  select(taxsimid, everything())
 
 family_income %>%
   head() %>%
@@ -177,20 +181,20 @@ As before, let's merge our tax data with the original input data set.
 
 ```{r}
 family_income <- family_income %>%
-  left_join(family_income_taxes, by = 'id_number')
+  left_join(family_income_taxes, by = 'taxsimid')
 ```
 
 Now, let's look at the relationship between household wages and estimated income tax liabilities. 
 
 ```{r}
 family_income_long <- family_income %>%
-  select(primary_wages, num_dependents_eitc, federal_taxes, state_taxes) %>%
-  pivot_longer(cols = c('federal_taxes', 'state_taxes'), 
+  select(pwages, depx, fiitax, siitax) %>%
+  pivot_longer(cols = c('fiitax', 'siitax'), 
                names_to = 'jurisdiction', values_to = 'taxes_paid') %>%
   mutate(
-    jurisdiction = recode(jurisdiction, 'federal_taxes' = 'Federal Income Taxes', 'state_taxes' = 'NC State Income Taxes'),
-    num_dependents_eitc = factor(num_dependents_eitc, levels = as.character(0:5)),
-    post_tax_wages = primary_wages - taxes_paid
+    jurisdiction = recode(jurisdiction, 'fiitax' = 'Federal Income Taxes', 'siitax' = 'NC State Income Taxes'),
+    num_dependents_eitc = factor(depx, levels = as.character(0:5)),
+    post_tax_wages = pwages - taxes_paid
   )
 # primary_wages, taxes_paid, color = as.character(num_dependents_eitc)
 taxes_line_plot <- function(.data, x_var, y_var, color_var) {
@@ -203,7 +207,7 @@ taxes_line_plot <- function(.data, x_var, y_var, color_var) {
     plt_theme()
   
 }
-taxes_line_plot(family_income_long, primary_wages, taxes_paid, num_dependents_eitc) +
+taxes_line_plot(family_income_long, pwages, taxes_paid, num_dependents_eitc) +
   facet_wrap(vars(jurisdiction)) +
   labs(
     title = "Relationship Between Wages and Income Taxes Paid",
@@ -221,7 +225,7 @@ Note that North Carolina had a flat tax of 5.25% in 2020. That's why their taxes
 We'll create a additional plot comparing pre-tax and post-tax household wages.
 
 ```{r}
-taxes_line_plot(family_income_long, primary_wages, post_tax_wages, num_dependents_eitc) +
+taxes_line_plot(family_income_long, pwages, post_tax_wages, num_dependents_eitc) +
   facet_wrap(vars(jurisdiction)) +
   labs(
     title = "Relationship Between Pre and Post-Tax Wages",
@@ -238,17 +242,17 @@ As noted previously, setting `return_all_information = TRUE` lets us retrieve ad
 
 ```{r}
 tax_items_mapping <- c(
-  eitc = 'Earned Income Tax Credit',
+  v25_eitc = 'Earned Income Tax Credit',
   child_tax_credit = 'Child Tax Credit'
 )
 
 family_income %>%
-  filter(num_dependents_eitc == 4) %>%
-  mutate(child_tax_credit = child_tax_credit_adjusted + child_tax_credit_refundable) %>%
-  select(primary_wages, federal_taxes, eitc, child_tax_credit) %>%
+  filter(depx == 4) %>%
+  mutate(child_tax_credit = v22_child_tax_credit_adjusted + v23_child_tax_credit_refundable) %>%
+  select(pwages, fiitax, v25_eitc, child_tax_credit) %>%
   pivot_longer(cols = names(tax_items_mapping), names_to = 'tax_item', values_to = 'amount') %>%
   mutate(tax_item = recode(tax_item, !!!tax_items_mapping)) %>%
-  taxes_line_plot(primary_wages, amount, tax_item) +
+  taxes_line_plot(pwages, amount, tax_item) +
   labs(
     title = "Relationship Between Wages and Credits",
     subtitle = "Taxpayer is married, filing jointly, in 2020 and has four children under 19",
