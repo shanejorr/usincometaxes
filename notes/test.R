@@ -6,14 +6,14 @@ library(RCurl)
 library(httr)
 library(ssh)
 library(glue)
-#library(usincometaxes)
+library(usincometaxes)
 
 # testing -----------------------------------------
 
 devtools::load_all()
 
 taxsim_input <- data.frame(
-  taxsimid = 1,
+  taxsimid = c(1,2,3),
   mstat = 2,
   year = 1970,
   ltcg = 100000

@@ -85,7 +85,8 @@ to `taxsim_calculate_taxes()`. Setting `return_all_information` to `FALSE` retur
 federal and state tax liabilities and FICA taxes. When `return_all_information` is `TRUE` 44 different tax 
 items are returned.
 
-See the [Description of Output Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-output.html) vignette for output information.
+`usoncometax`'s output contains the same information and column names as [TAXSIM 35](http://taxsim.nber.org/taxsim35/).
+Therefore, please consult either the [Description of Output Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-output.html) vignette or [TAXSIM 35 documentation](http://taxsim.nber.org/taxsim35/) for more output information.
 
 ```{r}
 family_taxes_full_output <- taxsim_calculate_taxes(
@@ -107,8 +108,17 @@ All columns must have the column names and data types listed in the
 [Description of Input Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html) vignette. 
 These are the same column names found in the [TAXSIM 35](http://taxsim.nber.org/taxsim35/) documentation.
 Therefore, you can consult the package documentation or TAXSIM 35 documentation for more information on input columns.
-The only difference between `usincometaxes` and TAXSIM 35 is that `usincometaxes` allows users to specify the state
-with either the two letter abbreviation or SOI code. `usincometaxes` will convert the abbreviation to an SOI code for TAXSIM 35.
+There are two differences between `usincometaxes` and TAXSIM 35:
+
+1.  `usincometaxes` allows users to specify the state with either the two letter abbreviation or [state SOI code](https://users.nber.org/~taxsim/statesoi.html). 
+`usincometaxes` will convert the abbreviation to an SOI code for TAXSIM 35.
+2.  For filing status, `mstat` users can either use the TAXSIM 35 integer found in TAXSIM 35's documentation or 
+one of the following descriptions:
+    * "single" or 1 for single;
+    * "married, jointly" or 2 for married, filing jointly; 
+    * "married, separately" or 6 for married, filing separately;
+    * "dependent child" or 8 for dependent, usually a child with income; or
+    * "head of household" or 1 for head of household filing status.
 
 The input data frame, `.data`, can contain columns beyond those listed in the vignette. The additional columns will be ignored.
 

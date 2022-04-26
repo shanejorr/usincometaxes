@@ -25,6 +25,7 @@ Suggests:
     rmarkdown,
     scales,
     testthat (>= 3.0.0),
+    here,
     tidyr
 VignetteBuilder: 
     knitr

@@ -39,8 +39,8 @@ get_state_soi <- function(state_column) {
 #'
 #' @param from_taxsim The data set received from TAXSIM.
 #'
-#' @return Data frame containing the row's `id_number` and tax calculations. This data frame can be
-#'     merged with the original input data frame by `id_number`.
+#' @return Data frame containing the row's `taxsimid` and tax calculations. This data frame can be
+#'     merged with the original input data frame by `taxsimid`.
 #'
 #' @keywords internal
 clean_from_taxsim <- function(from_taxsim) {
@@ -107,7 +107,10 @@ from_taxsim_cols <- function() {
     'v32' = 'v32_state_agi', 'v33' = 'v33_state_exemption_amount', 'v34' = 'v34_state_std_deduction_amount',
     'v35' = 'v35_state_itemized_deducation', 'v36' = 'v36_state_taxable_income', 'v37' = 'v37_state_property_tax_credit',
     'v38' = 'v38_state_child_care_credit', 'v39' = 'v39_state_eitc', 'v40' = 'v40_state_total_credits',
-    'v41' = 'v41_state_bracket_rate', 'v42' = 'v42_self_emp_income', 'v43' = 'v43_medicare_tax_unearned_income',
+    'v41' = 'v41_state_bracket_rate',
+
+    # extra federal columns
+    'v42' = 'v42_self_emp_income', 'v43' = 'v43_medicare_tax_unearned_income',
     'v44' = 'v44_medicare_tax_earned_income', 'v45' = 'v45_cares_recovery_rebate'
   )
 
@@ -154,5 +157,24 @@ convert_marginal_tax_rates <- function(marginal_tax_rate_specification) {
          'Primary Wage Earner' = 85,
          'Secondary Wage Earner' = 86
          )
+
+}
+
+#' Convert NA values to either 0 or the proper state value
+#'
+#' @keywords internal
+convert_na <- function(.data, cols_to_convert) {
+
+  cols_to_convert <- intersect(colnames(.data), cols_to_convert)
+
+  if (is.character(.data[['state']])) {
+    .data[['state']][is.na(.data[['state']])] <- 'No State'
+  } else if (is.numeric(.data[['state']])) {
+    .data[['state']][is.na(.data[['state']])] <- 'No State'
+  }
+
+  .data[cols_to_convert][is.na(.data[cols_to_convert])] <- 0
+
+  return(.data)
 
 }

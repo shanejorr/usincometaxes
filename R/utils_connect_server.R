@@ -115,7 +115,7 @@ connect_server_all_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filen
          call. = FALSE)
   }
 
-  error_message <- "Could not connect to the TAXSIM server via ssh."
+  error_message <- "There was a problem with SSH."
 
   tryCatch(
     error = function(cnd) {

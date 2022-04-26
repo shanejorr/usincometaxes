@@ -2,7 +2,7 @@
 #'
 #' Check to ensure all the required column are present and data types are correct. This function binds all the checks through helper functions.
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#' @param .data A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`
 #' @param state_column_name The column name of the state column.
 #'
@@ -13,8 +13,8 @@ check_data <- function(.data, cols, state_column_name) {
   # make sure all the required column are present
   check_required_cols(cols)
 
-  # ensure the id_number column is an integer and contains unique values
-  check_id_number(.data[['id_number']])
+  # ensure the taxsimid column is an integer and contains unique values
+  check_taxsimid(.data[['taxsimid']])
 
   # some numeric columns must have all values greater than zero
   check_greater_zero(.data, cols)
@@ -42,7 +42,7 @@ check_data <- function(.data, cols, state_column_name) {
 #'
 #' State should be either a two letter abbreviation or full state name. Check to make sure this is true.
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#' @param .data A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
 #' @param state_column_name The column name of the state column.
 #'
@@ -53,7 +53,7 @@ check_state <- function(.data, cols, state_column_name) {
   # if state is a character
   if (is.character(.data[[state_column_name]])) {
 
-    proper_states <- c(datasets::state.abb, datasets::state.name, "DC", "District of Columbia")
+    proper_states <- c(datasets::state.abb, datasets::state.name, "DC", "District of Columbia", "No State")
 
     # make state list and entered data lower case to ensure a state is not recogizend simply because of capitalization
     proper_states <- tolower(proper_states)
@@ -122,7 +122,7 @@ check_filing_status <- function(filing_status_vector) {
   )
 
   # return an error if any of marital status are NA
-  if (any(is.na(filing_status_vector))) stop("No 'mstat' values can be NA.")
+  if (any(is.na(filing_status_vector))) stop("No mstat values can be NA.")
 
   if (is.numeric(filing_status_vector)) {
 
@@ -160,7 +160,7 @@ check_filing_status <- function(filing_status_vector) {
 #'
 #' Checks that each column which should be numeric or integer is numeric or integer.
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#' @param .data A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
 #'
 #' @keywords internal
@@ -198,7 +198,7 @@ check_numeric <- function(.data, cols) {
 #'
 #' Some columns must have all values greater than zero. Check to make sure this is true.
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#' @param .data A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
 #'
 #' @keywords internal
@@ -231,30 +231,30 @@ check_greater_zero <- function(.data, cols) {
 
 }
 
-#' Check that the `id_number` column is an integer and every value is unique.
+#' Check that the `taxsimid` column is an integer and every value is unique.
 #'
-#' The `id_number` column requires a whole number and unique value. Check to make sure this is true.
+#' The `taxsimid` column requires a whole number and unique value. Check to make sure this is true.
 #'
-#' @param id_number_col Vector that id the `id_number` column. This will always be the column `id_number` in the input data frame.
+#' @param taxsimid_col Vector that id the `taxsimid` column. This will always be the column `taxsimid` in the input data frame.
 #'
 #' @keywords internal
-check_id_number <- function(id_number_col) {
+check_taxsimid <- function(taxsimid_col) {
 
-  # make sure id_number is an integer
-  id_remainders <- c(id_number_col) %% 1
+  # make sure taxsimid is an integer
+  id_remainders <- c(taxsimid_col) %% 1
 
   all(id_remainders == 0)
 
   if (!all(id_remainders == 0)) {
-    stop("id_number must be whole numbers.", call. = FALSE)
+    stop("taxsimid must be whole numbers.", call. = FALSE)
   }
 
   # make sure every value is unique
-  number_unique_values <- length(unique(id_number_col))
-  total_values <- length(id_number_col)
+  number_unique_values <- length(unique(taxsimid_col))
+  total_values <- length(taxsimid_col)
 
   if (number_unique_values != total_values) {
-    stop("id_number must contain unique values.", call. = FALSE)
+    stop("taxsimid must contain unique values.", call. = FALSE)
   } else {
     return(NULL)
   }
@@ -278,7 +278,7 @@ check_parameters <- function(.data, all_columns) {
 
 #' Ensure single taxpayers do not have spouse ages or income
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#' @param .data A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
 #'
 #' @keywords internal

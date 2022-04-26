@@ -1,6 +1,6 @@
 test_that("Package output matches TAXSIM test file", {
 
-  # example test from TAXSIM http://users.nber.org/~taxsim/taxsim32/low-level-remote.html
+  # example test from TAXSIM http://users.nber.org/~taxsim/taxsim35/low-level-remote.html
   taxsim_input <- data.frame(
     taxsimid = 1,
     mstat = 2,
@@ -12,7 +12,7 @@ test_that("Package output matches TAXSIM test file", {
 
   federal_taxes <- taxsim_output$fiitax
 
-  # number from http://users.nber.org/~taxsim/taxsim32/low-level-remote.html
+  # number from http://users.nber.org/~taxsim/taxsim35/low-level-remote.html
   test_result <- 16700.04
 
   expect_equal(federal_taxes, test_result)

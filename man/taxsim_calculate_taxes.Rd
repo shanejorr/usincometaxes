@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculate_taxes.R
 \name{taxsim_calculate_taxes}
 \alias{taxsim_calculate_taxes}
-\title{Calculate state and federal taxes using TAXSIM 32.}
+\title{Calculate state and federal taxes using TASXSIM 35.}
 \usage{
 taxsim_calculate_taxes(
   .data,
@@ -22,133 +22,43 @@ or only key information (FALSE). Returning all information returns 42 columns of
 returning key information returns 9 columns. It is faster to download results with only key information.}
 }
 \value{
-Returns a data frame with the following columns:
-
-\code{id_number} The unique id number for the row that corresponds to the id number in \code{.data}
-
-\code{federal_taxes} Total federal taxes due. Corresponds to \code{fiitax} in TAXSIM.
-
-\code{state_taxes} Total state taxes due; if state taxes were calculated.
-Corresponds to \code{siitax} in TAXSIM.
-
-\code{fica_taxes} Total FICA taxes due. This includes both the employee and company share.
-Corresponds to \code{fica} in TAXSIM.
-
-\code{federal_marginal_rate} Federal marginal tax rate of taxpayer. Corresponds to \code{frate} in TAXSIM.
-
-\code{state_marginal_rate} State marginal tax rate of taxpayer. Corresponds to \code{srate} in TAXSIM.
-
-\code{fica_rate} FICA rate. Corresponds to \code{ficar} in TAXSIM.
-
-Additional columns will be returned if \code{return_all_information = TRUE}
+The output data set contains all the information returned by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},
+using the same column names. Descriptions of these columns can be found at the bottom of the page
+containing \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35's documention}.
 }
 \description{
 This function calculates state and federal income taxes using the TAXSIM 35 tax simulator.
 See \url{http://taxsim.nber.org/taxsim35/} for more information on TAXSIM 35.
 }
-\section{Required columns}{
+\section{Formatting your data}{
 
 
-\code{id_number} An arbitrary, non-negative, whole number. Each number must be unique.
-This number links the results from TAXSIM 32 to the original data frame with entries.
+In the input data set, \code{.data}, each column is a tax characteristic (year, filing status, income, etc.)
+and each row is a tax filing unit.
 
-\code{tax_year} Tax year ending Dec 31 (4 digits between 1960 and 2023). State must be zero if
-year is before 1977 or after 2023.
+Columns should take the same names, and fulfill the same requirements, as those needed for \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
+Potential columns, with there names and descriptions, can be found at: \href{http://taxsim.nber.org/taxsim35/}{http://taxsim.nber.org/taxsim35/}.
 
-\code{filing_status} Filing status of tax unit. One of the following: "single" for single;
-"married, jointly" for married, filing jointly; "married, separately" for married, filing separately;
-"dependent child" for dependent, usually a child with income; or "head of household" for head of household filing status.
+The following columns are required: \code{taxsimid}, \code{year}, \code{mstat}, and \code{state}.
+
+There are two points where \code{\link{taxsim_calculate_taxes}} departs from \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
+\enumerate{
+\item For filing status, \code{mstat}, users can either enter the number allowed by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}
+or one of the following descriptions:
+}
+\itemize{
+\item "single"
+\item "married, jointly"
+\item "married, separately"
+\item "dependent child"
+\item "head of household"
+}
+\enumerate{
+\item For \code{year}, users can either enter the SOI code, as required by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},
+the two-letter state abbreviation, or the full name of the state.
 }
 
-\section{Optional columns}{
-
-
-\code{state} State two letter abbreviation or state SOI code. If state income taxes are not needed,
-either label as "No State" or remove this variable. State income tax information is only available from 1977 to 2023.
-
-\code{primary_age} Age of primary taxpayer as of December 31st of tax year. Taxpayer age variables
-determine eligibility for additional standard deductions, personal exemption, EITC and AMT exclusion.
-
-\code{spouse_age} Age of spouse as of December 31st of tax year.
-
-\code{num_dependents} Total number of dependents.
-
-\code{num_dependents_thirteen} Number of children under 13 with eligible child care expenses (Dependent Care Credit).
-
-\code{num_dependents_seventeen} Number of children under 17 for the entire tax year (Child Credit).
-This includes children under 13.
-
-\code{num_dependents_eitc} Number of qualifying children for EITC. (Typically younger than 19 or
-younger than 24 and a full-time student).
-
-\code{primary_wages} Wage and salary income of Primary Taxpayer (include self-employment but no QBI).
-
-\code{spouse_wages} Wage and salary income of Spouse (include self-employment but no QBI). Must
-be zero or the column should not exist for non-joint returns.
-
-\code{dividends} Dividend income (qualified dividends only for 2003 on).
-
-\code{interest} Interest income received (+/-).
-
-\code{short_term_capital_gains} Short Term Capital Gains or losses (+/-).
-
-\code{long_term_capital_gains} Long Term Capital Gains or losses (+/-).
-
-\code{other_property_income} Other property income subject to NIIT, including: unearned or limited
-partnership and passive S-Corp profits; rent not eligible for QBI deduction; non-qualified
-dividends; capital gains distributions on form 1040; and other income or loss not otherwise enumerated here.
-
-\code{other_non_property_income} Other non-property income not subject to Medicare NIIT such as:
-alimony; nonwage fellowships; and state income tax refunds (itemizers only). Also includes
-adjustments and items such as: alimony paid; Keogh and IRA contributions; foreign income exclusion; and NOLs
-
-\code{pensions} Taxable Pensions and IRA distributions.
-
-\code{social_security} Gross Social Security Benefits.
-
-\code{unemployment} Unemployment compensation received.
-
-\code{other_transfer_income} Other non-taxable transfer income such as: welfare; workers comp;
-veterans benefits; and child support that would affect eligibility for state property tax
-rebates but would not be taxable at the federal level.
-
-\code{rent_paid} Rent paid (used only for calculating state property tax rebates).
-
-\code{property_taxes} Real Estate taxes paid. This is a preference for the AMT and is is also
-used to calculate state property tax rebates.
-
-\code{other_itemized_deductions} Other Itemized deductions that are a preference for the Alternative
-Minimum Tax. These would include: Other state and local taxes (line 8 of Schedule A) plus
-local income tax; Preference share of medical expenses; Miscellaneous (line 27).
-
-\code{child_care_expenses} Child care expenses.
-
-\code{misc_deductions} Deductions not included in \code{other_itemized_deductions} and not a preference
-for the AMT, including (on Schedule A for 2009). Might include: Deductible medical expenses
-not included in Line 16; Motor Vehicle Taxes paid; Home mortgage interest; Charitable contributions;
-and Casulty or Theft Losses.
-
-\code{scorp_income} Active S-Corp income (is SSTB).
-
-\code{qualified_business_income} Primary Taxpayer's Qualified Business Income (QBI) subject to a
-preferential rate without phaseout and assuming sufficient wages paid or capital to be eligible
-for the full deduction. Subject to SECA and Medicare additional Earnings Tax.
-
-\code{specialized_service_trade} Primary Taxpayer's Specialized Service Trade or Business service
-(SSTB) with a preferential rate subject to claw-back. Subject to SECA and Medicare Additional Earnings Tax.
-
-\code{spouse_qualified_business_income} Spouse's QBI. Must be zero for non-joint returns, or the
-column should not exist.
-
-\code{spouse_specialized_service_trade} Spouse's SSTB. Must be zero for non-joint returns, or the
-column should not exist.
-}
-
-\section{Note on number of dependents}{
-
-
-\code{num_dependents} columns are not mutually exclusive. For example, a family with a 13 year old
-can report the dependent in \code{num_dependents_thirteen} and also in \code{num_dependents_seventeen}.
+It is OK if the input data set, \code{.data}, contains columns in addition to the ones that are used by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
 }
 
 \section{Giving credit where it is due}{
@@ -156,7 +66,7 @@ can report the dependent in \code{num_dependents_thirteen} and also in \code{num
 
 The NBER's \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35} tax simulator does all tax
 calculations. This package simply lets users interact with the tax simulator through R. Therefore,
-users should cite the TAXSIM 32 tax simulator when they use this package in their work:
+users should cite the TASXSIM 35 tax simulator when they use this package in their work:
 
 Feenberg, Daniel Richard, and Elizabeth Coutts, An Introduction to the TAXSIM Model,
 Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
@@ -165,16 +75,16 @@ Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-19
 \examples{
 
 family_income <- data.frame(
-    id_number = c(1, 2),
-     state = c('North Carolina', 'NY'),
-     tax_year = c(2015, 2015),
-     filing_status = c('single', 'married, jointly'),
-     primary_wages = c(10000, 100000),
-     primary_age = c(26, 36)
+    taxsimid = c(1, 2),
+    state = c('North Carolina', 'NY'),
+    year = c(2015, 2015),
+    mstat = c('single', 'married, jointly'),
+    pwages = c(10000, 100000),
+    page = c(26, 36)
 )
 
 family_taxes <- taxsim_calculate_taxes(family_income)
 
-merge(family_income, family_taxes, by = 'id_number')
+merge(family_income, family_taxes, by = 'taxsimid')
 
 }

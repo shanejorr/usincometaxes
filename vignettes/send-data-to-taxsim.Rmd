@@ -1,8 +1,8 @@
 ---
-title: "Manually Upload Data to TAXSIM32"
+title: "Manually Upload Data to TAXSIM 35"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Manually Upload Data to TAXSIM32}
+  %\VignetteIndexEntry{Manually Upload Data to TAXSIM 35}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -18,19 +18,22 @@ This function takes a data set that is in the format required for \code{\link{ta
 checks it to make sure it is in the proper format for TAXSIM 35, and then cleans so it can be sent to TAXSIM 35.
 This function is useful for troubleshooting. It is not needed to calculate taxes. The function is useful
 if you continue receiving unreasonable errors from \code{\link{taxsim_calculate_taxes}}. In such as case,
-you can run this function on the data frame used in \code{\link{taxsim_calculate_taxes}}. You should then save
-this data frame as a csv file. Then, upload the file to \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
+you can run this function on your data set. You should then save the resulting
+data frame as a csv file. Then, upload the file to \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
 If there are no errors with TAXSIM 35 then the issue lies in \code{\link{taxsim_calculate_taxes}}.
+}
+\details{
+\code{\link{create_dataset_for_taxsim}} takes the same columns as column names as \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
 }
 \examples{
 
 family_income <- data.frame(
-    id_number = c(1, 2),
-     state = c('North Carolina', 'NY'),
-     tax_year = c(2015, 2015),
-     filing_status = c('single', 'married, jointly'),
-     primary_wages = c(10000, 100000),
-     primary_age = c(26, 36)
+    taxsimid = c(1, 2),
+    state = c('North Carolina', 'NY'),
+    year = c(2015, 2015),
+    mstat = c('single', 'married, jointly'),
+    pwages = c(10000, 100000),
+    page = c(26, 36)
 )
 
 family_taxes <- create_dataset_for_taxsim(family_income)
