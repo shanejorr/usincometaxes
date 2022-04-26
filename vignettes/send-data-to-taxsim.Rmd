@@ -38,10 +38,6 @@ taxsim_filename <- 'taxsim_dataset.csv'
 vroom::vroom_write(taxsim_dataset, taxsim_filename)
 ```
 
-Now, manually upload the  file `taxsim_dataset.csv` to TAXSIM 35's server by going to (https://users.nber.org/~taxsim/taxsim35/), navigating to the following section of the page, and uploading the `.csv` file:
-
-```{r pic, echo=FALSE, warning = FALSE, fig.cap="", out.width = '75%'}
-knitr::include_graphics(here::here("vignettes", "webimg", "taxsim.png"))
-```
+Now, manually upload the  file `taxsim_dataset.csv` to TAXSIM 35's server by going to (https://users.nber.org/~taxsim/taxsim35/), navigating to the section titled 'OR...Upload a (not too large) file with TAXSIM data:', and uploading the `.csv` file:
 
 Errors from the manual upload could guide you in solving any data formatting issues.
