@@ -9,13 +9,15 @@
 #' @keywords internal
 create_ssh_command <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename, port) {
 
-  if (!port %in% c('443', '80', '20')) {
-    stop("`port` must be either '443', '80', or '20'.")
+  if (!port %in% c('22', '443', '80')) {
+    stop("`port` must be either '443', '80', or '22'.")
   }
+
+  ssh_server <- 'taxsim35@taxsimssh.nber.org' # taxsimssh@taxsimssh.nber.org
 
   paste0(
     "ssh -T -o ConnectTimeout=20 -o StrictHostKeyChecking=no -p ",
-    port, " taxsimssh@taxsimssh.nber.org < ",
+    port, " ", ssh_server, " < ",
     to_taxsim_tmp_filename, " > ", from_taxsim_tmp_filename
   )
 
@@ -40,18 +42,15 @@ import_data_ftp <- function(to_taxsim_tmp_filename, idtl) {
 
   upload_address <- paste0("ftp://", user_pwd, "@taxsimftp.nber.org/tmp/", user_id, collapse = "")
 
-  download_address <- paste0("ftp://taxsimftp.nber.org/tmp/", user_id, ".txm32", collapse = "")
+  download_address <- paste0("ftp://taxsimftp.nber.org/tmp/", user_id, ".txm35", collapse = "")
 
   RCurl::ftpUpload(to_taxsim_tmp_filename, upload_address)
 
-  message('Data uploaded ...')
-
   results <- RCurl::getURL(download_address, userpwd = user_pwd)
 
-  message('Data downloaded ...')
-  message("Upload and download successful!")
+  # return an error if nothing is returned in the output
+  if (results == "") stop('ftp did not return any results')
 
-  #vroom::vroom(results, show_col_types = FALSE)
   import_data_helper(I(results), idtl)
 
 }
@@ -68,7 +67,7 @@ import_data_ftp <- function(to_taxsim_tmp_filename, idtl) {
 #' @keywords internal
 connect_server_single_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename, port) {
 
-  error_message <- "Could not connect to the TAXSIM server via ssh."
+  error_message <- "Could not connect to the TAXSIM server via ssh on the port we just tried."
 
   ssh_command <- create_ssh_command(to_taxsim_tmp_filename, from_taxsim_tmp_filename, port)
 
@@ -80,14 +79,17 @@ connect_server_single_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_fi
 
       # default to using the 'shell' function to run ssh command, but use 'ssytem' if shell is not present
       if (exists('shell', mode = "function")) {
-        shell(ssh_command)
+        exc <- shell(ssh_command)
 
       } else if (exists('system', mode = "function")) {
-        system(ssh_command)
+        exc <- system(ssh_command)
 
       } else {
         stop("Could not find the `shell` or `system` functions in R. These functions are needed to run SSH commands.", call. = FALSE)
       }
+
+      # throw an error if there is a non-zero exit code
+      if (exc != 0) stop()
 
       message("Upload and download successful!")
     }
@@ -113,7 +115,7 @@ connect_server_all_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filen
          call. = FALSE)
   }
 
-  error_message <- "Could not connect to the TAXSIM server via ssh."
+  error_message <- "There was a problem with SSH."
 
   tryCatch(
     error = function(cnd) {
@@ -121,13 +123,13 @@ connect_server_all_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filen
         error = function(cnd) {
           tryCatch(
             error = function(cnd) stop(error_message, call. = FALSE),
-            connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '20')
+            connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '80')
           )
         },
-        connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '80')
+        connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '443')
       )
     },
-    connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '443')
+    connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, '22')
   )
 
 }
@@ -147,7 +149,6 @@ import_data_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename, id
   connect_server_all_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename)
 
   # import downloaded data
-  #vroom::vroom(from_taxsim_tmp_filename, show_col_types = FALSE, progress = FALSE)
   import_data_helper(from_taxsim_tmp_filename, idtl)
 
 }
@@ -157,7 +158,7 @@ import_data_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename, id
 #' When returning all columns, the data retrieved from TAXSIM contains an extra column. This function
 #' trims the extra column if we are returning all information.
 #'
-#' @param raw_data The raw data from TAXSIM thatwe want to load into R.
+#' @param raw_data The raw data from TAXSIM that we want to load into R.
 #'
 #' @keywords internal
 import_data_helper <- function(raw_data, idtl) {

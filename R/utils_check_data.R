@@ -2,7 +2,7 @@
 #'
 #' Check to ensure all the required column are present and data types are correct. This function binds all the checks through helper functions.
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#' @param .data A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`
 #' @param state_column_name The column name of the state column.
 #'
@@ -13,25 +13,26 @@ check_data <- function(.data, cols, state_column_name) {
   # make sure all the required column are present
   check_required_cols(cols)
 
-  # ensure the id_number column is an integer and contains unique values
-  check_id_number(.data[['id_number']])
+  # ensure the taxsimid column is an integer and contains unique values
+  check_taxsimid(.data[['taxsimid']])
 
   # some numeric columns must have all values greater than zero
   check_greater_zero(.data, cols)
 
   # make sure state names are either two letter abbreviations or full name of state
-  check_state(.data, cols, state_column_name)
+  # only if state si a character
+  if (is.character(.data[['state']])) {
+    check_state(.data, cols, state_column_name)
+  }
 
   # make sure that no single tax filers have spouse ages or income
   check_spouse(.data, cols)
 
   # tax year must be between the following two values
   # tax year is required, so we don't need to check whether it exists
-  if (!all(.data$tax_year >= 1960 & .data$tax_year <= 2024)) {
-    stop("`tax_year` must be a numeric value between 1960 and 2023", call. = FALSE)
+  if (!all(.data$year >= 1960 & .data$year <= 2024)) {
+    stop("`year` must be a numeric value between 1960 and 2023", call. = FALSE)
   }
-
-  message('All required columns are present and the data is in the proper format!')
 
   return(NULL)
 
@@ -41,7 +42,7 @@ check_data <- function(.data, cols, state_column_name) {
 #'
 #' State should be either a two letter abbreviation or full state name. Check to make sure this is true.
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#' @param .data A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
 #' @param state_column_name The column name of the state column.
 #'
@@ -49,17 +50,30 @@ check_data <- function(.data, cols, state_column_name) {
 check_state <- function(.data, cols, state_column_name) {
 
   # state should either be the two letter abbreviation or full name
-  if (state_column_name %in% cols) {
+  # if state is a character
+  if (is.character(.data[[state_column_name]])) {
 
-    proper_states <- c(datasets::state.abb, datasets::state.name, "DC", "District of Columbia")
+    proper_states <- c(datasets::state.abb, datasets::state.name, "DC", "District of Columbia", "No State")
 
     # make state list and entered data lower case to ensure a state is not recogizend simply because of capitalization
     proper_states <- tolower(proper_states)
     entered_states <- tolower(.data[[state_column_name]])
 
     if (!all(entered_states %in% proper_states)) {
-      stop("One of your state names is unrecognizable. Names should either be the full name or two letter abbreviation.", call. = FALSE)
+      stop("One of your state names is unrecognizable. Names should either be the full name, two letter abbreviation, or SOI code.", call. = FALSE)
     }
+
+  } else if (is.numeric(.data[[state_column_name]])) {
+
+    # check input SOIs against crosswalk
+    wrong_soi <- setdiff(.data[[state_column_name]], soi_and_states_crosswalk)
+
+    # produce an error if there are any wrong SOIs
+    if (length(wrong_soi) > 0) {
+      soi_string <- paste0(wrong_soi, collapse = ", ")
+      stop(paste0("The following state SOI code is nto a valid SOI: ", soi_string), call. = FALSE)
+    }
+
   }
 
   return(NULL)
@@ -73,7 +87,7 @@ check_state <- function(.data, cols, state_column_name) {
 #' @keywords internal
 check_required_cols <- function(cols) {
 
-  required_columns <- names(taxsim_cols())[1:3]
+  required_columns <- taxsim_cols()[1:3]
   required_cols_present <- sort(intersect(required_columns, cols))
   all_required_present <- isTRUE(all.equal(sort(required_columns), sort(required_cols_present)))
 
@@ -90,11 +104,63 @@ check_required_cols <- function(cols) {
 
 }
 
+#' Ensure values for filing status 'mstat' are proper.
+#'
+#' @param filing_status_vector Column, as a vector, containing filing status
+#'
+#' @keywords internal
+check_filing_status <- function(filing_status_vector) {
+
+  # mapping of strings to integers
+  # if this changes, need to change test in test-calculate_taxes, where we copy and paste this
+  filing_status_values <-   c(
+    'single' = 1,
+    'married, jointly' = 2,
+    'married, separately' = 6,
+    'dependent child' = 8,
+    'head of household' = 1
+  )
+
+  # return an error if any of marital status are NA
+  if (any(is.na(filing_status_vector))) stop("No mstat values can be NA.")
+
+  if (is.numeric(filing_status_vector)) {
+
+    # make sure that all values are one of the valid options
+    diff_names <- setdiff(unique(filing_status_vector), filing_status_values)
+
+    if (length(diff_names) > 0) {
+      stop(paste('The following filing status (mstat) are in your data, but are not legitimate values: ', paste0(diff_names, collapse = " "), collapse = " "))
+    }
+
+  } else if (is.character(filing_status_vector)) {
+
+    # make sure that all values are one of the valid options
+    diff_names <- setdiff(unique(tolower(filing_status_vector)), names(filing_status_values))
+
+    if (length(diff_names) > 0) {
+      stop(paste('The following filing status (mstat) are in your data, but are not legitimate values: ', paste0(diff_names, collapse = " "), collapse = " "))
+    }
+
+    filing_status_vector <- tolower(filing_status_vector)
+
+    filing_status_vector[filing_status_vector %in% c('single', 'head of household')] <- 1
+    filing_status_vector[filing_status_vector == 'married, jointly'] <- 2
+    filing_status_vector[filing_status_vector == 'married, separately'] <- 6
+    filing_status_vector[filing_status_vector == 'dependent child'] <- 8
+    filing_status_vector[filing_status_vector == 'head of household'] <- 1
+
+  }
+
+  return(filing_status_vector)
+
+}
+
 #' Check numeric columns
 #'
 #' Checks that each column which should be numeric or integer is numeric or integer.
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#' @param .data A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
 #'
 #' @keywords internal
@@ -132,7 +198,7 @@ check_numeric <- function(.data, cols) {
 #'
 #' Some columns must have all values greater than zero. Check to make sure this is true.
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#' @param .data A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
 #'
 #' @keywords internal
@@ -165,30 +231,30 @@ check_greater_zero <- function(.data, cols) {
 
 }
 
-#' Check that the `id_number` column is an integer and every value is unique.
+#' Check that the `taxsimid` column is an integer and every value is unique.
 #'
-#' The `id_number` column requires a whole number and unique value. Check to make sure this is true.
+#' The `taxsimid` column requires a whole number and unique value. Check to make sure this is true.
 #'
-#' @param id_number_col Vector that id the `id_number` column. This will always be the column `id_number` in the input data frame.
+#' @param taxsimid_col Vector that id the `taxsimid` column. This will always be the column `taxsimid` in the input data frame.
 #'
 #' @keywords internal
-check_id_number <- function(id_number_col) {
+check_taxsimid <- function(taxsimid_col) {
 
-  # make sure id_number is an integer
-  id_remainders <- c(id_number_col) %% 1
+  # make sure taxsimid is an integer
+  id_remainders <- c(taxsimid_col) %% 1
 
   all(id_remainders == 0)
 
   if (!all(id_remainders == 0)) {
-    stop("id_number must be whole numbers.", call. = FALSE)
+    stop("taxsimid must be whole numbers.", call. = FALSE)
   }
 
   # make sure every value is unique
-  number_unique_values <- length(unique(id_number_col))
-  total_values <- length(id_number_col)
+  number_unique_values <- length(unique(taxsimid_col))
+  total_values <- length(taxsimid_col)
 
   if (number_unique_values != total_values) {
-    stop("id_number must contain unique values.", call. = FALSE)
+    stop("taxsimid must contain unique values.", call. = FALSE)
   } else {
     return(NULL)
   }
@@ -212,32 +278,27 @@ check_parameters <- function(.data, all_columns) {
 
 #' Ensure single taxpayers do not have spouse ages or income
 #'
-#' @param .data A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.
+#' @param .data A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.
 #' @param cols The column names, as a string, in the data set `.data`.
 #'
 #' @keywords internal
 check_spouse <- function(.data, cols) {
 
-  if ('spouse_age' %in% cols) {
+  if ('sage' %in% cols) {
 
-    if (!('primary_age' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.", call. = FALSE)
+    if (!('page' %in% cols)) stop("You have `sage` column, but not `page`. You need to add `page`.", call. = FALSE)
 
-    if (any(.data[['filing_status']] == 'single' & .data[['spouse_age']] > 0)) {
+    if (any(.data[['mstat']] == 1 & .data[['sage']] > 0)) {
 
-      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0", call. = FALSE)
+      stop("You have a 'single' filer with a `sage` greater than 0. All single filers must have spouse ages of 0", call. = FALSE)
 
     }
   }
 
-  if ('spouse_wages' %in% cols) {
+  if ('swages' %in% cols) {
 
-    if (!('primary_wages' %in% cols)) stop("You have `spouse_age` column, but not `primary_age`. You need to add `primary_age`.", call. = FALSE)
+    if (!('pwages' %in% cols)) stop("You have `swages` column, but not `pwages`. You need to add `pwages`.", call. = FALSE)
 
-    if (any(.data[['filing_status']] == 'single' & .data[['spouse_age']] > 0)) {
-
-      stop("You have a 'single' filer with a `spouse_age` greater than 0. All single filers must have spouse ages of 0", call. = FALSE)
-
-    }
   }
 
   NULL

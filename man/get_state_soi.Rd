@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_clean_data.R
 \name{get_state_soi}
 \alias{get_state_soi}
-\title{Get state SOI from name.}
+\title{Get state SOI from state name.}
 \usage{
 get_state_soi(state_column)
 }
@@ -15,7 +15,5 @@ Named integer vector with each number between 1 and 51 representing the state's 
 Names are the state's two letter abbreviation.
 }
 \description{
-Return the integer number state SOI of a state based on either its two letter abbreviation or
-full name.
+Converts state names or state abbreviations to numeric SOI codes, which are required for TAXSIM.
 }
-\keyword{internal}

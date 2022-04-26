@@ -10,8 +10,8 @@ clean_from_taxsim(from_taxsim)
 \item{from_taxsim}{The data set received from TAXSIM.}
 }
 \value{
-Data frame containing the row's \code{id_number} and tax calculations. This data frame can be
-merged with the original input data frame by \code{id_number}.
+Data frame containing the row's \code{taxsimid} and tax calculations. This data frame can be
+merged with the original input data frame by \code{taxsimid}.
 }
 \description{
 Clean the data set received from TAXSIM by renaming columns and removing columns not needed in

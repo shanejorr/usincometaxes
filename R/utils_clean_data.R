@@ -1,15 +1,12 @@
-#' Get state SOI from name.
+#' Get state SOI from state name.
 #'
-#' Return the integer number state SOI of a state based on either its two letter abbreviation or
-#'     full name.
+#' Converts state names or state abbreviations to numeric SOI codes, which are required for TAXSIM.
 #'
 #' @param state_column Vectors containing the states to calculate taxes for. Generally, this is the
 #'     state column from the data set that will be sent to TAXSIM.
 #'
 #' @return Named integer vector with each number between 1 and 51 representing the state's SOI.
 #'     Names are the state's two letter abbreviation.
-#'
-#' @keywords internal
 get_state_soi <- function(state_column) {
 
   # the SOI crosswalk has two letter abbreviation
@@ -42,8 +39,8 @@ get_state_soi <- function(state_column) {
 #'
 #' @param from_taxsim The data set received from TAXSIM.
 #'
-#' @return Data frame containing the row's `id_number` and tax calculations. This data frame can be
-#'     merged with the original input data frame by `id_number`.
+#' @return Data frame containing the row's `taxsimid` and tax calculations. This data frame can be
+#'     merged with the original input data frame by `taxsimid`.
 #'
 #' @keywords internal
 clean_from_taxsim <- function(from_taxsim) {
@@ -54,11 +51,9 @@ clean_from_taxsim <- function(from_taxsim) {
     names(from_taxsim)[names(from_taxsim) == col] <- new_colname_output
   }
 
-  # year and state will be in the original dataset, so they are not needed
-  # find what column number they are and remove that column number
-  cols_to_remove <- which(colnames(from_taxsim) %in% c('year', 'state'))
-
-  from_taxsim <- from_taxsim[-cols_to_remove]
+  # remove state and year because they are also in the input data
+  # since they are in the input data, when you join input and output by taxsimid, they will appear twice
+  from_taxsim[c('state', 'year')] <- NULL
 
   return(from_taxsim)
 
@@ -71,21 +66,16 @@ clean_from_taxsim <- function(from_taxsim) {
 #' @keywords internal
 taxsim_cols <- function() {
 
+  # NOTE: You need to change replace_missing() and check_required_cols() if you change this function.
+
   c(
-    'id_number' = 'taxsimid', 'tax_year' = 'year', 'filing_status' = 'mstat', # required
-    'state' = 'state', 'primary_age' = 'page', 'spouse_age' = 'sage',
-    'num_dependents' = 'depx', 'num_dependents_thirteen' = 'dep13',
-    'num_dependents_seventeen' = 'dep17', 'num_dependents_eitc' = 'dep18',
-    'primary_wages' = 'pwages', 'spouse_wages' = 'swages', 'dividends' = 'dividends', 'interest' = 'intrec',
-    'short_term_capital_gains' = 'stcg', 'long_term_capital_gains' = 'ltcg',
-    'other_property_income' = 'otherprop', 'other_non_property_income' = 'nonprop',
-    'pensions' = 'pensions', 'social_security' = 'gssi', 'unemployment' = 'ui',
-    'other_transfer_income' = 'transfers', 'rent_paid' = 'rentpaid',
-    'property_taxes' = 'proptax', 'other_itemized_deductions' = 'otheritem',
-    'child_care_expenses' = 'childcare', 'misc_deductions' = 'mortgage',
-    'scorp_income' = 'scorp', 'qualified_business_income' = 'pbusinc', 'specialized_service_trade' = 'pprofinc',
-    'spouse_qualified_business_income' = 'sbusinc', 'spouse_specialized_service_trade' = 'sprofinc',
-    'mtr' = 'mtr', 'idtl'= 'idtl'
+    'taxsimid', 'year', 'mstat', # required
+    'state', 'page', 'sage',
+    'depx', 'age1', 'age2', 'age3', # dependents
+    'pwages', 'swages', 'dividends', 'intrec', 'stcg', 'ltcg', 'otherprop', 'nonprop',
+    'pensions', 'gssi', 'ui', 'transfers', 'rentpaid', 'proptax', 'otheritem',
+    'childcare', 'mortgage', 'scorp', 'pbusinc', 'pprofinc', 'sbusinc', 'sprofinc',
+    'mtr', 'idtl'
   )
 
 }
@@ -100,25 +90,28 @@ from_taxsim_cols <- function() {
   # named vector to rename the columns of the data set received from TAXSIM
   col_names_output <- c(
     # primary output
-    'taxsimid' = 'id_number', 'year' = 'year', 'state' = 'state',  'fiitax' = 'federal_taxes',
-    'siitax' = 'state_taxes',  'fica' = 'fica_taxes',  'frate' = 'federal_marginal_rate',
-    'srate' = 'state_marginal_rate',  'ficar' = 'fica_rate',
+    'taxsimid' = 'taxsimid', 'year' = 'year', 'state' = 'state',  'fiitax' = 'fiitax',
+    'siitax' = 'siitax',  'fica' = 'fica',  'frate' = 'frate',
+    'srate' = 'srate',  'ficar' = 'ficar', 'tfica' = 'tfica',
 
     # extended output
-    'v10' = 'federal_agi', 'v11' = 'ui_agi', 'v12' = 'soc_sec_agi', 'v13' = 'zero_bracket_amount',
-    'v14' = 'personal_exemptions', 'v15' = 'exemption_phaseout', 'v16' = 'deduction_phaseout',
-    'v17' = 'itemized_deductions', 'v18' = 'federal_taxable_income', 'v19' = 'tax_on_taxable_income',
-    'v20' = 'exemption_surtax', 'v21' = 'general_tax_credit', 'v22' = 'child_tax_credit_adjusted',
-    'v23' = 'child_tax_credit_refundable', 'v24' = 'child_care_credit', 'v25' = 'eitc',
-    'v26' = 'amt_income', 'v27' = 'amt_liability', 'v28' = 'fed_income_tax_before_credit', 'v29' = 'fica',
+    'v10' = 'v10_federal_agi', 'v11' = 'v11_ui_agi', 'v12' = 'v12_soc_sec_agi', 'v13' = 'v13_zero_bracket_amount',
+    'v14' = 'v14_personal_exemptions', 'v15' = 'v15_exemption_phaseout', 'v16' = 'v16_deduction_phaseout',
+    'v17' = 'v17_itemized_deductions', 'v18' = 'v18_federal_taxable_income', 'v19' = 'v19_tax_on_taxable_income',
+    'v20' = 'v20_exemption_surtax', 'v21' = 'v21_general_tax_credit', 'v22' = 'v22_child_tax_credit_adjusted',
+    'v23' = 'v23_child_tax_credit_refundable', 'v24' = 'v24_child_care_credit', 'v25' = 'v25_eitc',
+    'v26' = 'v26_amt_income', 'v27' = 'v27_amt_liability', 'v28' = 'v28_fed_income_tax_before_credit', 'v29' = 'v29_fica',
 
     # columns are zero if no state is specified
-    'v30' = 'state_household_income', 'v31' = 'state_rent_expense',
-    'v32' = 'state_agi', 'v33' = 'state_exemption_amount', 'v34' = 'state_std_deduction_amount',
-    'v35' = 'state_itemized_deducation', 'v36' = 'state_taxable_income', 'v37' = 'state_property_tax_credit',
-    'v38' = 'state_child_care_credit', 'v39' = 'state_eitc', 'v40' = 'state_total_credits',
-    'v41' = 'state_bracket_rate', 'v42' = 'self_emp_income', 'v43' = 'medicare_tax_unearned_income',
-    'v44' = 'medicare_tax_earned_income', 'v45' = 'cares_recovery_rebate'
+    'v30' = 'v30_state_household_income', 'v31' = 'v31_state_rent_expense',
+    'v32' = 'v32_state_agi', 'v33' = 'v33_state_exemption_amount', 'v34' = 'v34_state_std_deduction_amount',
+    'v35' = 'v35_state_itemized_deducation', 'v36' = 'v36_state_taxable_income', 'v37' = 'v37_state_property_tax_credit',
+    'v38' = 'v38_state_child_care_credit', 'v39' = 'v39_state_eitc', 'v40' = 'v40_state_total_credits',
+    'v41' = 'v41_state_bracket_rate',
+
+    # extra federal columns
+    'v42' = 'v42_self_emp_income', 'v43' = 'v43_medicare_tax_unearned_income',
+    'v44' = 'v44_medicare_tax_earned_income', 'v45' = 'v45_cares_recovery_rebate'
   )
 
   return(col_names_output)
@@ -128,7 +121,7 @@ from_taxsim_cols <- function() {
 #' @keywords internal
 non_numeric_col <- function() {
 
-  # filing status and state are the only non-numeric column
+  # state is the only non-numeric column
   # integer numbers represent the number in taxsim_cols
   c(3, 4)
 }
@@ -142,54 +135,10 @@ greater_zero_cols <- function() {
 
 }
 
-#' Recode filing status.
-#'
-#' Check to make sure the strings in `filing_status` are correct and recode from a string to an integer.
-#'
-#' @param filing_status_colname Column, as a vector, containing filing status
-#'
-#' @return Vector with integers reflecting numeric value of filing status.
-#'
-#' @keywords internal
-recode_filing_status <- function(filing_status_colname) {
-
-  # mapping of strings to integers
-  filing_status_mappings <- c(
-    'single' = '1',
-    'married, jointly' = '2',
-    'married, separately' = '6',
-    'dependent child' = '8',
-    'head of household' = '1'
-  )
-
-  # make sure that all values are one of the valid options
-  diff_names <- setdiff(unique(filing_status_colname), names(filing_status_mappings))
-
-  if (length(diff_names) > 0) {
-    stop(paste0(
-      'Invalid filing status. Acceptable values are:  ',
-      paste0(names(filing_status_mappings), collapse = "; ")
-    ))
-  }
-
-  # change strings to integers
-  for (i in seq_along(filing_status_mappings)) {
-
-    string_filing_status <- names(filing_status_mappings)[i]
-    filing_status_colname[filing_status_colname == string_filing_status] <- as.integer(filing_status_mappings[i])
-
-  }
-
-  filing_status_colname <- as.integer(filing_status_colname)
-
-  return(filing_status_colname)
-
-}
-
 #' Recode marginal tax rates.
 #'
 #' Marginal tax rates are specified with the \code{marginal_tax_rates} parameter. The possible values are
-#' descriptive strings. But,TAXSIM requires integers. Convert descriptice strings to integers.
+#' descriptive strings. But,TAXSIM requires integers. Convert descriptive strings to integers.
 #'
 #' @param marginal_tax_rate String representing the \code{marginal_tax_rate} parameter in \code{taxsim_calculate_taxes}
 #'
@@ -208,5 +157,24 @@ convert_marginal_tax_rates <- function(marginal_tax_rate_specification) {
          'Primary Wage Earner' = 85,
          'Secondary Wage Earner' = 86
          )
+
+}
+
+#' Convert NA values to either 0 or the proper state value
+#'
+#' @keywords internal
+convert_na <- function(.data, cols_to_convert) {
+
+  cols_to_convert <- intersect(colnames(.data), cols_to_convert)
+
+  if (is.character(.data[['state']])) {
+    .data[['state']][is.na(.data[['state']])] <- 'No State'
+  } else if (is.numeric(.data[['state']])) {
+    .data[['state']][is.na(.data[['state']])] <- 'No State'
+  }
+
+  .data[cols_to_convert][is.na(.data[cols_to_convert])] <- 0
+
+  return(.data)
 
 }

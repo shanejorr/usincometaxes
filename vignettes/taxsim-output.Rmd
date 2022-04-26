@@ -28,15 +28,17 @@ Setting `return_all_information` to `FALSE` equates to setting `idtl` to 0 in TA
 
 Returned columns when `return_all_information` = `FALSE`.
 
-* **id_number**: ID number from the input data set, so users can match the tax information
+* **taxsimid**: ID number from the input data set, so users can match the tax information
     with the input data set.
-* **federal_taxes**: Federal income tax liability including capital gains rates, surtaxes, AMT and 
+* **fiitax**: Federal income tax liability including capital gains rates, surtaxes, AMT and 
     refundable and non-refundable credits.
-* **state_taxes**: State income tax liability.
-* **fica_taxes**: Total FICA taxes, including the employers and employees share.
-* **federal_marginal_rate**: Marginal federal tax rate.
-* **state_marginal_rate**: Marginal state tax rate, if a state was identified.
-* **fica_rate**: FICA rate.
+* **siitax**: State income tax liability.
+* **fica**: Total FICA taxes, including the employers and employees share.
+* **frate**: Marginal federal tax rate.
+* **srate**: Marginal state tax rate, if a state was identified.
+* **ficar**: FICA rate.
+* **tfica**: taxpayer liability for FICA.
+Marginal rates are with respect to wage income unless another rate is requested. If detailed intermediate results are requested, the following 35 columns of data are added:.
 
 ## Detailed columns
 
@@ -44,57 +46,46 @@ Returned columns when `return_all_information` = `TRUE`.
 
 * All standard columns.
 <br>
-* **federal_agi**: Federal AGI
-* **ui_agi**: UI in AGI
-* **soc_sec_agi**: Social Security in AGI
-* **zero_bracket_amount**: Zero Bracket Amount
-* **personal_exemptions**: Personal Exemptions
-* **exemption_phaseout**: Exemption Phaseout
-* **deduction_phaseout**: Deduction Phaseout
-* **itemized_deductions**: Itemized Deductions Allowed (Zero for non-itemizers)
-* **federal_taxable_income**: Federal Taxable Income
-* **tax_on_taxable_income**: Tax on Taxable Income (no special capital gains rates)
-* **exemption_surtax**: Exemption Surtax
-* **general_tax_credit**: General Tax Credit
-* **child_tax_credit_adjusted**: Child Tax Credit (as adjusted)
-* **child_tax_credit_refundable**: Additional Child Tax Credit (refundable)
-* **child_care_credit**: Child Care Credit
-* **eitc**: Earned Income Credit (total federal)
-* **amt_income**: Income for the Alternative Minimum Tax
-* **amt_liability**: AMT Liability after credit for regular tax and other allowed credits.
-* **fed_income_tax_before_credit**:Federal Income Tax Before Credits (includes special treatment of Capital gains, 
+* **v10_federal_agi**: Federal AGI
+* **v11_ui_agi**: UI in AGI
+* **v12_soc_sec_agi**: Social Security in AGI
+* **v13_zero_bracket_amount**: Zero Bracket Amount
+* **v14_personal_exemptions**: Personal Exemptions
+* **v15_exemption_phaseout**: Exemption Phaseout
+* **v16_deduction_phaseout**: Deduction Phaseout
+* **v17_itemized_deductions**: Itemized Deductions Allowed (Zero for non-itemizers)
+* **v18_federal_taxable_income**: Federal Taxable Income
+* **v19_tax_on_taxable_income**: Tax on Taxable Income (no special capital gains rates)
+* **v20_exemption_surtax**: Exemption Surtax
+* **v21_general_tax_credit**: General Tax Credit
+* **v22_child_tax_credit_adjusted**: Child Tax Credit (as adjusted)
+* **v23_child_tax_credit_refundable**: Additional Child Tax Credit (refundable)
+* **v24_child_care_credit**: Child Care Credit
+* **v25_eitc**: Earned Income Credit (total federal)
+* **v26_amt_income**: Income for the Alternative Minimum Tax
+* **v27_amt_liability**: AMT Liability after credit for regular tax and other allowed credits.
+* **v28_fed_income_tax_before_credit**:Federal Income Tax Before Credits (includes special treatment of Capital gains, 
     exemption surtax (1988-1996) and 15% rate phaseout (1988-1990) but not AMT)
-* **fica**: FICA
-* **medicare_tax_unearned_income**: Medicare Tax on Unearned Income
-* **medicare_tax_earned_income**: Medicare Tax on Earned Income
-* **cares_recovery_rebate**: CARES act Recovery Rebates
+* **v29_fica**: FICA
 
 The following columns are zero if no state is specified:
 
-* **state_household_income**: State Household Income (imputation for property tax credit)
-* **state_rent_expense**: State Rent Expense (imputation for property tax credit)
-* **state_agi**: State AGI
-* **state_exemption_amount**: State Exemption amount
-* **state_std_deduction_amount**: State Standard Deduction
-* **state_itemized_deducation**: State Itemized Deductions
-* **state_taxable_income**: State Taxable Income
-* **state_property_tax_credit**: State Property Tax Credit
-* **state_child_care_credit**: State Child Care Credit
-* **state_eitc**: State EIC
-* **state_total_credits**: State Total Credits
-* **state_bracket_rate**: State Bracket Rate
-* **self_emp_income**: Earned Self-Employment Income for FICA
+* **v30_state_household_income**: State Household Income (imputation for property tax credit)
+* **v31_state_rent_expense**: State Rent Expense (imputation for property tax credit)
+* **v32_state_agi**: State AGI
+* **v33_state_exemption_amount**: State Exemption amount
+* **v34_state_std_deduction_amount**: State Standard Deduction
+* **v35_state_itemized_deducation**: State Itemized Deductions
+* **v36_state_taxable_income**: State Taxable Income
+* **v37_state_property_tax_credit**: State Property Tax Credit
+* **v38_state_child_care_credit**: State Child Care Credit
+* **v39_state_eitc**: State EIC
+* **v40_state_total_credits**: State Total Credits
+* **v41_state_bracket_rate**: State Bracket Rate
 
-## Mapping `usincometaxes` columns to TAXSIM 32 columns
+Additional federal results:
 
-Results from `usincometaxes` include all output from TAXSIM 32. The table below maps `usincometaxes` 
-output column names to TAXSIM 32 output column names.
-
-```{r, echo = FALSE}
-package_to_taxsim <- data.frame(
-  usincometaxes = unname(usincometaxes:::from_taxsim_cols()),
-  TAXSIM = names(usincometaxes:::from_taxsim_cols())
-)
-
-knitr::kable(package_to_taxsim)
-```
+* **v42_self_emp_income**: Earned Self-Employment Income for FICA
+* **v43_medicare_tax_unearned_income**: Medicare Tax on Unearned Income
+* **v44_medicare_tax_earned_income**: Medicare Tax on Earned Income
+* **v45_cares_recovery_rebate**: CARES act Recovery Rebates

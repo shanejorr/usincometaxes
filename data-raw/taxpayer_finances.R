@@ -4,6 +4,8 @@
 #
 #############################################################################
 
+library(tidyr)
+
 # add to checks: single returns cannot have age or income
 
 # function to create log-normal distributions
@@ -39,9 +41,9 @@ age_youngest <- sample(1:14, size = n, replace = TRUE)
 
 age_youngest <- ifelse(n_kids == 0, NA_integer_, age_youngest)
 
-age_second <- age_youngest + 1
+age_second <- ifelse(n_kids > 1, age_youngest + 1, 0)
 
-age_third <- age_second + 1
+age_third <- ifelse(n_kids > 2, age_youngest + 2, 0)
 
 p_wages <- log_norm(n, 30000, 2.5)
 
@@ -50,22 +52,24 @@ s_wages <- log_norm(n, 30000, 2.5)
 s_wages <- ifelse(file_status == 'single', 0, s_wages)
 
 taxpayer_finances <- data.frame(
-  id_number = seq(1, n),
-  tax_year = rep(years, each = n / length(years)),
-  filing_status = file_status,
+  taxsimid = seq(1, n),
+  year = rep(years, each = n / length(years)),
+  mstat = file_status,
   state = 'NC',
-  primary_age = p_age,
-  spouse_age = s_age,
-  num_dependents = n_kids,
-  num_dependents_thirteen = n_kids,
-  num_dependents_seventeen = n_kids,
-  num_dependents_eitc = n_kids,
-  primary_wages = p_wages,
-  spouse_wages = s_wages,
+  page = p_age,
+  sage = s_age,
+  depx = n_kids,
+  age1 = age_youngest,
+  age2 = age_second,
+  age3 = age_third,
+  pwages = p_wages,
+  swages = s_wages,
   dividends = log_norm(n, 2500, 2),
-  interest = log_norm(n, 2500, 2),
-  short_term_capital_gains = log_norm(n, 1000, 2),
-  long_term_capital_gains = log_norm(n, 2000, 2)
+  intrec = log_norm(n, 2500, 2),
+  stcg = log_norm(n, 1000, 2),
+  ltcg = log_norm(n, 2000, 2)
 )
+
+taxpayer_finances <- dplyr::mutate(taxpayer_finances, dplyr::across(everything(), ~tidyr::replace_na(.x, 0)))
 
 usethis::use_data(taxpayer_finances, internal = FALSE, overwrite = TRUE)

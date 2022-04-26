@@ -17,89 +17,77 @@ knitr::opts_chunk$set(
 
 `usincometaxes` calculates taxes through the function `taxsim_calculate_taxes(.data)`. The key parameter in this function is `.data`, which is a data frame containing the information used to calculate income taxes. Each column in `.data` contains financial or household information and maps to the variables in [TAXSIM 35](http://taxsim.nber.org/taxsim35/) . All variables in TAXSIM 35 can be used in `usincometaxes`. 
 
-The column names in `usincometaxes`, however, are not the same as TAXSIM 35's variable names. `usincometaxes`uses more descriptive column names and column names in `.data` must match the column names listed below exactly.
+The column names in `usincometaxes` are the same as TAXSIM 35's variable names. The data types for inputs are also the same as what is noted in the [TAXSIM 35 documentation](http://taxsim.nber.org/taxsim35/), except for two exceptions.
 
-.data` can contain columns beyond those listed below. The additional columns will be ignored.
+1. For filing status, `mstat`, users can either enter a description of the filing status (shown below) or the number required by TAXSIM.
+2. For state, `state`, users can enter the two letter state abbreviation or the SOI code, as required by TAXSIM.
+
+`usincometaxes` will convert descriptions of filing statuses or state abbreviations to the numbers required by TAXSIM.
+
+`.data` can contain columns beyond those listed below. The additional columns will be ignored.
 
 ## Required columns
 
-* **id_number**: An arbitrary, non-negative, *integer*. This number links the results from TAXSIM
-    32 to the original input data frame specified with `.data`.
-    * `taxsimid` in TAXSIM 35
+* **taxsimid**: An arbitrary, non-negative, *whole number* greater than zero. This number links the results from TAXSIM
+    35 to the original input data frame specified with `.data`.
 <br>       
-* **tax_year**: Tax year ending Dec 31 (4 digits between 1960 and 2023). State must be zero if
+* **year**: Tax year ending Dec 31 (4 digits between 1960 and 2023). State must be zero if
       year is before 1977 or after 2023.
-    * `year` in TAXSIM 35
 <br>          
-* **filing_status**: Filing status of tax unit. One of the following: 
-    * "single" for single;
-    * "married, jointly" for married, filing jointly; 
-    * "married, separately" for married, filing separately;
-    * "dependent child" for dependent, usually a child with income; or
-    * "head of household" for head of household filing status.
-        * `mstat` in TAXSIM 35
+* **mstat**: Filing status of tax unit. One of the following: 
+    * "single" or 1 for single;
+    * "married, jointly" or 2 for married, filing jointly; 
+    * "married, separately" or 6 for married, filing separately;
+    * "dependent child" or 8 for dependent, usually a child with income; or
+    * "head of household" or 1 for head of household filing status.
 <br>   
-
-## Optional columns
-
 * **state**: State two letter abbreviation ('NC'), full state name ('North Carolina') or [state SOI code](https://users.nber.org/~taxsim/statesoi.html) (32). 
     If state income taxes are not needed,
     either label as "No State" or remove this variable. State income tax information is only available from 1977 to 2023.
-    * `state` in TAXSIM 35
-<br>    
-* **primary_age**: Age of primary taxpayer as of December 31st of tax year. Taxpayer age variables
-      determine eligibility for additional standard deductions, personal exemption, EITC and AMT exclusion.
-    * `page` in TAXSIM 35
-<br>    
-* **spouse_age**: Age of spouse as of December 31st of tax year (or 0 / NA if no spouse).
-    * `sage` in TAXSIM 35
-<br>    
-* **num_dependents**: Total number of dependents (part of personal exemption calculation).
-    * `depx` in TAXSIM 32
-<br>    
-* **num_dependents_thirteen**: Number of children under 13 with eligible child care expenses (Dependent Care Credit).
-    * `dep13` in TAXSIM 32
-<br>   
-* **num_dependents_seventeen**: Number of children under 17 for the entire tax year (Child Credit).
-      This includes children under 13.
-    * `dep17` in TAXSIM 32
-<br>   
-* **num_dependents_eitc**: Number of qualifying children for EITC. (Typically younger than 19 or
-      younger than 24 and a full-time student).
-    * `dep18` in TAXSIM 32
-<br>  
 
-*`num_dependents_` columns are not mutually exclusive. For example, a family with a 13 year old
- can report the dependent in `num_dependents_thirteen` and also in `num_dependents_seventeen`.* 
- 
-* **primary_wages**: Wage and salary income of Primary Taxpayer (include self-employment but no QBI).
-    * `pwages` in TAXSIM 35
+## Optional columns
+
+* **page**: Age of primary taxpayer as of December 31st of tax year. Taxpayer age variables
+      determine eligibility for additional standard deductions, personal exemption, EITC and AMT exclusion.
+<br>    
+* **sage**: Age of spouse as of December 31st of tax year (or 0 / NA if no spouse).
+<br>    
+* **depx**: Total number of dependents (part of personal exemption calculation).
+<br>    
+* **age1**: Age of youngest dependent. Used for EITC, CTC and CCC. For 1991+ code students between 20 and 23 as 19 to get the EITC calculation correct. Code infants as "1". If age1 is not present depx is used for the number of child eligible for the EIC, CTC and CDCC.
 <br>   
-* **spouse_wages**: Wage and salary income of Spouse (include self-employment but no QBI). Must
+* **age2**: Age of 2nd youngest dependent.
+<br>   
+* **age3**: Age of 3rd youngest dependent.
+
+Ages of any additional dependents are not relevant for the tax calculation, but all dependents should be included in \code{depx}.
+
+**Incomes**
+
+* **pwages**: Wage and salary income of Primary Taxpayer (exclude QBI).
+<br>   
+* **swages**: Wage and salary income of Spouse (include self-employment but no QBI). Must
       be zero or the column should not exist for non-joint returns.
-    * `swages` in TAXSIM 35
 <br>   
+* **psemp**: Self-employment income of Primary Taxpayer (exclude QBI).
+<br>   
+* **ssemp**: Self-empoyment income of Spouse.
+<br>  
 * **dividends**: Dividend income (qualified dividends only for 2003 on).
-    * `dividends` in TAXSIM 35
 <br>   
-* **interest**: Interest income received (+/-).
-    * `intrec` in TAXSIM 35
+* **intrec**: Interest income received (+/-).
 <br>   
-* **short_term_capital_gains**: Short Term Capital Gains or losses (+/-).
-    * `stcg` in TAXSIM 35
+* **stcg**: Short Term Capital Gains or losses (+/-).
 <br>   
-* **long_term_capital_gains**: Long Term Capital Gains or losses (+/-).
-    * `ltcg` in TAXSIM 35
+* **ltcg**: Long Term Capital Gains or losses (+/-).
 <br>   
-* **other_property_income**: Other property income subject to NIIT, including: 
+* **otherprop**: Other property income subject to NIIT, including: 
     * Unearned or limited partnership and passive S-Corp profits; 
     * Rent not eligible for QBI deduction;
     * Non-qualified dividends; 
-    * Capital gains distributions on form 1040; and
     * Other income or loss not otherwise enumerated here.
-        * `otherprop` in TAXSIM 35
 <br>   
-* **other_non_property_income**: Other non-property income not subject to Medicare NIIT such as:
+* **nonprop**: Other non-property income not subject to Medicare NIIT such as:
     * Alimony; 
     * Nonwage fellowships; 
     * State income tax refunds (itemizers only);
@@ -107,65 +95,47 @@ The column names in `usincometaxes`, however, are not the same as TAXSIM 35's va
     * Keogh and IRA contributions; 
     * Foreign income exclusion; and 
     * NOLs.
-        * `nonprop` in TAXSIM 35
 <br>   
 * **pensions**: Taxable Pensions and IRA distributions.
-    * `pensions` in TAXSIM 35
 <br>   
-* **social_security**: Gross Social Security Benefits.
-    * `ggsi` in TAXSIM 35
+* **ggsi**: Gross Social Security Benefits.
 <br>   
-* **unemployment**: Unemployment compensation received.
-    * `pensions` in TAXSIM 35
+* **pui**: Unemployment Compensation received - primary taxpayer.
 <br>   
-* **other_transfer_income**: Other non-taxable transfer income such as: 
+* **ui**: Unemployment compensation received - secondary taxpayer. The split is relevant only 2020-2021.
+<br>   
+* **transfers**: Other non-taxable transfer income such as: 
     * Welfare; 
     * Workers comp;
     * Veterans benefits; and 
     * Child support that would affect eligibility for state property tax rebates but would not be taxable at the federal level.
-        * `transfers` in TAXSIM 35
 <br>   
-* **rent_paid**: Rent paid (used only for calculating state property tax rebates).
-    * `rentpaid` in TAXSIM 35
+* **rentpaid**: Rent paid (used only for calculating state property tax rebates).
 <br>   
-* **property_taxes**: Real Estate taxes paid. This is a preference for the AMT and is is also
+* **proptax**: Real Estate taxes paid. This is a preference for the AMT and is is also
       used to calculate state property tax rebates.
-    * `proptax` in TAXSIM 35
 <br>   
-* **other_itemized_deductions**: Other Itemized deductions that are a preference for the Alternative Minimum Tax. These would include: 
+* **otheritem**: Other Itemized deductions that are a preference for the Alternative Minimum Tax. These would include: 
     * Other state and local taxes (line 8 of Schedule A) plus local income tax; 
     * Preference share of medical expenses; and 
     * Miscellaneous (line 27).
-        * `otheritem` in TAXSIM 35
 <br>   
-* **child_care_expenses**: Child care expenses.
-    * `childcare` in TAXSIM 35
+* **childcare**: Child care expenses.
 <br>   
-* **misc_deductions**: Deductions not included in `other_itemized_deductions` and not a preference
-      for the AMT, including (on Schedule A for 2009):
-    * Deductible medical expenses not included in Line 16; 
-    * Motor Vehicle Taxes paid; 
-    * Home mortgage interest; 
-    * Charitable contributions; and 
-    * Casualty or Theft Losses.
-        * `mortgage` in TAXSIM 35
-<br>   
-* **scorp_income**: Active S-Corp income (is SSTB).
-    * `scorp` in TAXSIM 35
-<br>   
-* **qualified_business_income**: Primary Taxpayer's Qualified Business Income (QBI) subject to a
+
+**The following are for the TCJA Business Tax Deduction.**
+
+* **scorp**: Active S-Corp income (is SSTB).
+<br>  
+* **pbusinc**: Primary Taxpayer's Qualified Business Income (QBI) subject to a
       preferential rate without phaseout and assuming sufficient wages paid or capital to be eligible
       for the full deduction. Subject to SECA and Medicare additional Earnings Tax.
-     * `pbusinc` in TAXSIM 35
 <br>   
-* **specialized_service_trade**: Primary Taxpayer's Specialized Service Trade or Business service
+* **pprofinc**: Primary Taxpayer's Specialized Service Trade or Business service
       (SSTB) with a preferential rate subject to claw-back. Subject to SECA and Medicare Additional Earnings Tax.
-    * `pprofinc` in TAXSIM 35
 <br>   
-* **spouse_qualified_business_income**: Spouse's QBI. Must be zero for non-joint returns, or the
+* **sbusinc**: Spouse's QBI. Must be zero for non-joint returns, or the
       column should not exist.
-    * `sbusinc` in TAXSIM 35
 <br>   
-* **spouse_specialized_service_trade**: Spouse's SSTB. Must be zero for non-joint returns, or the
+* **sprofinc**: Spouse's SSTB. Must be zero for non-joint returns, or the
       column should not exist.
-    * `sprofinc` in TAXSIM 35

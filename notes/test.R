@@ -6,30 +6,87 @@ library(RCurl)
 library(httr)
 library(ssh)
 library(glue)
-#library(usincometaxes)
+library(usincometaxes)
 
 # testing -----------------------------------------
 
 devtools::load_all()
 
 taxsim_input <- data.frame(
-  id_number = as.integer(1),
-  filing_status = 'married, jointly',
-  tax_year = 1970,
-  long_term_capital_gains = 100000
-) %>%
-  create_dataset_for_taxsim()
+  taxsimid = c(1,2,3),
+  mstat = 2,
+  year = 1970,
+  ltcg = 100000
+)
 
-to_taxsim_filename <- 'test_to_taxsim.csv'
-
-data(taxpayer_finances)
-
+taxsim_output <- taxsim_calculate_taxes(
+  .data = taxsim_input,
+  marginal_tax_rates = 'Wages',
+  return_all_information = FALSE
+)
 
 to_taxsim_tmp_filename <- tempfile(fileext = ".csv")
 vroom_write(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
 
 vroom(to_taxsim_tmp_filename)
 
+from_taxsim_filename <- 'test_from_taxsim.csv'
+
+connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_filename, '443')
+
+ssh_cmd <- paste0("ssh -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no -p 22 taxsimssh@taxsimssh.nber.org < ",
+                  to_taxsim_tmp_filename, " > ", from_taxsim_filename)
+
+a <- system(ssh_cmd)
+
+b <- processx::run(ssh_cmd, c('T', 'o', 'ConnectTimeout', '10', 'StrictHostKeyChecking', 'no',
+                              'taxsimssh@taxsimssh.nber.org', '<', to_taxsim_tmp_filename))
+
+
+px <- paste0(
+  system.file(package = "processx", "bin", "px"),
+  system.file(package = "processx", "bin", .Platform$r_arch, "px.exe")
+)
+
+
+
+# create random user id
+user_id <- paste0(sample(letters, 10), collapse = "")
+
+# username and password are publically listed, so we're not revealing private information
+user_pwd <- 'taxsim:02138'
+
+upload_address <- paste0("ftp://", user_pwd, "@taxsimftp.nber.org/tmp/", user_id, collapse = "")
+
+download_address <- paste0("ftp://taxsimftp.nber.org/tmp/", user_id, ".txm35", collapse = "")
+
+RCurl::ftpUpload(to_taxsim_tmp_filename, upload_address)
+
+message('Data uploaded ...')
+
+results <- RCurl::getURL(download_address, userpwd = user_pwd)
+
+vroom(results)
+
+#curl -u taxsim:02138 -T txpydata.csv ftp://taxsim:02138@taxsimftp.nber.org/tmp/mrdvxlukwaa
+#curl -u taxsim:02138 ftp://taxsimftp.nber.org/tmp/mrdvxlukwaa.txm35
+
+############
+
+sample_data <- data.frame(taxsimid = 1,
+                          mstat = 2,
+                          year = 1970,
+                          ltcg = 100000,
+                          idtl = 2)
+
+library(RCurl)
+write.csv(sample_data, "./txpydata.csv", row.names = F, na="")
+ftpUpload("./txpydata.csv", "ftp://taxsim:02138@taxsimftp.nber.org/tmp/userid")
+results <- getURL("ftp://taxsimftp.nber.org/tmp/userid.txm35", userpwd =
+                    "taxsim:02138")
+taxsim_data <- read.csv(text = results)
+
+######################
 
 family_income <- data.frame(
   id_number = as.integer(c(1, 2)),

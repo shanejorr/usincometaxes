@@ -7,7 +7,7 @@
 check_numeric(.data, cols)
 }
 \arguments{
-\item{.data}{A data frame containing the input parameters for the TAXSIM 32 program. The column names of the input parameters are below. The column can be in any order.}
+\item{.data}{A data frame containing the input parameters for the TAXSIM 35 program. The column names of the input parameters are below. The column can be in any order.}
 
 \item{cols}{The column names, as a string, in the data set \code{.data}.}
 }
