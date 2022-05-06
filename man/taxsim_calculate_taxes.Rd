@@ -74,6 +74,7 @@ Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-19
 
 \examples{
 
+\dontrun{
 family_income <- data.frame(
     taxsimid = c(1, 2),
     state = c('North Carolina', 'NY'),
@@ -83,8 +84,10 @@ family_income <- data.frame(
     page = c(26, 36)
 )
 
+
 family_taxes <- taxsim_calculate_taxes(family_income)
 
 merge(family_income, family_taxes, by = 'taxsimid')
+}
 
 }
