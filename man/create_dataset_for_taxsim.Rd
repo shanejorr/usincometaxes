@@ -38,9 +38,6 @@ family_income <- data.frame(
 
 family_taxes <- create_dataset_for_taxsim(family_income)
 
-\dontrun{
-# write out the data frame as a csv file for uploading to TAXSIM 35
-vroom::vroom_write(family_taxes, delim = ",")
-}
+# You can then write out the data frame as a csv file for uploading to TAXSIM 35
 
 }

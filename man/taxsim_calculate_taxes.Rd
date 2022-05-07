@@ -74,7 +74,7 @@ Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-19
 
 \examples{
 
-\dontrun{
+\donttest{
 family_income <- data.frame(
     taxsimid = c(1, 2),
     state = c('North Carolina', 'NY'),

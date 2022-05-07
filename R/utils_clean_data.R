@@ -105,7 +105,7 @@ from_taxsim_cols <- function() {
     # columns are zero if no state is specified
     'v30' = 'v30_state_household_income', 'v31' = 'v31_state_rent_expense',
     'v32' = 'v32_state_agi', 'v33' = 'v33_state_exemption_amount', 'v34' = 'v34_state_std_deduction_amount',
-    'v35' = 'v35_state_itemized_deducation', 'v36' = 'v36_state_taxable_income', 'v37' = 'v37_state_property_tax_credit',
+    'v35' = 'v35_state_itemized_deduction', 'v36' = 'v36_state_taxable_income', 'v37' = 'v37_state_property_tax_credit',
     'v38' = 'v38_state_child_care_credit', 'v39' = 'v39_state_eitc', 'v40' = 'v40_state_total_credits',
     'v41' = 'v41_state_bracket_rate',
 

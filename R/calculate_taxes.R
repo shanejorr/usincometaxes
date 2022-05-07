@@ -28,10 +28,7 @@
 #'
 #' family_taxes <- create_dataset_for_taxsim(family_income)
 #'
-#' \dontrun{
-#' # write out the data frame as a csv file for uploading to TAXSIM 35
-#' vroom::vroom_write(family_taxes, delim = ",")
-#' }
+#' # You can then write out the data frame as a csv file for uploading to TAXSIM 35
 #'
 #' @export
 create_dataset_for_taxsim <- function(.data) {
@@ -137,15 +134,15 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' It is OK if the input data set, \code{.data}, contains columns in addition to the ones that are used by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
 #'
-#' @returns
+#' @return
 #'
 #' The output data set contains all the information returned by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},
 #' using the same column names. Descriptions of these columns can be found at the bottom of the page
-#' containing \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35's documention}.
+#' containing \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35's documentation}.
 #'
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' family_income <- data.frame(
 #'     taxsimid = c(1, 2),
 #'     state = c('North Carolina', 'NY'),

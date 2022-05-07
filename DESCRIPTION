@@ -3,11 +3,10 @@ Title: Calculate Federal and State Income Taxes in the United States
 Version: 0.2.0
 Authors@R: 
     person("Shane", "Orr", , "shane.j.orr@gmail.com", role = c("aut", "cre"))
-Description: Calculates federal and state income taxes in the United
-    States. It acts as a wrapper to the NBER's TAXSIM 35 tax simulator.
-    TAXSIM 35 conducts the calculations, while usincometaxes prepares the
-    data for TAXSIM 35, sends the data to TAXSIM 35's server, retrieves
-    the data, and places it into a data frame. All without the user
+Description: Calculates federal and state income taxes in the United States. It acts as a wrapper 
+    to the NBER's TAXSIM 35 (<http://taxsim.nber.org/taxsim35/>) tax simulator. TAXSIM 35 conducts 
+    the calculations, while usincometaxes prepares the data for TAXSIM 35, sends the data to 
+    TAXSIM 35's server, retrieves the data, and places it into a data frame. All without the user
     worrying about this process.
 License: MIT + file LICENSE
 URL: https://github.com/shanejorr/usincometaxes,
@@ -16,6 +15,7 @@ BugReports: https://github.com/shanejorr/usincometaxes/issues
 Depends: 
     R (>= 3.1)
 Imports: 
+    datasets,
     RCurl,
     vroom
 Suggests: 
@@ -25,8 +25,8 @@ Suggests:
     rmarkdown,
     scales,
     testthat (>= 3.0.0),
-    here,
-    tidyr
+    tidyr,
+    tools
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

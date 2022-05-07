@@ -75,7 +75,7 @@ The following columns are zero if no state is specified:
 * **v32_state_agi**: State AGI
 * **v33_state_exemption_amount**: State Exemption amount
 * **v34_state_std_deduction_amount**: State Standard Deduction
-* **v35_state_itemized_deducation**: State Itemized Deductions
+* **v35_state_itemized_deduction**: State Itemized Deductions
 * **v36_state_taxable_income**: State Taxable Income
 * **v37_state_property_tax_credit**: State Property Tax Credit
 * **v38_state_child_care_credit**: State Child Care Credit

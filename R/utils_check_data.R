@@ -1,4 +1,4 @@
-#' Ensure input data set has required fields and datatypes are correct
+#' Ensure input data set has required fields and data types are correct
 #'
 #' Check to ensure all the required column are present and data types are correct. This function binds all the checks through helper functions.
 #'
@@ -263,7 +263,7 @@ check_taxsimid <- function(taxsimid_col) {
 #' Check input parameters
 #'
 #' Check that the input parameters to `taxsim_calculate_taxes` are of the proper type
-#'    The paramters to this function should be the same as those to `taxsim_calcualte_taxes`
+#'    The parameters to this function should be the same as those to `taxsim_calcualte_taxes`
 #'
 #' @keywords internal
 check_parameters <- function(.data, all_columns) {
