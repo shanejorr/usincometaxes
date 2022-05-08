@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_check_data.R
 \name{check_data}
 \alias{check_data}
-\title{Ensure input data set has required fields and datatypes are correct}
+\title{Ensure input data set has required fields and data types are correct}
 \usage{
 check_data(.data, cols, state_column_name)
 }

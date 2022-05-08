@@ -13,45 +13,13 @@ create_ssh_command <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename,
     stop("`port` must be either '443', '80', or '22'.")
   }
 
-  ssh_server <- 'taxsim35@taxsimssh.nber.org' # taxsimssh@taxsimssh.nber.org
+  ssh_server <- 'taxsim35@taxsimssh.nber.org'
 
   paste0(
     "ssh -T -o ConnectTimeout=20 -o StrictHostKeyChecking=no -p ",
     port, " ", ssh_server, " < ",
     to_taxsim_tmp_filename, " > ", from_taxsim_tmp_filename
   )
-
-}
-
-#' Upload and import TAXSIM results via ftp
-#'
-#' @param to_taxsim_tmp_filename Full file path and name to the temp file containing the data to upload to TAXSIM.
-#'
-#' @return A Dataframe of TAXSIM results.
-#'
-#' @keywords internal
-import_data_ftp <- function(to_taxsim_tmp_filename, idtl) {
-
-  message('Connecting to TAXSIM server via ftp ...')
-
-  # create random user id
-  user_id <- paste0(sample(letters, 10), collapse = "")
-
-  # username and password are publically listed, so we're not revealing private information
-  user_pwd <- 'taxsim:02138'
-
-  upload_address <- paste0("ftp://", user_pwd, "@taxsimftp.nber.org/tmp/", user_id, collapse = "")
-
-  download_address <- paste0("ftp://taxsimftp.nber.org/tmp/", user_id, ".txm35", collapse = "")
-
-  RCurl::ftpUpload(to_taxsim_tmp_filename, upload_address)
-
-  results <- RCurl::getURL(download_address, userpwd = user_pwd)
-
-  # return an error if nothing is returned in the output
-  if (results == "") stop('ftp did not return any results')
-
-  import_data_helper(I(results), idtl)
 
 }
 
