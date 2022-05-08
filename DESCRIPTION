@@ -2,7 +2,7 @@ Package: usincometaxes
 Title: Calculate Federal and State Income Taxes in the United States
 Version: 0.2.0
 Authors@R: 
-    person("Shane", "Orr", , "shane.j.orr@gmail.com", role = c("aut", "cre"))
+    person("Shane", "Orr", , "shane.j.orr@gmail.com", role = c("aut", "cre", "cph"))
 Description: Calculates federal and state income taxes in the United States. It acts as a wrapper 
     to the NBER's TAXSIM 35 (<http://taxsim.nber.org/taxsim35/>) tax simulator. TAXSIM 35 conducts 
     the calculations, while usincometaxes prepares the data for TAXSIM 35, sends the data to 
@@ -16,7 +16,6 @@ Depends:
     R (>= 3.1)
 Imports: 
     datasets,
-    RCurl,
     vroom
 Suggests: 
     dplyr,
