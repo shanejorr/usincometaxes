@@ -142,7 +142,7 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' @examples
 #'
-#' \donttest{
+#' \dontrun{
 #' family_income <- data.frame(
 #'     taxsimid = c(1, 2),
 #'     state = c('North Carolina', 'NY'),
