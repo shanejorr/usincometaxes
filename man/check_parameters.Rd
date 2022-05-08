@@ -8,6 +8,6 @@ check_parameters(.data, all_columns)
 }
 \description{
 Check that the input parameters to \code{taxsim_calculate_taxes} are of the proper type
-The paramters to this function should be the same as those to \code{taxsim_calcualte_taxes}
+The parameters to this function should be the same as those to \code{taxsim_calcualte_taxes}
 }
 \keyword{internal}

@@ -24,7 +24,7 @@ returning key information returns 9 columns. It is faster to download results wi
 \value{
 The output data set contains all the information returned by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},
 using the same column names. Descriptions of these columns can be found at the bottom of the page
-containing \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35's documention}.
+containing \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35's documentation}.
 }
 \description{
 This function calculates state and federal income taxes using the TAXSIM 35 tax simulator.

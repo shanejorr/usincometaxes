@@ -157,6 +157,18 @@ can be changed with the `marginal_tax_rates` parameter to
 ‘Long Term Capital Gains’, ‘Primary Wage Earner’, or ‘Secondary Wage
 Earner’.
 
+## Connecting to the TAXSIM Server
+
+`usincometaxes` connects to the TAXSIM server through ssh. TAXSIM allows
+users to connect to its server through ftp, ssh, html, or email. (See
+the [TAXSIM
+documentation](http://taxsim.nber.org/taxsim35/low-level-remote.html) on
+connection options.). CRAN, however, requires all data uploads and
+downloads to occur through a secure connection (See [CRAN
+policies](https://cran.r-project.org/web/packages/policies.html) for
+more information.). Since ssh is the only secure connection offered by
+TAXSIM, that is the one used.
+
 ## Giving credit
 
 The NBER’s [TAXSIM 35](http://taxsim.nber.org/taxsim35/) tax simulator
