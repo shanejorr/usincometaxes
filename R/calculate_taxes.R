@@ -129,7 +129,7 @@ create_dataset_for_taxsim <- function(.data) {
 #' - "dependent child"
 #' - "head of household"
 #'
-#' 2. For \code{year}, users can either enter the SOI code, as required by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},
+#' 2. For \code{state}, users can either enter the SOI code, as required by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},
 #' the two-letter state abbreviation, or the full name of the state.
 #'
 #' It is OK if the input data set, \code{.data}, contains columns in addition to the ones that are used by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
