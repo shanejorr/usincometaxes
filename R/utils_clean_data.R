@@ -68,33 +68,15 @@ taxsim_cols <- function() {
 
   # NOTE: You need to change replace_missing() and check_required_cols() if you change this function.
 
-  c(
-    "taxsimid", "year", "mstat", # required
-    "nonprop",
-    "state",
-    "page",
-    "mortgage",
-    "otheritem",
-    "pwages",
-    "psemp",
-    "proptax",
-    "rentpaid",
-    "childcare",
-    "transfers",
-    "otherprop",
-    "ltcg",
-    "stcg",
-    "dividends",
-    "intrec",
-    "pui",
-    "gssi",
-    "pensions",
-    "sage",
-    "depx",
-    "age1",
-    "age2",
-    "age3"
-  )
+c(
+  'taxsimid', 'year', 'mstat', # required
+  'state', 'page', 'sage',
+  'depx', 'age1', 'age2', 'age3', # dependents
+  'pwages', 'swages', 'psemp', 'ssemp', 'dividends', 'intrec', 'stcg', 'ltcg', 'otherprop', 'nonprop',
+  'pensions', 'gssi', 'pui', 'sui', 'transfers', 'rentpaid', 'proptax', 'otheritem',
+  'childcare', 'mortgage', 'scorp', 'pbusinc', 'pprofinc', 'sbusinc', 'sprofinc',
+  'mtr', 'idtl'
+)
 
 }
 
