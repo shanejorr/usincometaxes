@@ -54,7 +54,7 @@ or one of the following descriptions:
 \item "head of household"
 }
 \enumerate{
-\item For \code{year}, users can either enter the SOI code, as required by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},
+\item For \code{state}, users can either enter the SOI code, as required by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},
 the two-letter state abbreviation, or the full name of the state.
 }
 
@@ -74,7 +74,7 @@ Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-19
 
 \examples{
 
-\donttest{
+\dontrun{
 family_income <- data.frame(
     taxsimid = c(1, 2),
     state = c('North Carolina', 'NY'),

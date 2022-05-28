@@ -102,7 +102,7 @@ Ages of any additional dependents are not relevant for the tax calculation, but 
 <br>   
 * **pui**: Unemployment Compensation received - primary taxpayer.
 <br>   
-* **ui**: Unemployment compensation received - secondary taxpayer. The split is relevant only 2020-2021.
+* **sui**: Unemployment compensation received - secondary taxpayer. The split is relevant only 2020-2021.
 <br>   
 * **transfers**: Other non-taxable transfer income such as: 
     * Welfare; 
