@@ -1,6 +1,11 @@
-# usincometaxes 0.2.0
+# usincometaxes 0.3.0
 
-# usincometaxes VERSION 0.2.0
+## MINOR CHANGE
+
+Updated the input column names so that all input columns in TAXSIM are represented. 
+Changed spelling on one input column name to match TAXSIM (changed 'ui' to 'sui'). ([#7](https://github.com/shanejorr/usincometaxes/pull/7), @thomascwells)
+
+# usincometaxes 0.2.0
 
 ## MAJOR CHANGES
 
