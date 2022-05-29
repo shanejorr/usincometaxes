@@ -8,6 +8,9 @@ library(ssh)
 library(glue)
 library(usincometaxes)
 
+# STOP 993 (data is of wrong type)
+# STOP 901 (extra column that is not a column)
+
 # testing -----------------------------------------
 
 devtools::load_all()
@@ -19,18 +22,26 @@ taxsim_input <- data.frame(
   ltcg = 100000
 )
 
-taxsim_output <- taxsim_calculate_taxes(
-  .data = taxsim_input,
-  marginal_tax_rates = 'Wages',
-  return_all_information = FALSE
-)
+a <- taxsim_calculate_taxes(taxsim_input)
 
-to_taxsim_tmp_filename <- tempfile(fileext = ".csv")
-vroom_write(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
+to_taxsim_tmp_filename <- 'notes/to_taxsim.csv'
+from_taxsim_tmp_filename <- 'notes/from_taxsim.csv'
+std_error_filename <- 'notes/stderror.txt'
+known_hosts_file <- 'notes/known_hosts'
 
-vroom(to_taxsim_tmp_filename)
+vroom::vroom_write(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
 
-from_taxsim_filename <- 'test_from_taxsim.csv'
+connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file)
+
+import_data_helper(from_taxsim_tmp_filename, idtl = 0)
+
+import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file, 0)
+
+# ssh -T -o ConnectTimeout=20 -o UserKnownHostsFile='a.txt' -o StrictHostKeyChecking=no -p 22 taxsim35@taxsimssh.nber.org < notes/to_taxsim.csv 1> notes/from_taxsim.csv 2> notes/error.txt
+
+'curl -F notes/from_taxsim.csv=@notes/to_taxsim.csv "https://wwwdev.nber.org/uptest/webfile.cgi"'
+
+session <- ssh_connect("taxsim35@taxsimssh.nber.org")
 
 connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_filename, '443')
 
@@ -197,15 +208,18 @@ scp(
 
 #############################
 
+write.csv(taxsim_input, to_taxsim_filename)
+
 taxsim_http_command <- paste0('curl -F txpydata.raw=@',to_taxsim_filename, ' "https://wwwdev.nber.org/uptest/webfile.cgi" > "test_http.csv"')
 system(taxsim_http_command)
 
+read.csv(to_taxsim_filename)
 
 POST(
   "https://wwwdev.nber.org/uptest/webfile.cgi",
     body = list(
       # send the file with mime type `"application/rds"` so the RDS parser is used
-      txpydata.raw = upload_file('test_main.csv', 'application/csv')
+      txpydata.raw = upload_file(to_taxsim_filename, 'application/csv')
     )
   ) %>%
   content(as = 'text', type = 'application/csv')

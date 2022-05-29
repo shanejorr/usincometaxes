@@ -204,10 +204,15 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
   "See the following address for more information: https://www.shaneorr.io/r/usincometaxes/articles/send-data-to-taxsim.html"
   )
 
+  std_error_filename <- tempfile(pattern = 'std_error_', fileext = ".txt")
+  known_hosts_file <- paste0(tempdir(), '/known_hosts')
+
   from_taxsim <- tryCatch(
     error = function(cnd) stop(stop_error_message, call. = FALSE),
-    import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, idtl)
+    import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file, idtl)
   )
+
+  message("Connected to TAXSIM server and downloaded tax data.")
 
   # add column names to the TAXSIM columns that do not have names
   from_taxsim <- clean_from_taxsim(from_taxsim)
