@@ -7,18 +7,25 @@
 connect_server_single_ssh(
   to_taxsim_tmp_filename,
   from_taxsim_tmp_filename,
-  port
+  std_error_filename,
+  known_hosts_file
 )
 }
 \arguments{
-\item{to_taxsim_tmp_filename}{Full file path and name to the temp file containing the data to upload to TAXSIM.}
+\item{to_taxsim_tmp_filename}{Full file path and name to the temp file containing the data to upload to TAXSIM.
+This is stdin.}
 
-\item{from_taxsim_tmp_filename}{Full file path and name to the temp file that will contain the downloaded data.}
+\item{from_taxsim_tmp_filename}{Full file path and name to the temp file that will contain the downloaded data.
+This is stdout.}
 
-\item{port}{String. The port to use when connecting to the TAXAIM server}
+\item{std_error_filename}{The file name for the file to write out errors. This is stderror.}
+
+\item{known_hosts_file}{File name to write out the known_hosts file. Must be in a temp directory
+because that is the only directory where you can edit files.}
 }
 \description{
 Uploads the data to the TAXSIM server via SSH and then downloads the data with taxes.
-The uploads and downloads are of csv files that are saved in temp directories.
+The uploads and downloads are of csv files that are saved in temp directories. The parameters are the
+same as those in 'create_ssh_command'.
 }
 \keyword{internal}
