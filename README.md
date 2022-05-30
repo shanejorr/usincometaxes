@@ -136,7 +136,7 @@ information on input columns. There are two differences between
     two letter abbreviation or [state SOI
     code](https://users.nber.org/~taxsim/statesoi.html). `usincometaxes`
     will convert the abbreviation to an SOI code for TAXSIM 35.
-2.  For filing status, `mstat` users can either use the TAXSIM 35
+2.  For filing status, `mstat`, users can either use the TAXSIM 35
     integer found in TAXSIM 35’s documentation or one of the following
     descriptions:
     -   “single” or 1 for single;
