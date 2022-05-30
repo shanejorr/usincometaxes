@@ -84,7 +84,7 @@ connect_server_single_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_fi
       "     usincometaxes documentation: https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html\n",
       "     TAXSIM 35 documentation: https://users.nber.org/~taxsim/taxsim35/\n",
       "\nYou can try manually uploading the data to TAXSIM as an avenue of troubleshooting.\n",
-      "See the following address for more information: https://www.shaneorr.io/r/usincometaxes/articles/send-data-to-taxsim.html",
+      "See the following address for more information: https://www.shaneorr.io/r/usincometaxes/articles/send-data-to-taxsim.html"
     )
 
     stop(error_prefix, call. = FALSE)

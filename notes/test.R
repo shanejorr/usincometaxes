@@ -22,8 +22,6 @@ taxsim_input <- data.frame(
   ltcg = 100000
 )
 
-a <- taxsim_calculate_taxes(taxsim_input)
-
 to_taxsim_tmp_filename <- 'notes/to_taxsim.csv'
 from_taxsim_tmp_filename <- 'notes/from_taxsim.csv'
 std_error_filename <- 'notes/stderror.txt'
@@ -208,9 +206,26 @@ scp(
 
 #############################
 
-write.csv(taxsim_input, to_taxsim_filename)
+sample_data <- data.frame(
+  taxsimid = 1,
+  mstat = 2,
+  year = 1970,
+  ltcg = 100000,
+  idtl = 2
+)
 
-taxsim_http_command <- paste0('curl -F txpydata.raw=@',to_taxsim_filename, ' "https://wwwdev.nber.org/uptest/webfile.cgi" > "test_http.csv"')
+to_taxsim_tmp_filename <- 'notes/to_taxsim.csv'
+from_taxsim_tmp_filename <- 'notes/from_taxsim.csv'
+std_error_filename <- 'notes/stderror.txt'
+
+write_csv(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
+
+taxsim_http_command <- paste0(
+  "curl -F txpydata.raw=@",to_taxsim_tmp_filename,
+  " 'https://wwwdev.nber.org/uptest/webfile.cgi' 1> ", from_taxsim_tmp_filename,
+  " 2> ", std_error_filename
+)
+
 system(taxsim_http_command)
 
 read.csv(to_taxsim_filename)
@@ -218,8 +233,7 @@ read.csv(to_taxsim_filename)
 POST(
   "https://wwwdev.nber.org/uptest/webfile.cgi",
     body = list(
-      # send the file with mime type `"application/rds"` so the RDS parser is used
-      txpydata.raw = upload_file(to_taxsim_filename, 'application/csv')
+      txpydata.raw = upload_file(to_taxsim_tmp_filename, 'application/csv')
     )
   ) %>%
   content(as = 'text', type = 'application/csv')
