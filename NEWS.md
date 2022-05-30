@@ -1,3 +1,11 @@
+# usincometaxes 0.4.0
+
+### Minor Changes
+
+- For ssh, create known_hosts file in temporary directory instead of .ssh.known_hosts. This is needed so that the package does not write to files outside the tempdir, in violation of CRAN requirements.
+- For ssh, only use port 22.
+- Merged from branch [update-ssh](https://github.com/shanejorr/usincometaxes/tree/update-ssh)
+
 # usincometaxes 0.3.0
 
 ### Minor Changes

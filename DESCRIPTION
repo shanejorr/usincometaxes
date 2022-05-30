@@ -1,6 +1,6 @@
 Package: usincometaxes
 Title: Calculate Federal and State Income Taxes in the United States
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: 
     person("Shane", "Orr", , "shane.j.orr@gmail.com", role = c("aut", "cre", "cph"))
 Description: Calculates federal and state income taxes in the United States. It acts as a wrapper 
