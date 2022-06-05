@@ -8,7 +8,7 @@ library(ssh)
 library(glue)
 library(usincometaxes)
 
-# STOP 993 (data is of wrong type)
+# STOP 993 (data is of wrong type )
 # STOP 901 (extra column that is not a column)
 
 # testing -----------------------------------------
