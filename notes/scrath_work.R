@@ -1,4 +1,4 @@
-# create functions by hand to test
+# This file is a scratch pad to try random stuff. It is not included in the package build.
 
 library(tidyverse)
 library(vroom)
