@@ -16,7 +16,10 @@ Depends:
     R (>= 3.1)
 Imports: 
     datasets,
-    vroom
+    vroom,
+    httr,
+    tibble,
+    utils
 Suggests: 
     dplyr,
     ggplot2,

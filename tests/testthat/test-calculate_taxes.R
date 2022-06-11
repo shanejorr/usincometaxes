@@ -79,3 +79,30 @@ test_that("All states work", {
   expect_equal(nrow(taxsim_output), 50)
 
 })
+
+test_that("All interface options return same values", {
+
+  states <- state.abb
+
+  id_nums <- seq(1, length(states))
+
+  taxsim_input <- data.frame(
+    taxsimid = id_nums,
+    mstat = 2,
+    year = 2018,
+    pwages = 50000,
+    state = states
+  )
+
+  ssh_results <- taxsim_calculate_taxes(taxsim_input,
+                                        return_all_information = T,
+                                        interface = 'ssh')
+
+  http_results <- taxsim_calculate_taxes(taxsim_input,
+                                         return_all_information = T,
+                                         interface = 'http')
+
+  expect(all.equal(ssh_results, http_results),
+         failure_message = "HTTP results do not match SSH results.")
+})
+
