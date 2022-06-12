@@ -23,13 +23,16 @@ or only key information (FALSE). Returning all information returns 42 columns of
 returning key information returns 9 columns. It is faster to download results with only key information.}
 
 \item{interface}{String indicating which NBER TAXSIM interface to use. Should
-be one of: ssh or http.
+be one of: "ssh," "http," or "wasm."
 \itemize{
 \item "ssh" uses SSH to connect to taxsimssh.nber.org. Your system must already
 have SSH installed.
 \item "http" uses CURL to connect to
 https://taxsim.nber.org/uptest/webfile.cgi. Approximate max file size: 1000
 rows.
+\item "wasm" uses a compiled WebAssembly version of the TAXSIM app. Details
+about generating the wasm file can be found here:
+https://github.com/tmm1/taxsim.js
 }}
 }
 \value{
