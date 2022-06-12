@@ -225,6 +225,8 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
       import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file, idtl)
     )
 
+    message("Connected to TAXSIM server and downloaded tax data.")
+
   } else if (interface == "http") {
 
     # convert input data to string
@@ -248,6 +250,8 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
       utils::read.table(text = response_text,
                         header = T,
                         sep = ","))
+
+    message("Connected to TAXSIM server and downloaded tax data.")
 
   } else if (interface == "wasm") {
 
@@ -274,11 +278,13 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
                         header = T,
                         sep = ","))
 
+    message("Tax data calculated locally.")
+
   } else {
     stop("Invalid value for `interface` argument.")
   }
 
-  message("Connected to TAXSIM server and downloaded tax data.")
+
 
   # add column names to the TAXSIM columns that do not have names
   from_taxsim <- clean_from_taxsim(from_taxsim)
