@@ -107,6 +107,9 @@ create_dataset_for_taxsim <- function(.data) {
 #' @param return_all_information Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 #'     or only key information (FALSE). Returning all information returns 42 columns of output, while only
 #'     returning key information returns 9 columns. It is faster to download results with only key information.
+#' @param interface String indicating which NBER TAXSIM interface to use. Should be one of:
+#'     - 'ssh': Uses SSH to connect to taxsimssh.nber.org. Your system must already have SSH installed.
+#'     - 'http': Uses CURL to connect to https://taxsim.nber.org/uptest/webfile.cgi. Approximate max file size: 1000 rows.
 #'
 #' @section Formatting your data:
 #'
@@ -168,7 +171,7 @@ create_dataset_for_taxsim <- function(.data) {
 #' Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
 #'
 #' @export
-taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_all_information = FALSE) {
+taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_all_information = FALSE, interface = "ssh") {
 
   # save input ID numbers as object, so we can make sure the output ID numbers are the same
   input_s <- .data$taxsimid
@@ -192,25 +195,55 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
 
   # save csv file of data set to a temp folder
   to_taxsim_tmp_filename <- tempfile(pattern = 'upload_', fileext = ".csv")
-  vroom::vroom_write(.data, to_taxsim_tmp_filename, delim = ",", progress = FALSE)
-
   from_taxsim_tmp_filename <- tempfile(pattern = 'download_', fileext = ".csv")
 
-  # try uploading and downloading via ssh
   stop_error_message <- paste0(
-  "There was a problem in trying to retrieve your data.\n",
-  "Either we could not connect to the TAXSIM server or your data is not in the proper format.\n",
-  "You can try manually uploading the data to TAXSIM as an avenue of troubleshooting.\n",
-  "See the following address for more information: https://www.shaneorr.io/r/usincometaxes/articles/send-data-to-taxsim.html"
+    "There was a problem in trying to retrieve your data.\n",
+    "Either we could not connect to the TAXSIM server or your data is not in the proper format.\n",
+    "You can try manually uploading the data to TAXSIM as an avenue of troubleshooting.\n",
+    "See the following address for more information: https://www.shaneorr.io/r/usincometaxes/articles/send-data-to-taxsim.html"
   )
 
-  std_error_filename <- tempfile(pattern = 'std_error_', fileext = ".txt")
-  known_hosts_file <- paste0(tempdir(), '/known_hosts')
+  if (interface == "ssh") {
 
-  from_taxsim <- tryCatch(
-    error = function(cnd) stop(stop_error_message, call. = FALSE),
-    import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file, idtl)
-  )
+    vroom::vroom_write(.data, to_taxsim_tmp_filename, delim = ",", progress = FALSE)
+
+    # try uploading and downloading via ssh
+    std_error_filename <- tempfile(pattern = 'std_error_', fileext = ".txt")
+    known_hosts_file <- paste0(tempdir(), '/known_hosts')
+
+    from_taxsim <- tryCatch(
+      error = function(cnd) stop(stop_error_message, call. = FALSE),
+      import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file, idtl)
+    )
+
+  } else if (interface == "http") {
+
+    # convert input data to string
+    data_string <- vroom::vroom_format(.data, delim = ",")
+
+    # remove trailing newline character - causes error with TAXSIM
+    # and write to file
+    cat(sub(x = data_string, "(\r\n|\n)$", ""),
+        file = to_taxsim_tmp_filename)
+
+    # create http post and send to NBER
+    http_response <- httr::POST(
+      url = "https://taxsim.nber.org/uptest/webfile.cgi",
+      body = list(txpydata.raw = httr::upload_file(to_taxsim_tmp_filename)))
+
+    # extract response body as to text
+    response_text <- httr::content(http_response, as = 'text')
+
+    # convert text to a tibble to match vroom format
+    from_taxsim <- tibble::tibble(
+      utils::read.table(text = response_text,
+                        header = T,
+                        sep = ","))
+
+  } else {
+    stop("Invalid value for `interface` argument.")
+  }
 
   message("Connected to TAXSIM server and downloaded tax data.")
 
