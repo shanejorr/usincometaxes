@@ -107,9 +107,14 @@ create_dataset_for_taxsim <- function(.data) {
 #' @param return_all_information Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 #'     or only key information (FALSE). Returning all information returns 42 columns of output, while only
 #'     returning key information returns 9 columns. It is faster to download results with only key information.
-#' @param interface String indicating which NBER TAXSIM interface to use. Should be one of:
-#'     - 'ssh': Uses SSH to connect to taxsimssh.nber.org. Your system must already have SSH installed.
-#'     - 'http': Uses CURL to connect to https://taxsim.nber.org/uptest/webfile.cgi. Approximate max file size: 1000 rows.
+#' @param interface String indicating which NBER TAXSIM interface to use. Should
+#'   be one of: ssh or http.
+#'
+#'   - "ssh" uses SSH to connect to taxsimssh.nber.org. Your system must already
+#'   have SSH installed.
+#'   - "http" uses CURL to connect to
+#'   https://taxsim.nber.org/uptest/webfile.cgi. Approximate max file size: 1000
+#'   rows.
 #'
 #' @section Formatting your data:
 #'
@@ -236,6 +241,31 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
     response_text <- httr::content(http_response, as = 'text')
 
     # convert text to a tibble to match vroom format
+    from_taxsim <- tibble::tibble(
+      utils::read.table(text = response_text,
+                        header = T,
+                        sep = ","))
+
+  } else if (interface == "wasm") {
+
+    # connect to js and wasm files
+    wasm_path   <- system.file("webassembly/taxsim.wasm", package = "usincometaxes")
+    js_path     <- system.file("javascript/taxsim.js",    package = "usincometaxes")
+    wasm_binary <- readBin(wasm_path, raw(), file.info(wasm_path)$size)
+
+    # convert input data to string
+    data_string <- vroom::vroom_format(.data, delim = ",", eol = "\\n")
+
+    # load the V8 context
+    ctx <- V8::v8()
+    ctx$assign("wasmBinary", wasm_binary)
+    ctx$source(js_path)
+
+    response_text <- ctx$call("taxsim",
+                              V8::JS(paste0("'", data_string, "'")),
+                              V8::JS("{wasmBinary}"),
+                              await = TRUE)
+
     from_taxsim <- tibble::tibble(
       utils::read.table(text = response_text,
                         header = T,

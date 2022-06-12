@@ -22,9 +22,15 @@ This data set will be sent to TAXSIM. Data frame must have specified column name
 or only key information (FALSE). Returning all information returns 42 columns of output, while only
 returning key information returns 9 columns. It is faster to download results with only key information.}
 
-\item{interface}{String indicating which NBER TAXSIM interface to use. Should be one of:
-- 'ssh': Uses SSH to connect to taxsimssh.nber.org. Your system must already have SSH installed.
-- 'http': Uses CURL to connect to https://taxsim.nber.org/uptest/webfile.cgi. Approximate max file size: 1000 rows.}
+\item{interface}{String indicating which NBER TAXSIM interface to use. Should
+be one of: ssh or http.
+\itemize{
+\item "ssh" uses SSH to connect to taxsimssh.nber.org. Your system must already
+have SSH installed.
+\item "http" uses CURL to connect to
+https://taxsim.nber.org/uptest/webfile.cgi. Approximate max file size: 1000
+rows.
+}}
 }
 \value{
 The output data set contains all the information returned by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},
