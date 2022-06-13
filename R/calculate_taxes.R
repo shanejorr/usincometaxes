@@ -256,8 +256,8 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
   } else if (interface == "wasm") {
 
     # connect to js and wasm files
-    wasm_path   <- system.file("webassembly/taxsim.wasm", package = "usincometaxes")
-    js_path     <- system.file("javascript/taxsim.js",    package = "usincometaxes")
+    wasm_path   <- system.file("taxsim/taxsim.wasm", package = "usincometaxes")
+    js_path     <- system.file("taxsim/taxsim.js",    package = "usincometaxes")
     wasm_binary <- readBin(wasm_path, raw(), file.info(wasm_path)$size)
 
     # convert input data to string
