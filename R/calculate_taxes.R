@@ -42,9 +42,9 @@ create_dataset_for_taxsim <- function(.data) {
   cols_in_taxsim_and_df <- intersect(cols, taxsim_cols())
   .data <- .data[cols_in_taxsim_and_df]
 
-  # return an error is any required columns have missing values (except for state)
+  # return an error if any required columns have missing values (except for state)
   for (col in c('taxsim', 'year', 'mstat')) {
-    if (any(is.na(.data[[col]]))) stop(paste0("No", col, "values can be NA."))
+    if (any(is.na(.data[[col]]))) stop(paste0("No", col, "values can be NA."), call. = FALSE)
   }
 
   # convert all NA values to 0 for non-required items
