@@ -170,7 +170,7 @@ convert_na <- function(.data, cols_to_convert) {
   if (is.character(.data[['state']])) {
     .data[['state']][is.na(.data[['state']])] <- 'No State'
   } else if (is.numeric(.data[['state']])) {
-    .data[['state']][is.na(.data[['state']])] <- 'No State'
+    .data[['state']][is.na(.data[['state']])] <- 0
   }
 
   .data[cols_to_convert][is.na(.data[cols_to_convert])] <- 0
