@@ -102,7 +102,13 @@ test_that("All interface options return same values", {
                                          return_all_information = T,
                                          interface = 'http')
 
+  wasm_results <- taxsim_calculate_taxes(taxsim_input,
+                                         return_all_information = T,
+                                         interface = 'wasm')
+
   expect(all.equal(ssh_results, http_results),
          failure_message = "HTTP results do not match SSH results.")
+  expect(all.equal(ssh_results, wasm_results),
+         failure_message = "WASM results do not match SSH results.")
 })
 

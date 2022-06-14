@@ -19,7 +19,8 @@ Imports:
     vroom,
     httr,
     tibble,
-    utils
+    utils,
+    V8
 Suggests: 
     dplyr,
     ggplot2,
