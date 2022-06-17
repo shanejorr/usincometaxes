@@ -18,14 +18,14 @@ devtools::load_all()
 taxsim_input <- data.frame(
   taxsimid = c(1,2),
   mstat = 2,
-  year = 1970,
+  year = 1980,
   state = c('NC', 'NC'),
   ltcg = 100000
 )
 
 a <- create_dataset_for_taxsim(taxsim_input)
 
-df <- taxsim_calculate_taxes(taxsim_input, return_all_information = T, interface = "http")
+df <- taxsim_calculate_taxes(taxsim_input, return_all_information = T, interface = "ssh")
 
 to_taxsim_tmp_filename <- 'notes/to_taxsim.csv'
 from_taxsim_tmp_filename <- 'notes/from_taxsim.csv'
