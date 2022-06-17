@@ -183,7 +183,7 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
 
   # check parameter options
   # must change this function if parameters are added
-  check_parameters(.data, return_all_information)
+  check_parameters(.data, marginal_tax_rates, return_all_information, interface)
 
   # save input ID numbers as object, so we can make sure the output ID numbers are the same
   input_s <- .data$taxsimid
@@ -206,9 +206,9 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
   from_taxsim_tmp_filename <- tempfile(pattern = 'download_', fileext = ".csv")
 
   stop_error_message <- paste0(
-    "There was a problem in trying to retrieve your data.\n",
-    "Either we could not connect to the TAXSIM server or your data is not in the proper format.\n",
-    "You can try manually uploading the data to TAXSIM as an avenue of troubleshooting.\n",
+    paste0("There was a problem in calculating the taxes using '", interface, "'.\n"),
+    "Please try a different `interface` option.\n",
+    "Alternatively, you can try manually uploading the data to TAXSIM as an avenue of troubleshooting.\n",
     "See the following address for more information: https://www.shaneorr.io/r/usincometaxes/articles/send-data-to-taxsim.html"
   )
 
@@ -225,39 +225,19 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
       import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file, idtl)
     )
 
-    message("Connected to TAXSIM server and downloaded tax data.")
-
   } else if (interface == "http") {
 
-    # convert input data to string
-    data_string <- vroom::vroom_format(.data, delim = ",")
-
-    # remove trailing newline character - causes error with TAXSIM
-    # and write to file
-    cat(sub(x = data_string, "(\r\n|\n)$", ""),
-        file = to_taxsim_tmp_filename)
-
-    # create http post and send to NBER
-    http_response <- httr::POST(
-      url = "https://taxsim.nber.org/uptest/webfile.cgi",
-      body = list(txpydata.raw = httr::upload_file(to_taxsim_tmp_filename)))
-
-    # extract response body as to text
-    response_text <- httr::content(http_response, as = 'text')
-
-    # convert text to a tibble to match vroom format
-    from_taxsim <- tibble::tibble(
-      utils::read.table(text = response_text,
-                        header = T,
-                        sep = ","))
-
-    message("Connected to TAXSIM server and downloaded tax data.")
+    from_taxsim <- tryCatch(
+      error = function(cnd) stop(stop_error_message, call. = FALSE),
+      calculate_taxes_http(.data, to_taxsim_tmp_filename)
+    )
 
   } else if (interface == "wasm") {
 
-    from_taxsim <- calculate_taxes_wasm(.data)
-
-    message("Tax data calculated locally.")
+    from_taxsim <- tryCatch(
+      error = function(cnd) stop(stop_error_message, call. = FALSE),
+      calculate_taxes_wasm(.data)
+    )
 
   } else {
     stop("Invalid value for `interface` argument. Msut be one of 'wasm', 'ssh', or 'http'.", call. = FALSE)

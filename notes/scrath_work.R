@@ -23,9 +23,9 @@ taxsim_input <- data.frame(
   ltcg = 100000
 )
 
-a <- create_dataset_for_taxsim(taxsim_input)
+.data <- taxsim_input
 
-df <- taxsim_calculate_taxes(taxsim_input, return_all_information = T, interface = "ssh")
+df <- taxsim_calculate_taxes(taxsim_input, return_all_information = T, interface = "http")
 
 to_taxsim_tmp_filename <- 'notes/to_taxsim.csv'
 from_taxsim_tmp_filename <- 'notes/from_taxsim.csv'

@@ -162,9 +162,10 @@ import_data_helper <- function(raw_data, idtl) {
 #' Calculate taxes using https
 #'
 #' @param .data Dataset to send to NBER via http.
+#' @param to_taxsim_tmp_filename Filename for temporary file to send data to for uploading.
 #'
 #' @keywords internal
-calcualte_taxes_http <- function(.data) {
+calculate_taxes_http <- function(.data, to_taxsim_tmp_filename) {
 
   # convert input data to string
   data_string <- vroom::vroom_format(.data, delim = ",")
