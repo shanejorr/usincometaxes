@@ -116,8 +116,8 @@ create_dataset_for_taxsim <- function(.data) {
 #'   - "ssh" uses SSH to connect to taxsimssh.nber.org. Your system must already
 #'   have SSH installed.
 #'   - "http" uses CURL to connect to
-#'   https://taxsim.nber.org/uptest/webfile.cgi. Approximate max file size: 1000
-#'   rows.
+#'   https://taxsim.nber.org/uptest/webfile.cgi. 'http" does not work for dataset with more than
+#'        1,000 rows.
 #'
 #' @section Formatting your data:
 #'
@@ -181,15 +181,15 @@ create_dataset_for_taxsim <- function(.data) {
 #' @export
 taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_all_information = FALSE, interface = "wasm") {
 
+  # check parameter options
+  # must change this function if parameters are added
+  check_parameters(.data, return_all_information)
+
   # save input ID numbers as object, so we can make sure the output ID numbers are the same
   input_s <- .data$taxsimid
 
   # create data set to send to taxsim
   .data <- create_dataset_for_taxsim(.data)
-
-  # check parameter options
-  # must change this function if parameters are added
-  check_parameters(.data, return_all_information)
 
   # add 2 to column if we need all columns, otherwise add 0 for only the default columns
   idtl <- if (return_all_information) 2 else 0

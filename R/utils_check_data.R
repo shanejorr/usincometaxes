@@ -263,14 +263,28 @@ check_taxsimid <- function(taxsimid_col) {
 #' Check input parameters
 #'
 #' Check that the input parameters to `taxsim_calculate_taxes` are of the proper type
-#'    The parameters to this function should be the same as those to `taxsim_calcualte_taxes`
+#'    The parameters to this function should be the same as those to `taxsim_calculate_taxes`
 #'
 #' @keywords internal
-check_parameters <- function(.data, all_columns) {
+check_parameters <- function(.data, marginal_tax_rates, return_all_information, interface) {
+
+  marginal_rates_options <- c('Wages', 'Long Term Capital Gains', 'Primary Wage Earner', 'Secondary Wage Earner')
+  marginal_rates_stop_message <- paste0("`marginal_tax_rates` parameter must be one of: '", paste0(marginal_rates_options, collapse = "', '"), "'.")
+
+  interface_options <- c('wasm', 'ssh', 'http')
+  interface_stop_message <- paste0("`interface` parameter must be one of: '", paste0(interface_options, collapse = "', '"), "'.")
 
   if (!is.data.frame(.data)) stop("`.data` parameter must be a data frame.", call. = FALSE)
 
-  if (!(all_columns %in% c(T, F))) stop('`all_columns` parameter must be either TRUE or FALSE.', call. = FALSE)
+  if (!(return_all_information %in% c(T, F))) stop('`all_columns` parameter must be either TRUE or FALSE.', call. = FALSE)
+
+  if (!(interface %in% interface_options)) stop(interface_stop_message, call. = FALSE)
+
+  if (!(marginal_tax_rates %in% marginal_rates_options)) stop(marginal_rates_stop_message, call. = FALSE)
+
+  # 'http' does not work on datasets with more than 1,000 rows (its an NBER issue),
+  # so throw an error if user is using http and the dataset has more than 1,000 rows
+  if (nrow(.data) > 1000 & interface == 'http') stop("'http' cannot be used when the dataset contains more than 1000 rows.")
 
   NULL
 

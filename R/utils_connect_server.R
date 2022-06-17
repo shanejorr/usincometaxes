@@ -159,6 +159,39 @@ import_data_helper <- function(raw_data, idtl) {
 
 }
 
+#' Calculate taxes using https
+#'
+#' @param .data Dataset to send to NBER via http.
+#'
+#' @keywords internal
+calcualte_taxes_http <- function(.data) {
+
+  # convert input data to string
+  data_string <- vroom::vroom_format(.data, delim = ",")
+
+  # remove trailing newline character - causes error with TAXSIM
+  # and write to file
+  cat(sub(x = data_string, "(\r\n|\n)$", ""),
+      file = to_taxsim_tmp_filename)
+
+  # create http post and send to NBER
+  http_response <- httr::POST(
+    url = "https://taxsim.nber.org/uptest/webfile.cgi",
+    body = list(txpydata.raw = httr::upload_file(to_taxsim_tmp_filename)))
+
+  # extract response body as to text
+  response_text <- httr::content(http_response, as = 'text')
+
+  # convert text to a tibble to match vroom format
+  from_taxsim <- tibble::tibble(
+    utils::read.table(text = response_text,
+                      header = T,
+                      sep = ","))
+
+  return(from_taxsim)
+
+}
+
 #' Use WASM to calculate taxes locally
 #'
 #' @param .data Dataset that can be sent to WASM.
