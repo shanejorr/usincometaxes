@@ -1,0 +1,43 @@
+---
+title: "Calculating Federal and State Income Taxes"
+output: rmarkdown::html_vignette
+author: "Shane Orr"
+vignette: >
+  %\VignetteIndexEntry{Calculating Federal and State Income Taxes}
+  %\VignetteDepends{ggplot2}
+  %\VignetteDepends{dplyr}
+  %\VignetteDepends{scales}
+  %\VignetteDepends{tidyr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = 'center',
+  fig.path = 'webimg/',
+  fig.width = 8,
+  fig.height = 5,
+  dpi = 72,
+  dev = 'png'
+)
+```
+
+```{r setup, include = FALSE}
+library(usincometaxes)
+```
+
+Users calculate taxes with the `taxsim_calculate_taxes()` function. This function contains an `interface` parameter that allows users to specify how they want to interact with the NBER's TAXSIM 35 program. The `interface` parameter has three options:
+
+### 1. 'wasm'
+
+'wasm', an abbreviation for WebAssembly, is the only option that runs the calculations locally on your computer. You do not have to connect to the TAXSIM 35 servers. For this reason, it is faster and more robust - you don't have to connect to a server, worry about firewalls, etc. - than the other methods. The output *should* be the same as the options that connect to the TAXSIM 35 server directly.
+
+With 'wasm' the calculations are conducted by JavaScript / WebAssembly files that are part of the package. Downloading and interacting with the files are abstracted away so all you see are the tax calculations.
+
+The JavaScript / WebAssembly tooling comes from Aman Gupta Karmani's great work that you can find in this GitHub repo: https://github.com/tmm1/taxsim.js. And while your checking out his work, don't overlook his tax calculator web app at [taxsim.app](https://taxsim.app).
+
+The JavaScript / WebAssembly files are updated soon after the NBER updates the Fortran code that runs TAXSIM 35. That said, there could be a small lag between when the NBER's Fortran code is updated and when the JavaScript / WebAssembly files are updated.

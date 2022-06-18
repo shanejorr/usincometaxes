@@ -137,3 +137,5 @@ This package simply lets users interact with the tax simulator through R. Theref
 cite the TAXSIM 35 tax simulator when they use this package in their work:
 
 |           Feenberg, Daniel Richard, and Elizabeth Coutts, An Introduction to the TAXSIM Model, Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
+
+Kudos also go to Aman Gupta Karmani who built the [JS / WebAssembly tooling](https://github.com/tmm1/taxsim.js) that powers the 'wasm' interface.
