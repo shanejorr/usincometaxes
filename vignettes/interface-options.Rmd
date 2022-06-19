@@ -1,13 +1,9 @@
 ---
-title: "Calculating Federal and State Income Taxes"
+title: "Interface Options for Calculating Taxes"
 output: rmarkdown::html_vignette
 author: "Shane Orr"
 vignette: >
-  %\VignetteIndexEntry{Calculating Federal and State Income Taxes}
-  %\VignetteDepends{ggplot2}
-  %\VignetteDepends{dplyr}
-  %\VignetteDepends{scales}
-  %\VignetteDepends{tidyr}
+  %\VignetteIndexEntry{Interface Options for Calculating Taxes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -30,7 +26,7 @@ knitr::opts_chunk$set(
 library(usincometaxes)
 ```
 
-You calculate taxes with the `taxsim_calculate_taxes()` function. This function contains an `interface` parameter where you can specify how you want to interact with the NBER's TAXSIM 35 program. The `interface` parameter has three options: (1) 'wasm', (2) 'ssh', and (3) 'http'. All three options are outlined below.
+You calculate taxes with the `taxsim_calculate_taxes()` function. This function contains an `interface` parameter where you can specify how you want to interact with the NBER's [TAXSIM 35](https://users.nber.org/~taxsim/taxsim35/) program. All options use TAXSIM 35, they only differ in how you access the program. The `interface` parameter has three options: (1) 'wasm', (2) 'ssh', and (3) 'http'. All three options are outlined below.
 
 ### 1. 'wasm'
 
