@@ -284,7 +284,7 @@ check_parameters <- function(.data, marginal_tax_rates, return_all_information, 
 
   # 'http' does not work on datasets with more than 1,000 rows (its an NBER issue),
   # so throw an error if user is using http and the dataset has more than 1,000 rows
-  if (nrow(.data) > 1000 & interface == 'http') stop("'http' cannot be used when the dataset contains more than 1000 rows.")
+  #if (nrow(.data) > 1000 & interface == 'http') stop("'http' cannot be used when the dataset contains more than 1000 rows.", call. = FALSE)
 
   NULL
 

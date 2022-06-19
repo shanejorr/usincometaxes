@@ -16,14 +16,12 @@ library(usincometaxes)
 devtools::load_all()
 
 taxsim_input <- data.frame(
-  taxsimid = c(1,2),
+  taxsimid = seq(1:10),
   mstat = 2,
   year = 1980,
-  state = c('NC', 'NC'),
+  state = 'NC',
   ltcg = 100000
 )
-
-.data <- taxsim_input
 
 df <- taxsim_calculate_taxes(taxsim_input, return_all_information = T, interface = "http")
 
