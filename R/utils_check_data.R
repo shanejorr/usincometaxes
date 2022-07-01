@@ -282,9 +282,11 @@ check_parameters <- function(.data, marginal_tax_rates, return_all_information, 
 
   if (!(marginal_tax_rates %in% marginal_rates_options)) stop(marginal_rates_stop_message, call. = FALSE)
 
-  # 'http' does not work on datasets with more than 1,000 rows (its an NBER issue),
-  # so throw an error if user is using http and the dataset has more than 1,000 rows
-  #if (nrow(.data) > 1000 & interface == 'http') stop("'http' cannot be used when the dataset contains more than 1000 rows.", call. = FALSE)
+  # 'http' does not work on datasets with more than 2,000 rows (its an NBER issue),
+  # so throw an error if user is using http and the dataset has more than 2,000 rows
+  if (nrow(.data) > 2000 & interface == 'http') stop(
+    "'http' cannot be used when the dataset contains more than 2000 rows. Please use different interface", call. = FALSE
+    )
 
   NULL
 

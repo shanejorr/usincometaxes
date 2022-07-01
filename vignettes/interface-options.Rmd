@@ -22,10 +22,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, include = FALSE}
-library(usincometaxes)
-```
-
 You calculate taxes with the `taxsim_calculate_taxes()` function. This function contains an `interface` parameter where you can specify how you want to interact with the NBER's [TAXSIM 35](https://users.nber.org/~taxsim/taxsim35/) program. All options use TAXSIM 35, they only differ in how you access the program. The `interface` parameter has three options: (1) 'wasm', (2) 'ssh', and (3) 'http'. All three options are outlined below.
 
 ### 1. 'wasm'
@@ -34,7 +30,7 @@ You calculate taxes with the `taxsim_calculate_taxes()` function. This function 
 
 With 'wasm', the calculations are conducted by JavaScript / WebAssembly files that are part of the package. In other words, you get the files when you install the package. Interacting with the files is abstracted away so all you see are the tax calculations.
 
-The JavaScript / WebAssembly tooling comes from Aman Gupta Karmani's great work that you can find in this GitHub repo: https://github.com/tmm1/taxsim.js. And while your checking out his work, don't overlook his tax calculator web app at [taxsim.app](https://taxsim.app).
+The JavaScript / WebAssembly tooling comes from Aman Gupta Karmani's great work that you can find in this GitHub repo: https://github.com/tmm1/taxsim.js. And while you're checking out his work, don't overlook his tax calculator web app at [taxsim.app](https://taxsim.app).
 
 The JavaScript / WebAssembly files are updated soon after the NBER updates the Fortran code that runs TAXSIM 35. We will then incorporate these updated JavaScript / WebAssembly files into a new version of `usincometaxes`. A benefit of this approach is that a given version of `usincometaxes` will always produce the same results when using 'wasm'. This holds because a given version of `usincometaxes` will always use the exact same JavaScript / WebAssembly files to calculate taxes. This might not always be true with 'ssh' or 'http' since the calculations are conducted on the NBER's servers. Changes to the NBER's TASXIM program running on these servers will not correlate with version changes to `usincometaxes`. Therefore, 'wasm' is a great option if reproducibility is paramount.
 
@@ -42,9 +38,14 @@ The JavaScript / WebAssembly files are updated soon after the NBER updates the F
 
 ### 2. 'ssh'
 
-The 'ssh' `interface` option to `taxsim_calculate_taxes()` connects to the TAXSIM 35 server via ssh, sends the data to the server, and retrives the output with calculated taxes via standard output. SSH must be installed on your operating system to use this option. If you use the 'ssh' option and SSH is not installed on your computer, you will receive an informative error telling you this fact. Because of this, there is no need to check whether SSH is installed prior to using; but you can do so with the following R command: `Sys.which('ssh')`.
+The 'ssh' `interface` option to `taxsim_calculate_taxes()` connects to the TAXSIM 35 server via ssh, sends the data to the server, and retrieves the output with calculated taxes via standard output. SSH must be installed on your operating system to use this option. If you use the 'ssh' option and SSH is not installed on your computer, you will receive an informative error telling you this fact. Because of this, there is no need to check whether SSH is installed prior to using; but you can do so with the following R command: `Sys.which('ssh')`.
 
 Standard port 22 is used to connect via SSH. There is a chance that SSH port 22 is blocked via a firewall. In this case, `taxsim_calculate_taxes()` will return an error that starts: "Error: There was a problem in calculating the taxes using 'ssh'.". Note that this error could represent a variety of problems, one of which is that a connection cannot be established with the NBER server vai SSH. But, the error might also mean that problems arose when the NBER's server attempted to calculate taxes.
 
-Using 'ssh' ensures that you are working with the most up to date version of TAXSIM 35, regardless of when you installed `usincometaxes`. With 'ssh' the good news is that you will always be using the most up to date TAXSIM 35 version, the bad news is that there is an off chance you will see slightly different results through time.
+Using 'ssh' ensures that you are working with the most up to date version of TAXSIM 35, regardless of when you installed `usincometaxes`. With 'ssh' the good news is that you will always be using the most up to date TAXSIM 35 version, the bad news is that there is an off chance you will see slightly different results through time. Thus, 'ssh' may not always provide reproducible results. Finally, 'ssh' is slower than 'wasm' since you are sending data to, and retrieving data from, a server.
 
+### 2. 'http'
+
+'http' uses `curl` to send and retrieve the data from the TAXSIM 35 server via https. Since calculations are conducted remotely, 'http' has the advantages and disadvantages of 'ssh': you are using the most up to date version of TAXSIM 35 (advantage), which may prevent results from being the exact same through time (disadvantage).
+
+With 'http', data sets are limited to 2,000 rows. You will receive an error if you use 'http' on a data set with more than 2,000 rows.

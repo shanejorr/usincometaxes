@@ -87,7 +87,7 @@ vroom(results)
 
 sample_data <- data.frame(taxsimid = 1,
                           mstat = 2,
-                          year = 1970,
+                          year = 1990,
                           ltcg = 100000,
                           idtl = 2)
 
@@ -221,7 +221,7 @@ to_taxsim_tmp_filename <- 'notes/to_taxsim.csv'
 from_taxsim_tmp_filename <- 'notes/from_taxsim.csv'
 std_error_filename <- 'notes/stderror.txt'
 
-write_csv(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
+write_csv(sample_data, to_taxsim_tmp_filename, ",", progress = FALSE)
 
 taxsim_http_command <- paste0(
   "curl -F txpydata.raw=@",to_taxsim_tmp_filename,
@@ -241,3 +241,9 @@ POST(
   ) %>%
   content(as = 'text', type = 'application/csv')
 
+# checking wasm ETag to ensure we are using most recent version
+
+# how to check
+# curl --head -v -o /dev/null http://taxsim.nber.org/taxsim35/taxsim.wasm 2>&1 | grep ETag
+
+# we are using version "e1c7c-5e1ce45f427ba"

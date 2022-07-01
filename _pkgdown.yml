@@ -5,6 +5,8 @@ template:
 authors:
   Shane Orr:
      href: https://shaneorr.io
+  Thomas Wells:
+     href: https://github.com/thomascwells
 
 destination: '../shanes-site/static/R/usincometaxes'
 
@@ -16,3 +18,4 @@ articles:
   - taxsim-input
   - taxsim-output
   - send-data-to-taxsim
+  - interface-options
