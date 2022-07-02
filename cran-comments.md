@@ -15,3 +15,5 @@
 ## Downstream dependencies
 
 There are no downstream dependencies.
+
+## Check NEWS.md for updates.

@@ -240,7 +240,7 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
     )
 
   } else {
-    stop("Invalid value for `interface` argument. Msut be one of 'wasm', 'ssh', or 'http'.", call. = FALSE)
+    stop("Invalid value for `interface` argument. Must be one of 'wasm', 'ssh', or 'http'.", call. = FALSE)
   }
 
 

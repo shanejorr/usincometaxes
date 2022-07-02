@@ -2,7 +2,7 @@
 
 ### Major Changes
 
-- Add `interface` parameter to `taxsim_calculate_taxes()`, which allows users to select the methode of interfacing with TAXSIM.
+- Add `interface` parameter to `taxsim_calculate_taxes()`, which allows users to select the method of interfacing with TAXSIM.
 - Add 'wasm' option to `interface` parameter. The functionality incorporates Aman Gupta Karmani's  [JS / WebAssembly tooling](https://github.com/tmm1/taxsim.js) into the package.  Therefore, tax calculations can be conducted locally without send and retrieving data from the TAXSIM servers. (@thomascwells, [PR #11](https://github.com/shanejorr/usincometaxes/pull/11))
 - Add 'http' option to `interface` parameter. This option uses curl to send and retrieve data from TAXSIM via https. (@thomascwells, [PR #9](https://github.com/shanejorr/usincometaxes/pull/9))
 
