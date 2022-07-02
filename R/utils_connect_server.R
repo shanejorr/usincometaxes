@@ -158,3 +158,71 @@ import_data_helper <- function(raw_data, idtl) {
   return(raw_data)
 
 }
+
+#' Calculate taxes using https
+#'
+#' @param .data Dataset to send to NBER via http.
+#' @param to_taxsim_tmp_filename Filename for temporary file to send data to for uploading.
+#'
+#' @keywords internal
+calculate_taxes_http <- function(.data, to_taxsim_tmp_filename) {
+
+  # convert input data to string
+  data_string <- vroom::vroom_format(.data, delim = ",")
+
+  # remove trailing newline character - causes error with TAXSIM
+  # and write to file
+  cat(sub(x = data_string, "(\r\n|\n)$", ""),
+      file = to_taxsim_tmp_filename)
+
+  # create http post and send to NBER
+  http_response <- httr::POST(
+    url = "https://taxsim.nber.org/uptest/webfile.cgi",
+    body = list(txpydata.raw = httr::upload_file(to_taxsim_tmp_filename)))
+
+  # extract response body as to text
+  response_text <- httr::content(http_response, as = 'text')
+
+  # convert text to a tibble to match vroom format
+  from_taxsim <- tibble::tibble(
+    utils::read.table(text = response_text,
+                      header = T,
+                      sep = ","))
+
+  return(from_taxsim)
+
+}
+
+#' Use WASM to calculate taxes locally
+#'
+#' @param .data Dataset that can be sent to WASM.
+#'
+#' @keywords internal
+calculate_taxes_wasm <- function(.data) {
+
+  # connect to js and wasm files
+  wasm_path   <- system.file("taxsim/taxsim.wasm", package = "usincometaxes")
+  js_path     <- system.file("taxsim/taxsim.js",    package = "usincometaxes")
+  wasm_binary <- readBin(wasm_path, raw(), file.info(wasm_path)$size)
+
+  # convert input data to string
+  data_string <- vroom::vroom_format(.data, delim = ",", eol = "\\n")
+
+  # load the V8 context
+  ctx <- V8::v8()
+  ctx$assign("wasmBinary", wasm_binary)
+  ctx$source(js_path)
+
+  response_text <- ctx$call("taxsim",
+                            V8::JS(paste0("'", data_string, "'")),
+                            V8::JS("{wasmBinary}"),
+                            await = TRUE)
+
+  from_taxsim <- tibble::tibble(
+    utils::read.table(text = response_text,
+                      header = T,
+                      sep = ","))
+
+  return(from_taxsim)
+
+}

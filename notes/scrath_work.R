@@ -11,19 +11,22 @@ library(usincometaxes)
 # STOP 993 (data is of wrong type )
 # STOP 901 (extra column that is not a column)
 
+# add when accepted into CRAN
+
+# Kudos also go to Aman Gupta Karmani who built the [JS / WebAssembly tooling](https://github.com/tmm1/taxsim.js)
+# that powers the 'wasm' interface.
+
 # testing -----------------------------------------
 
 devtools::load_all()
 
 taxsim_input <- data.frame(
-  taxsimid = c(1,2),
+  taxsimid = seq(1:10),
   mstat = 2,
-  year = 1970,
-  state = c('NC', 'NC'),
+  year = 1980,
+  state = 'NC',
   ltcg = 100000
 )
-
-a <- create_dataset_for_taxsim(taxsim_input)
 
 df <- taxsim_calculate_taxes(taxsim_input, return_all_information = T, interface = "http")
 
@@ -89,7 +92,7 @@ vroom(results)
 
 sample_data <- data.frame(taxsimid = 1,
                           mstat = 2,
-                          year = 1970,
+                          year = 1990,
                           ltcg = 100000,
                           idtl = 2)
 
@@ -223,7 +226,7 @@ to_taxsim_tmp_filename <- 'notes/to_taxsim.csv'
 from_taxsim_tmp_filename <- 'notes/from_taxsim.csv'
 std_error_filename <- 'notes/stderror.txt'
 
-write_csv(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
+write_csv(sample_data, to_taxsim_tmp_filename, ",", progress = FALSE)
 
 taxsim_http_command <- paste0(
   "curl -F txpydata.raw=@",to_taxsim_tmp_filename,
@@ -243,3 +246,9 @@ POST(
   ) %>%
   content(as = 'text', type = 'application/csv')
 
+# checking wasm ETag to ensure we are using most recent version
+
+# how to check
+# curl --head -v -o /dev/null http://taxsim.nber.org/taxsim35/taxsim.wasm 2>&1 | grep ETag
+
+# we are using version "e1c7c-5e1ce45f427ba"
