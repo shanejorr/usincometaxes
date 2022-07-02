@@ -11,6 +11,11 @@ library(usincometaxes)
 # STOP 993 (data is of wrong type )
 # STOP 901 (extra column that is not a column)
 
+# add when accepted into CRAN
+
+# Kudos also go to Aman Gupta Karmani who built the [JS / WebAssembly tooling](https://github.com/tmm1/taxsim.js)
+# that powers the 'wasm' interface.
+
 # testing -----------------------------------------
 
 devtools::load_all()

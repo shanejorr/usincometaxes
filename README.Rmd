@@ -29,10 +29,10 @@ uploading the data, downloading the results, and placing the results into a tidy
 
 ## Installation
 
-You can install `usincometaxes` from [GitHub](https://github.com/shanejorr/usincometaxes) with:
+You can install `usincometaxes` from CRAN:
 
 ```{r eval = FALSE}
-devtools::install_github("shanejorr/usincometaxes")
+install.packages('usincometaxes')
 ```
 
 ## Quick example
@@ -58,8 +58,7 @@ family_income <- data.frame(
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
   marginal_tax_rates = 'Wages',
-  return_all_information = FALSE,
-  interface = 'http'
+  return_all_information = FALSE
 )
 ```
 
@@ -127,10 +126,6 @@ The input data frame, `.data`, can contain columns beyond those listed in the vi
 
 By default, marginal tax rates are calculated using wages. The default can be changed with the `marginal_tax_rates` parameter to `taxsim_calculate_taxes()`. Possible options are: 'Wages' (default), 'Long Term Capital Gains', 'Primary Wage Earner', or 'Secondary Wage Earner'.
 
-## Connecting to the TAXSIM Server
-
-`usincometaxes` connects to the TAXSIM server through ssh. TAXSIM allows users to connect to its server through ftp, ssh, html, or email. (See the [TAXSIM documentation](http://taxsim.nber.org/taxsim35/low-level-remote.html) on connection options.). CRAN, however, requires all data uploads and downloads to occur through a secure connection (See [CRAN policies](https://cran.r-project.org/web/packages/policies.html) for more information.). Since ssh is the only secure connection offered by TAXSIM, that is the one used.
-
 ## Giving credit
 
 The NBER's [TAXSIM 35](http://taxsim.nber.org/taxsim35/) tax simulator does all tax calculations. 
@@ -138,5 +133,3 @@ This package simply lets users interact with the tax simulator through R. Theref
 cite the TAXSIM 35 tax simulator when they use this package in their work:
 
 |           Feenberg, Daniel Richard, and Elizabeth Coutts, An Introduction to the TAXSIM Model, Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
-
-Kudos also go to Aman Gupta Karmani who built the [JS / WebAssembly tooling](https://github.com/tmm1/taxsim.js) that powers the 'wasm' interface.
