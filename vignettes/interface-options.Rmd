@@ -44,7 +44,7 @@ Standard port 22 is used to connect via SSH. There is a chance that SSH port 22 
 
 Using 'ssh' ensures that you are working with the most up to date version of TAXSIM 35, regardless of when you installed `usincometaxes`. With 'ssh' the good news is that you will always be using the most up to date TAXSIM 35 version, the bad news is that there is an off chance you will see slightly different results through time. Thus, 'ssh' may not always provide reproducible results. Finally, 'ssh' is slower than 'wasm' since you are sending data to, and retrieving data from, a server.
 
-### 2. 'http'
+### 3. 'http'
 
 'http' uses `curl` to send and retrieve the data from the TAXSIM 35 server via https. Since calculations are conducted remotely, 'http' has the advantages and disadvantages of 'ssh': you are using the most up to date version of TAXSIM 35 (advantage), which may prevent results from being the exact same through time (disadvantage).
 
