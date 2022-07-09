@@ -86,7 +86,7 @@ federal and state tax liabilities and FICA taxes. When `return_all_information` 
 items are returned.
 
 `usoncometax`'s output contains the same information and column names as [TAXSIM 35](http://taxsim.nber.org/taxsim35/).
-Therefore, please consult either the [Description of Output Columns](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-output.html) vignette or [TAXSIM 35 documentation](http://taxsim.nber.org/taxsim35/) for more output information.
+Therefore, please consult either the [Description of Output Columns vignette](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-output.html) or [TAXSIM 35 documentation](http://taxsim.nber.org/taxsim35/) for more output information.
 
 ```{r}
 family_taxes_full_output <- taxsim_calculate_taxes(
@@ -126,6 +126,10 @@ The input data frame, `.data`, can contain columns beyond those listed in the vi
 
 By default, marginal tax rates are calculated using wages. The default can be changed with the `marginal_tax_rates` parameter to `taxsim_calculate_taxes()`. Possible options are: 'Wages' (default), 'Long Term Capital Gains', 'Primary Wage Earner', or 'Secondary Wage Earner'.
 
+## User interface
+
+The `interface` parameter to `taxsim_calculate_taxes()` controls how the TAXSIM 35 program is accessed. It has three options: (1) 'wasm', (2) 'ssh', and (3) 'http'.  With 'wasm', all tax calculations are done locally on one's own computer through [WebAssembly / JavaScript files](https://github.com/tmm1/taxsim.js) that are bundled with the package. With 'ssh' and 'http', the date are uploaded to the NBER's servers where the calculations are conducted. See the [TAXSIM input vignette](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html) for more information on the interface options.
+
 ## Giving credit
 
 The NBER's [TAXSIM 35](http://taxsim.nber.org/taxsim35/) tax simulator does all tax calculations. 
@@ -133,3 +137,5 @@ This package simply lets users interact with the tax simulator through R. Theref
 cite the TAXSIM 35 tax simulator when they use this package in their work:
 
 |           Feenberg, Daniel Richard, and Elizabeth Coutts, An Introduction to the TAXSIM Model, Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
+
+Aman Gupta Karmani created the [WebAssembly / JavaScript files](https://github.com/tmm1/taxsim.js). These files also power his tax calculator web app at [taxsim.app](https://taxsim.app).
