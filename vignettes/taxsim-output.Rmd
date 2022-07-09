@@ -37,14 +37,15 @@ Returned columns when `return_all_information` = `FALSE`.
 * **frate**: Marginal federal tax rate.
 * **srate**: Marginal state tax rate, if a state was identified.
 * **ficar**: FICA rate.
-* **tfica**: taxpayer liability for FICA.
+* **tfica**: Taxpayer liability for FICA.
+
 Marginal rates are with respect to wage income unless another rate is requested. If detailed intermediate results are requested, the following 35 columns of data are added:.
 
 ## Detailed columns
 
 Returned columns when `return_all_information` = `TRUE`.
 
-* All standard columns.
+* All standard columns shown above, plus:
 <br>
 * **v10_federal_agi**: Federal AGI
 * **v11_ui_agi**: UI in AGI
