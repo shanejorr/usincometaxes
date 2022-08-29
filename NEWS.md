@@ -1,3 +1,5 @@
+# usincometaxes 0.6.0
+
 # usincometaxes 0.5.0
 
 ### Major Changes
