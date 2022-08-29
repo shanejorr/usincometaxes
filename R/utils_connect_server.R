@@ -166,7 +166,7 @@ import_data_helper <- function(raw_data, idtl) {
 #'
 #' @keywords internal
 calculate_taxes_http <- function(.data, to_taxsim_tmp_filename) {
-
+  #vroom::vroom_write(.data, to_taxsim_tmp_filename, ",", progress = FALSE)
   # convert input data to string
   data_string <- vroom::vroom_format(.data, delim = ",")
 
@@ -181,14 +181,20 @@ calculate_taxes_http <- function(.data, to_taxsim_tmp_filename) {
     body = list(txpydata.raw = httr::upload_file(to_taxsim_tmp_filename)))
 
   # extract response body as to text
-  response_text <- httr::content(http_response, as = 'text')
+  response_text <- httr::content(http_response, as = 'text', type = 'text/plain')
+
+  # response_text <- gsub("[.] *", "", response_text)
+
+  response_text <- gsub("[,](?=\\n)", "", response_text, perl = TRUE)   #str_remove_all(response_text, "[,](?=\\n)")
 
   # convert text to a tibble to match vroom format
-  from_taxsim <- tibble::tibble(
-    utils::read.table(text = response_text,
-                      header = T,
-                      sep = ","))
-
+  # from_taxsim <- tibble::tibble(
+  #   utils::read.table(text = response_text,
+  #                     header = T,
+  #                     sep = ",",
+  #                     row.names = NULL)
+  #   )
+  from_taxsim <- vroom::vroom(I(response_text))
   return(from_taxsim)
 
 }

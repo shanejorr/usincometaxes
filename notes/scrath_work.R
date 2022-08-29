@@ -13,9 +13,6 @@ library(usincometaxes)
 
 # add when accepted into CRAN
 
-# Kudos also go to Aman Gupta Karmani who built the [JS / WebAssembly tooling](https://github.com/tmm1/taxsim.js)
-# that powers the 'wasm' interface.
-
 # testing -----------------------------------------
 
 devtools::load_all()
@@ -215,7 +212,7 @@ scp(
 #############################
 
 sample_data <- data.frame(
-  taxsimid = 1,
+  taxsimid = 1:5,
   mstat = 2,
   year = 1970,
   ltcg = 100000,
@@ -236,7 +233,7 @@ taxsim_http_command <- paste0(
 
 system(taxsim_http_command)
 
-read.csv(to_taxsim_filename)
+read.csv(to_taxsim_tmp_filename)
 
 POST(
   "https://wwwdev.nber.org/uptest/webfile.cgi",

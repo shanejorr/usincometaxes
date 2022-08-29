@@ -107,6 +107,7 @@ test_that("All interface options return same values", {
                                          return_all_information = T,
                                          interface = 'wasm')
 
-  expect_equal(ssh_results, http_results)
+  # remove column 8 because HTTP does not have tficar column
+  expect_equal(ssh_results[-8], http_results)
   expect_equal(ssh_results, wasm_results)
 })
