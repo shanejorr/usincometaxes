@@ -1,4 +1,10 @@
-## R CMD check test environment
+# Submission
+
+Resolves errors in [CRAN Checks](https://cran.r-project.org/web/checks/check_results_usincometaxes.html). Check NEWS.md for specifics.
+
+# R CMD check test environment
+
+## Github Actions Checks
 
 - macOS-latest (release)
 - windows-latest (release)
@@ -10,10 +16,14 @@
 
 ## win-builder (devel) check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 notes
 
-## Downstream dependencies
+* checking for detritus in the temp directory ... NOTE
+Found the following files/directories:
+  'lastMiKTeXException'
 
-There are no downstream dependencies.
+As noted in [R-hub issue #503](https://github.com/r-hub/rhub/issues/503), this could be due to a bug/crash in MiKTeX and can likely be ignored.
 
-## Check NEWS.md for updates.
+# Downstream dependencies
+
+There are no downstream dependencies, as checked by `revdepcheck::revdep_check()`.
