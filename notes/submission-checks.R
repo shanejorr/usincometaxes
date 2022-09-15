@@ -7,3 +7,12 @@
 devtools::spell_check()
 devtools::check_rhub()
 devtools::check_win_devel()
+
+# Check for CRAN specific requirements using rhub and save it in the results
+# objects
+results <- rhub::check_for_cran()
+
+# Get the summary of your results
+results$cran_summary()
+
+devtools::release()
