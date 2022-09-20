@@ -1,8 +1,14 @@
+# usincometaxes 0.5.2
+
+### Patch
+
+- TAXSIM added back the `tficar` column to http (see 0.5.1 for more information). Added the `tficar` column back to tests. 
+
 # usincometaxes 0.5.1
 
 ### Patch
 
-- TAXSIM changed how it returns http results from its server. It now adds a trailing comma at the end of each line. This causes the import functions to think there is an additional column. So solve, update http import functions to remove trailing commas.
+- TAXSIM changed how it returns http results from its server. It now adds a trailing comma at the end of each line. This causes the import functions to think there is an additional column. To solve, update http import functions to remove trailing commas.
 - http results from TAXSIM no longer include the column `tficar`. This caused tests to fail. Updated tests that match http and ssh results to account for this difference.
 
 # usincometaxes 0.5.0
