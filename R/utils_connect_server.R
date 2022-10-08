@@ -136,26 +136,26 @@ import_data_helper <- function(raw_data, idtl) {
   if (idtl == 2) {
 
     col_headers <- vroom::vroom(raw_data, col_names = FALSE, n_max = 1, progress = FALSE, show_col_types = FALSE)
+    col_headers <- as.vector(col_headers[1,])
 
-    raw_data <- vroom::vroom(raw_data, col_names = FALSE, skip = 1, progress = FALSE, show_col_types = FALSE)
+    .n_named_cols <- length(col_headers)
 
-    if (ncol(raw_data) == 46 & all(is.na(raw_data$X46))) {
+    tax_data <- vroom::vroom(raw_data, col_names = FALSE, col_select = c(1:.n_named_cols), skip = 1, progress = FALSE, show_col_types = FALSE)
 
-      raw_data <- raw_data[-46]
+    colnames(tax_data) <- col_headers
 
-    }
+    # make sure we only keep to column v45, so that ssh aligns with wasm
+    n_v45 <- which(colnames(tax_data) == 'v45')
 
-    col_names <- t(col_headers[1, ])
-
-    colnames(raw_data) <- col_names
+    tax_data <- tax_data[1:n_v45]
 
   } else if (idtl == 0) {
 
-    raw_data <- vroom::vroom(raw_data, progress = FALSE, show_col_types = FALSE)
+    tax_data <- vroom::vroom(raw_data, progress = FALSE, show_col_types = FALSE)
 
   }
 
-  return(raw_data)
+  return(tax_data)
 
 }
 
@@ -168,12 +168,12 @@ import_data_helper <- function(raw_data, idtl) {
 calculate_taxes_http <- function(.data, to_taxsim_tmp_filename) {
 
   # convert input data to string
-  data_string <- vroom::vroom_format(.data, delim = ",")
+  # data_string <- vroom::vroom_format(.data, delim = ",")
 
   # remove trailing newline character - causes error with TAXSIM
   # and write to file
-  cat(sub(x = data_string, "(\r\n|\n)$", ""),
-      file = to_taxsim_tmp_filename)
+  # cat(sub(x = data_string, "(\r\n|\n)$", ""),
+  #     file = to_taxsim_tmp_filename)
 
   # create http post and send to NBER
   http_response <- httr::POST(
@@ -181,12 +181,14 @@ calculate_taxes_http <- function(.data, to_taxsim_tmp_filename) {
     body = list(txpydata.raw = httr::upload_file(to_taxsim_tmp_filename)))
 
   # extract response body as to text
-  response_text <- httr::content(http_response, as = 'text', type = 'text/plain', encoding = "UTF-8")
+  response_text <- httr::content(http_response, as = 'text', type = 'text/csv', encoding = "UTF-8")
 
   # remove trailing commas in output
-  response_text <- gsub("[,](?=\\n)", "", response_text, perl = TRUE)
+  # response_text <- gsub("[,](?=\\n)", "", response_text, perl = TRUE)
 
-  from_taxsim <- vroom::vroom(I(response_text), show_col_types = FALSE)
+  from_taxsim <- vroom::vroom(I(response_text), progress = FALSE, show_col_types = FALSE)
+
+
 
   return(from_taxsim)
 

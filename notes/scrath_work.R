@@ -26,17 +26,21 @@ taxsim_input <- data.frame(
   idtl = 2
 )
 
+.data <- taxsim_input
+
 to_taxsim_tmp_filename <- 'notes/to_taxsim.csv'
 from_taxsim_tmp_filename <- 'notes/from_taxsim.csv'
 std_error_filename <- 'notes/stderror.txt'
 known_hosts_file <- 'notes/known_hosts'
 
+raw_data <- from_taxsim_tmp_filename
+
 vroom::vroom_write(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
 
 create_ssh_command(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file, '22')
 
-test <- read_csv(from_taxsim_tmp_filename)
-
+# col_names = c(from_taxsim_cols(), 'v46', 'v47')
+test <- vroom::vroom(from_taxsim_tmp_filename, col_names = FALSE, col_select = c(1:4), skip = 1)
 
 connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file)
 
