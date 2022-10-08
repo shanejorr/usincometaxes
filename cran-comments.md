@@ -1,6 +1,6 @@
 # Submission
 
-Package was archived because the TAXSIM API changed and I did not update the R Package quick enough. Submitting to resolve errors in [CRAN Checks](https://cran-archive.r-project.org/web/checks/2022/2022-09-12_check_results_usincometaxes.html) that led to package being archived. Check NEWS.md for specifics.
+Package is failing [CRAN Checks](https://cran-archive.r-project.org/web/checks/2022/2022-09-12_check_results_usincometaxes.html) due to a change in the TAXSIM API. This submission ensures all checks are passed. Check NEWS.md for specifics.
 
 # R CMD check test environment
 
