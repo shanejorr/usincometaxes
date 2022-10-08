@@ -21,11 +21,10 @@ taxsim_input <- data.frame(
   taxsimid = seq(1:10),
   mstat = 2,
   year = 1980,
-  state = 'NC',
-  ltcg = 100000
+  state = seq(1:10),
+  ltcg = 100000,
+  idtl = 2
 )
-
-df <- taxsim_calculate_taxes(taxsim_input, return_all_information = T, interface = "http")
 
 to_taxsim_tmp_filename <- 'notes/to_taxsim.csv'
 from_taxsim_tmp_filename <- 'notes/from_taxsim.csv'
@@ -33,6 +32,11 @@ std_error_filename <- 'notes/stderror.txt'
 known_hosts_file <- 'notes/known_hosts'
 
 vroom::vroom_write(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
+
+create_ssh_command(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file, '22')
+
+test <- read_csv(from_taxsim_tmp_filename)
+
 
 connect_server_single_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file)
 
