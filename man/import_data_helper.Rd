@@ -8,6 +8,8 @@ import_data_helper(raw_data, idtl)
 }
 \arguments{
 \item{raw_data}{The raw data from TAXSIM that we want to load into R.}
+
+\item{idtl}{0 if returning a subset of columns, 2 if returning all columns.}
 }
 \description{
 When returning all columns, the data retrieved from TAXSIM contains an extra column. This function

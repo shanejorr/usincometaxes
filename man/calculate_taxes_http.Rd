@@ -4,12 +4,12 @@
 \alias{calculate_taxes_http}
 \title{Calculate taxes using https}
 \usage{
-calculate_taxes_http(.data, to_taxsim_tmp_filename)
+calculate_taxes_http(to_taxsim_tmp_filename, idtl)
 }
 \arguments{
-\item{.data}{Dataset to send to NBER via http.}
-
 \item{to_taxsim_tmp_filename}{Filename for temporary file to send data to for uploading.}
+
+\item{idtl}{0 if returning a subset of columns, 2 if returning all columns.}
 }
 \description{
 Calculate taxes using https
