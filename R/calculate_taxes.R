@@ -227,9 +227,11 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
 
   } else if (interface == "http") {
 
+    vroom::vroom_write(.data, to_taxsim_tmp_filename, delim = ",", progress = FALSE)
+
     from_taxsim <- tryCatch(
       error = function(cnd) stop(stop_error_message, call. = FALSE),
-      calculate_taxes_http(.data, to_taxsim_tmp_filename)
+      calculate_taxes_http(to_taxsim_tmp_filename, idtl)
     )
 
   } else if (interface == "wasm") {

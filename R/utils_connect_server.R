@@ -127,6 +127,7 @@ import_data_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_filename, st
 #' trims the extra column if we are returning all information.
 #'
 #' @param raw_data The raw data from TAXSIM that we want to load into R.
+#' @param idtl 0 if returning a subset of columns, 2 if returning all columns.
 #'
 #' @keywords internal
 import_data_helper <- function(raw_data, idtl) {
@@ -140,9 +141,9 @@ import_data_helper <- function(raw_data, idtl) {
 
     .n_named_cols <- length(col_headers)
 
-    tax_data <- vroom::vroom(raw_data, col_names = FALSE, col_select = c(1:.n_named_cols), skip = 1, progress = FALSE, show_col_types = FALSE)
+    tax_data <- vroom::vroom(raw_data, col_names = FALSE, col_select = c(1:tidyselect::all_of(.n_named_cols)), skip = 1, progress = FALSE, show_col_types = FALSE)
 
-    colnames(tax_data) <- col_headers
+    colnames(tax_data) <- as.character(col_headers)
 
     # make sure we only keep to column v45, so that ssh aligns with wasm
     n_v45 <- which(colnames(tax_data) == 'v45')
@@ -161,19 +162,11 @@ import_data_helper <- function(raw_data, idtl) {
 
 #' Calculate taxes using https
 #'
-#' @param .data Dataset to send to NBER via http.
 #' @param to_taxsim_tmp_filename Filename for temporary file to send data to for uploading.
+#' @param idtl 0 if returning a subset of columns, 2 if returning all columns.
 #'
 #' @keywords internal
-calculate_taxes_http <- function(.data, to_taxsim_tmp_filename) {
-
-  # convert input data to string
-  # data_string <- vroom::vroom_format(.data, delim = ",")
-
-  # remove trailing newline character - causes error with TAXSIM
-  # and write to file
-  # cat(sub(x = data_string, "(\r\n|\n)$", ""),
-  #     file = to_taxsim_tmp_filename)
+calculate_taxes_http <- function(to_taxsim_tmp_filename, idtl) {
 
   # create http post and send to NBER
   http_response <- httr::POST(
@@ -183,12 +176,18 @@ calculate_taxes_http <- function(.data, to_taxsim_tmp_filename) {
   # extract response body as to text
   response_text <- httr::content(http_response, as = 'text', type = 'text/csv', encoding = "UTF-8")
 
-  # remove trailing commas in output
-  # response_text <- gsub("[,](?=\\n)", "", response_text, perl = TRUE)
-
   from_taxsim <- vroom::vroom(I(response_text), progress = FALSE, show_col_types = FALSE)
 
+  # only keep to column v45 to match wasm
+  if (!(idtl %in% c(0, 2))) stop('`idtl` must either be 0 or 2')
 
+  if (idtl == 2) {
+
+    n_v45 <- which(colnames(from_taxsim) == 'v45')
+
+    from_taxsim <- from_taxsim[1:n_v45]
+
+  }
 
   return(from_taxsim)
 

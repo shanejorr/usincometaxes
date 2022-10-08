@@ -1,4 +1,10 @@
-# usincometaxes 0.6.0
+# usincometaxes 0.5.3
+
+### Patch
+
+- TAXSIM changed its output for ssh and http and returns additional columns. Incorporate these changes,
+but still only return the columns that were present before the change. Only return the original columns
+so that ssh and http output aligns with wasm output.
 
 # usincometaxes 0.5.2
 
