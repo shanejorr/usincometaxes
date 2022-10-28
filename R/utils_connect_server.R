@@ -78,7 +78,7 @@ connect_server_single_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_fi
     error_code <- sub("^STOP |^Stop ", "", stderror[errors])
     error_prefix <- paste0(
       "TAXSIM's server returned a ", error_code, " error.\n",
-      "This most likely means there is something wrong with the data's format.\n",
+      "This most likely means there is something wrong with the data's format or we could not connect to the TAXSIM server.\n",
       "Please make sure your column names are correct and your data types are proper.\n",
       "For more information on formatting your data please see the following:\n",
       "     usincometaxes documentation: https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html\n",
@@ -87,11 +87,15 @@ connect_server_single_ssh <- function(to_taxsim_tmp_filename, from_taxsim_tmp_fi
       "See the following address for more information: https://www.shaneorr.io/r/usincometaxes/articles/send-data-to-taxsim.html"
     )
 
-    stop(error_prefix, call. = FALSE)
+    message(error_prefix)
+    return(NULL)
   }
 
   # throw an error if there is a non-zero exit code
-  if (exc != 0) stop("There was an unexpected problem with either connecting to TAXSIM's server or with the format of your data.")
+  if (exc != 0) {
+    message("There was an unexpected problem with either connecting to TAXSIM's server or with the format of your data.")
+    return(NULL)
+  }
 
 }
 
@@ -172,6 +176,14 @@ calculate_taxes_http <- function(to_taxsim_tmp_filename, idtl) {
   http_response <- httr::POST(
     url = "https://taxsim.nber.org/uptest/webfile.cgi",
     body = list(txpydata.raw = httr::upload_file(to_taxsim_tmp_filename)))
+
+  # add message if network is down
+  if (httr::http_error(http_response)) {
+    message(
+      "Unable to connect to the TAXSIM server or properly retrieve data via 'http'. Please try using 'wasm' for the `interface` parameter."
+      )
+    return(NULL)
+  }
 
   # extract response body as to text
   response_text <- httr::content(http_response, as = 'text', type = 'text/csv', encoding = "UTF-8")
