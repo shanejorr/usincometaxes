@@ -1,3 +1,9 @@
+# usincometaxes 0.5.4
+
+### Patch
+
+- Convert errors to messages when TAXSIM cannot be connected to, as per CRAN policy 'Packages which use Internet resources should fail gracefully'.
+
 # usincometaxes 0.5.3
 
 ### Patch
