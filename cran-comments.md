@@ -1,6 +1,10 @@
 # Submission
 
-Package is failing [CRAN Checks](https://cran-archive.r-project.org/web/checks/2022/2022-09-12_check_results_usincometaxes.html) due to a change in the TAXSIM API. This submission ensures all checks are passed. Check NEWS.md for specifics.
+Updated checked and converted errors to messages in order to meet the following CRAN policy, "Packages which use Internet resources should fail gracefully with an informative message if the resource is not available or has changed (and not give a check warning nor error).". 
+
+Updated tests so that tests which call the API are skipped on CRAN.
+
+Check NEWS.md for specifics.
 
 # R CMD check test environment
 
