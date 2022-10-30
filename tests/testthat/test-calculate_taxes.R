@@ -8,7 +8,7 @@ test_that("Package output matches TAXSIM test file", {
     ltcg = 100000
   )
 
-  taxsim_output <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE)
+  taxsim_output <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE, interface = "wasm")
 
   federal_taxes <- taxsim_output$fiitax
 
@@ -46,8 +46,8 @@ test_that("Output is correct (including marital status)", {
   n_col_short <- 8
   n_col_long <- 44
 
-  taxsim_output_short <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE)
-  taxsim_output_long <- taxsim_calculate_taxes(taxsim_input, return_all_information = TRUE)
+  taxsim_output_short <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE, interface = "wasm")
+  taxsim_output_long <- taxsim_calculate_taxes(taxsim_input, return_all_information = TRUE, interface = "wasm")
 
   # test that ID numbers are equal
   expect_equal(taxsim_output_short$taxsimid, taxsim_input$taxsimid)
@@ -73,7 +73,7 @@ test_that("All states work", {
     state = states
   )
 
-  taxsim_output <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE)
+  taxsim_output <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE, interface = "wasm")
 
   # test that all states were returned
   expect_equal(nrow(taxsim_output), 50)
@@ -81,6 +81,9 @@ test_that("All states work", {
 })
 
 test_that("All interface options return same values", {
+
+  # don't run on CRAN
+  testthat::skip_on_cran()
 
   # remove MA from test for now, because it is giving odd results from the server for v36_state_taxable_income
   states <- state.abb[-21]

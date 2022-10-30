@@ -3,6 +3,7 @@
 ### Patch
 
 - Convert errors to messages when TAXSIM cannot be connected to, as per CRAN policy 'Packages which use Internet resources should fail gracefully'.
+- No longer run tests on CRAN that rely on calling the API, as per the guidance in [HTTP Testing in R](https://books.ropensci.org/http-testing/graceful.html).
 
 # usincometaxes 0.5.3
 
