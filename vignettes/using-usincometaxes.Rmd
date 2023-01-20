@@ -52,9 +52,7 @@ taxpayer_finances %>%
 
 Each row in the data set is a tax paying unit. Thus, each row files one tax return. Columns represent items reported on tax returns that impact taxes. Of course, the information in the data set does not represent everything people report on tax returns. For this reason, the income tax calculations are simply estimates.
 
-We call `taxsim_calculate_taxes()` to estimate federal and state income taxes for each tax paying unit. `taxsim_calculate_taxes()` sends the data to the [NBER's TAXSIM 35](https://users.nber.org/~taxsim/taxsim35/) program for calculation and returns the results as a data frame.
-
-We are only interested in federal and state tax liabilities, not line item credits and deduction, so we are using `return_all_information = FALSE`.
+We call `taxsim_calculate_taxes()` to estimate federal and state income taxes for each tax paying unit. We are only interested in federal and state tax liabilities, not line item credits and deduction, so we are using `return_all_information = FALSE`.
 
 ```{r calcualte_survey_taxes}
 family_taxes <- taxsim_calculate_taxes(

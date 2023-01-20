@@ -19,11 +19,9 @@ Depends:
 Imports: 
     datasets,
     vroom,
-    httr,
     tibble,
     utils,
-    V8,
-    tidyselect
+    V8
 Suggests: 
     dplyr,
     ggplot2,

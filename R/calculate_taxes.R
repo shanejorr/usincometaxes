@@ -6,7 +6,6 @@
 #' if you continue receiving unreasonable errors from \code{\link{taxsim_calculate_taxes}}. In such as case,
 #' you can run this function on your data set. You should then save the resulting
 #' data frame as a csv file. Then, upload the file to \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
-#' If there are no errors with TAXSIM 35 then the issue lies in \code{\link{taxsim_calculate_taxes}}.
 #'
 #' \code{\link{create_dataset_for_taxsim}} takes the same columns as column names as \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
 #'
@@ -28,7 +27,6 @@
 #'
 #' family_taxes <- create_dataset_for_taxsim(family_income)
 #'
-#' # You can then write out the data frame as a csv file for uploading to TAXSIM 35
 #'
 #' @export
 create_dataset_for_taxsim <- function(.data) {
@@ -98,7 +96,9 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' @description
 #' This function calculates state and federal income taxes using the TAXSIM 35 tax simulator.
-#' See \url{http://taxsim.nber.org/taxsim35/} for more information on TAXSIM 35.
+#' See \url{http://taxsim.nber.org/taxsim35/} for more information on TAXSIM 35. The function uses
+#' a compiled WebAssembly (wasm) version of the TAXSIM app that is part of the package to calculate taxes.
+#' Details about generating the wasm file can be found here: https://github.com/tmm1/taxsim.js
 #'
 #' @param .data Data frame containing the information that will be used to calculate taxes.
 #'    This data set will be sent to TAXSIM. Data frame must have specified column names and data types.
@@ -107,17 +107,6 @@ create_dataset_for_taxsim <- function(.data) {
 #' @param return_all_information Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 #'     or only key information (FALSE). Returning all information returns 42 columns of output, while only
 #'     returning key information returns 9 columns. It is faster to download results with only key information.
-#' @param interface String indicating which NBER TAXSIM interface to use. Should
-#'   be one of: "wasm", "ssh", or "http".
-#'
-#'   - "wasm" uses a compiled WebAssembly version of the TAXSIM app. Details
-#'   about generating the wasm file can be found here:
-#'   https://github.com/tmm1/taxsim.js
-#'   - "ssh" uses SSH to connect to taxsimssh.nber.org. Your system must already
-#'   have SSH installed.
-#'   - "http" uses CURL to connect to
-#'   https://taxsim.nber.org/uptest/webfile.cgi. 'http" does not work for dataset with more than
-#'        1,000 rows.
 #'
 #' @section Formatting your data:
 #'
@@ -153,7 +142,6 @@ create_dataset_for_taxsim <- function(.data) {
 #'
 #' @examples
 #'
-#' \dontrun{
 #' family_income <- data.frame(
 #'     taxsimid = c(1, 2),
 #'     state = c('North Carolina', 'NY'),
@@ -167,7 +155,6 @@ create_dataset_for_taxsim <- function(.data) {
 #' family_taxes <- taxsim_calculate_taxes(family_income)
 #'
 #' merge(family_income, family_taxes, by = 'taxsimid')
-#' }
 #'
 #' @section Giving credit where it is due:
 #'
@@ -179,11 +166,11 @@ create_dataset_for_taxsim <- function(.data) {
 #' Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
 #'
 #' @export
-taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_all_information = FALSE, interface = "wasm") {
+taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_all_information = FALSE) {
 
   # check parameter options
   # must change this function if parameters are added
-  check_parameters(.data, marginal_tax_rates, return_all_information, interface)
+  check_parameters(.data, marginal_tax_rates, return_all_information)
 
   # save input ID numbers as object, so we can make sure the output ID numbers are the same
   input_s <- .data$taxsimid
@@ -199,53 +186,17 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
   # add marginal tax rate calculation
   .data[['mtr']] <- convert_marginal_tax_rates(marginal_tax_rates)
 
-  # send data set to taxsim server
-
-  # save csv file of data set to a temp folder
-  to_taxsim_tmp_filename <- tempfile(pattern = 'upload_', fileext = ".csv")
-  from_taxsim_tmp_filename <- tempfile(pattern = 'download_', fileext = ".csv")
-
   stop_error_message <- paste0(
-    paste0("There was a problem in calculating the taxes using '", interface, "'.\n"),
-    "Please try a different `interface` option.\n",
-    "Alternatively, you can try manually uploading the data to TAXSIM as an avenue of troubleshooting.\n",
+    "There was a problem in calculating the taxes. Please check the format of your data.\n",
+    "If the problem persists, you can try manually uploading the data to TAXSIM as an avenue of troubleshooting.\n",
     "See the following address for more information: https://www.shaneorr.io/r/usincometaxes/articles/send-data-to-taxsim.html"
   )
 
-  if (interface == "ssh") {
-
-    vroom::vroom_write(.data, to_taxsim_tmp_filename, delim = ",", progress = FALSE)
-
-    # try uploading and downloading via ssh
-    std_error_filename <- tempfile(pattern = 'std_error_', fileext = ".txt")
-    known_hosts_file <- paste0(tempdir(), '/known_hosts')
-
-    from_taxsim <- tryCatch(
-      error = function(cnd) stop(stop_error_message, call. = FALSE),
-      import_data_ssh(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file, idtl)
-    )
-
-  } else if (interface == "http") {
-
-    vroom::vroom_write(.data, to_taxsim_tmp_filename, delim = ",", progress = FALSE)
-
-    from_taxsim <- tryCatch(
-      error = function(cnd) stop(stop_error_message, call. = FALSE),
-      calculate_taxes_http(to_taxsim_tmp_filename, idtl)
-    )
-
-  } else if (interface == "wasm") {
-
-    from_taxsim <- tryCatch(
+  # calcualte taxes using wasm
+  from_taxsim <- tryCatch(
       error = function(cnd) stop(stop_error_message, call. = FALSE),
       calculate_taxes_wasm(.data)
-    )
-
-  } else {
-    stop("Invalid value for `interface` argument. Must be one of 'wasm', 'ssh', or 'http'.", call. = FALSE)
-  }
-
-
+  )
 
   # add column names to the TAXSIM columns that do not have names
   from_taxsim <- clean_from_taxsim(from_taxsim)
