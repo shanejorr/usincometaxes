@@ -58,8 +58,7 @@ family_income <- data.frame(
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
   marginal_tax_rates = 'Wages',
-  return_all_information = TRUE,
-  interface = "ssh"
+  return_all_information = TRUE
 )
 ```
 
@@ -126,10 +125,6 @@ The input data frame, `.data`, can contain columns beyond those listed in the vi
 ## Marginal tax rates
 
 By default, marginal tax rates are calculated using wages. The default can be changed with the `marginal_tax_rates` parameter to `taxsim_calculate_taxes()`. Possible options are: 'Wages' (default), 'Long Term Capital Gains', 'Primary Wage Earner', or 'Secondary Wage Earner'.
-
-## User interface
-
-The `interface` parameter to `taxsim_calculate_taxes()` controls how the TAXSIM 35 program is accessed. It has three options: (1) 'wasm', (2) 'ssh', and (3) 'http'.  With 'wasm', all tax calculations are done locally on one's own computer through [WebAssembly / JavaScript files](https://github.com/tmm1/taxsim.js) that are bundled with the package. With 'ssh' and 'http', the date are uploaded to the NBER's servers where the calculations are conducted. See the [TAXSIM input vignette](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html) for more information on the interface options.
 
 ## Giving credit
 
