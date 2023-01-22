@@ -52,7 +52,7 @@ family_income <- data.frame(
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
   marginal_tax_rates = 'Wages',
-  return_all_information = FALSE
+  return_all_information = TRUE
 )
 ```
 
@@ -60,10 +60,10 @@ family_taxes <- taxsim_calculate_taxes(
 kable(family_taxes)
 ```
 
-| taxsimid |  fiitax |  siitax |  fica | frate | srate | ficar | tfica |
-|---------:|--------:|--------:|------:|------:|------:|------:|------:|
-|        1 |  3487.5 | 2012.50 |  7650 |    15 |  5.75 |  15.3 |  3825 |
-|        2 | 15103.5 | 5377.86 | 15300 |    24 |  6.41 |  15.3 |  7650 |
+| taxsimid |  fiitax |  siitax |  fica | frate | srate | ficar | tfica | v10_federal_agi | v11_ui_agi | v12_soc_sec_agi | v13_zero_bracket_amount | v14_personal_exemptions | v15_exemption_phaseout | v16_deduction_phaseout | v17_itemized_deductions | v18_federal_taxable_income | v19_tax_on_taxable_income | v20_exemption_surtax | v21_general_tax_credit | v22_child_tax_credit_adjusted | v23_child_tax_credit_refundable | v24_child_care_credit | v25_eitc | v26_amt_income | v27_amt_liability | v28_fed_income_tax_before_credit | v29_fica | v30_state_household_income | v31_state_rent_expense | v32_state_agi | v33_state_exemption_amount | v34_state_std_deduction_amount | v35_state_itemized_deduction | v36_state_taxable_income | v37_state_property_tax_credit | v38_state_child_care_credit | v39_state_eitc | v40_state_total_credits | v41_state_bracket_rate | v42_self_emp_income | v43_medicare_tax_unearned_income | v44_medicare_tax_earned_income | v45_cares_recovery_rebate |
+|---------:|--------:|--------:|------:|------:|------:|------:|------:|----------------:|-----------:|----------------:|------------------------:|------------------------:|-----------------------:|-----------------------:|------------------------:|---------------------------:|--------------------------:|---------------------:|-----------------------:|------------------------------:|--------------------------------:|----------------------:|---------:|---------------:|------------------:|---------------------------------:|---------:|---------------------------:|-----------------------:|--------------:|---------------------------:|-------------------------------:|-----------------------------:|-------------------------:|------------------------------:|----------------------------:|---------------:|------------------------:|-----------------------:|--------------------:|---------------------------------:|-------------------------------:|--------------------------:|
+|        1 |  3487.5 | 2012.50 |  7650 |    15 |  5.75 |  15.3 |  3825 |           5e+04 |          0 |               0 |                   12600 |                    8000 |                      0 |                      0 |                       0 |                      29400 |                    3487.5 |                    0 |                      0 |                             0 |                               0 |                     0 |        0 |          5e+04 |                 0 |                           3487.5 |     7650 |                   50000.01 |                      0 |      50000.01 |                          0 |                          15000 |                            0 |                 35000.01 |                             0 |                           0 |              0 |                       0 |                   0.00 |               5e+04 |                                0 |                              0 |                         0 |
+|        2 | 15103.5 | 5377.86 | 15300 |    24 |  6.41 |  15.3 |  7650 |           1e+05 |          0 |               0 |                   12400 |                       0 |                      0 |                      0 |                       0 |                      87600 |                   15103.5 |                    0 |                      0 |                             0 |                               0 |                     0 |        0 |          1e+05 |                 0 |                          15103.5 |    15300 |                  100001.01 |                      0 |     100000.01 |                          0 |                           8000 |                            0 |                 92000.01 |                             0 |                           0 |              0 |                       0 |                   6.41 |               1e+05 |                                0 |                              0 |                         0 |
 
 Users can use the `taxsimid` column to join the tax data with the
 original data set. Every `taxsimid` in the input data is represented in
@@ -75,10 +75,10 @@ family_income %>%
   kable()
 ```
 
-| taxsimid | state          | year | mstat            | pwages | page |  fiitax |  siitax |  fica | frate | srate | ficar | tfica |
-|---------:|:---------------|-----:|:-----------------|-------:|-----:|--------:|--------:|------:|------:|------:|------:|------:|
-|        1 | North Carolina | 2015 | married, jointly |  5e+04 |   26 |  3487.5 | 2012.50 |  7650 |    15 |  5.75 |  15.3 |  3825 |
-|        2 | NY             | 2020 | single           |  1e+05 |   36 | 15103.5 | 5377.86 | 15300 |    24 |  6.41 |  15.3 |  7650 |
+| taxsimid | state          | year | mstat            | pwages | page |  fiitax |  siitax |  fica | frate | srate | ficar | tfica | v10_federal_agi | v11_ui_agi | v12_soc_sec_agi | v13_zero_bracket_amount | v14_personal_exemptions | v15_exemption_phaseout | v16_deduction_phaseout | v17_itemized_deductions | v18_federal_taxable_income | v19_tax_on_taxable_income | v20_exemption_surtax | v21_general_tax_credit | v22_child_tax_credit_adjusted | v23_child_tax_credit_refundable | v24_child_care_credit | v25_eitc | v26_amt_income | v27_amt_liability | v28_fed_income_tax_before_credit | v29_fica | v30_state_household_income | v31_state_rent_expense | v32_state_agi | v33_state_exemption_amount | v34_state_std_deduction_amount | v35_state_itemized_deduction | v36_state_taxable_income | v37_state_property_tax_credit | v38_state_child_care_credit | v39_state_eitc | v40_state_total_credits | v41_state_bracket_rate | v42_self_emp_income | v43_medicare_tax_unearned_income | v44_medicare_tax_earned_income | v45_cares_recovery_rebate |
+|---------:|:---------------|-----:|:-----------------|-------:|-----:|--------:|--------:|------:|------:|------:|------:|------:|----------------:|-----------:|----------------:|------------------------:|------------------------:|-----------------------:|-----------------------:|------------------------:|---------------------------:|--------------------------:|---------------------:|-----------------------:|------------------------------:|--------------------------------:|----------------------:|---------:|---------------:|------------------:|---------------------------------:|---------:|---------------------------:|-----------------------:|--------------:|---------------------------:|-------------------------------:|-----------------------------:|-------------------------:|------------------------------:|----------------------------:|---------------:|------------------------:|-----------------------:|--------------------:|---------------------------------:|-------------------------------:|--------------------------:|
+|        1 | North Carolina | 2015 | married, jointly |  5e+04 |   26 |  3487.5 | 2012.50 |  7650 |    15 |  5.75 |  15.3 |  3825 |           5e+04 |          0 |               0 |                   12600 |                    8000 |                      0 |                      0 |                       0 |                      29400 |                    3487.5 |                    0 |                      0 |                             0 |                               0 |                     0 |        0 |          5e+04 |                 0 |                           3487.5 |     7650 |                   50000.01 |                      0 |      50000.01 |                          0 |                          15000 |                            0 |                 35000.01 |                             0 |                           0 |              0 |                       0 |                   0.00 |               5e+04 |                                0 |                              0 |                         0 |
+|        2 | NY             | 2020 | single           |  1e+05 |   36 | 15103.5 | 5377.86 | 15300 |    24 |  6.41 |  15.3 |  7650 |           1e+05 |          0 |               0 |                   12400 |                       0 |                      0 |                      0 |                       0 |                      87600 |                   15103.5 |                    0 |                      0 |                             0 |                               0 |                     0 |        0 |          1e+05 |                 0 |                          15103.5 |    15300 |                  100001.01 |                      0 |     100000.01 |                          0 |                           8000 |                            0 |                 92000.01 |                             0 |                           0 |              0 |                       0 |                   6.41 |               1e+05 |                                0 |                              0 |                         0 |
 
 ## Output
 
@@ -138,12 +138,12 @@ information on input columns. There are two differences between
 2.  For filing status, `mstat`, users can either use the TAXSIM 35
     integer found in TAXSIM 35’s documentation or one of the following
     descriptions:
-    -   “single” or 1 for single;
-    -   “married, jointly” or 2 for married, filing jointly;
-    -   “married, separately” or 6 for married, filing separately;
-    -   “dependent child” or 8 for dependent, usually a child with
-        income; or
-    -   “head of household” or 1 for head of household filing status.
+    - “single” or 1 for single;
+    - “married, jointly” or 2 for married, filing jointly;
+    - “married, separately” or 6 for married, filing separately;
+    - “dependent child” or 8 for dependent, usually a child with income;
+      or
+    - “head of household” or 1 for head of household filing status.
 
 The input data frame, `.data`, can contain columns beyond those listed
 in the vignette. The additional columns will be ignored.
@@ -155,18 +155,6 @@ can be changed with the `marginal_tax_rates` parameter to
 `taxsim_calculate_taxes()`. Possible options are: ‘Wages’ (default),
 ‘Long Term Capital Gains’, ‘Primary Wage Earner’, or ‘Secondary Wage
 Earner’.
-
-## User interface
-
-The `interface` parameter to `taxsim_calculate_taxes()` controls how the
-TAXSIM 35 program is accessed. It has three options: (1) ‘wasm’, (2)
-‘ssh’, and (3) ‘http’. With ‘wasm’, all tax calculations are done
-locally on one’s own computer through [WebAssembly / JavaScript
-files](https://github.com/tmm1/taxsim.js) that are bundled with the
-package. With ‘ssh’ and ‘http’, the date are uploaded to the NBER’s
-servers where the calculations are conducted. See the [TAXSIM input
-vignette](https://www.shaneorr.io/r/usincometaxes/articles/taxsim-input.html)
-for more information on the interface options.
 
 ## Giving credit
 

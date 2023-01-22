@@ -1,0 +1,31 @@
+---
+title: "About the Web Assembly Interface"
+output: rmarkdown::html_vignette
+author: "Shane Orr"
+vignette: >
+  %\VignetteIndexEntry{About the Web Assembly Interface}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = 'center',
+  fig.path = 'webimg/',
+  fig.width = 8,
+  fig.height = 5,
+  dpi = 72,
+  dev = 'png'
+)
+```
+
+`usincometaxes` uses a JavaScript / WebAssembly version of TAXSIM 35 to calculate taxes. The JavaScript / WebAssembly files are part of the package. Therefore, you can calculate taxes without sending data to the TAXSIM server. The output *should* be the same as the output from the TAXSIM 35 server. But, keep reading for why this might not always be the case.
+
+The JavaScript / WebAssembly tooling comes from Aman Gupta Karmani's great work that you can find in this GitHub repo: https://github.com/tmm1/taxsim.js. And while you're checking out his work, don't overlook his tax calculator web app at [taxsim.app](https://taxsim.app).
+
+The JavaScript / WebAssembly files are updated soon after the NBER updates the Fortran code that runs TAXSIM 35. We will then incorporate these updated JavaScript / WebAssembly files into a new version of `usincometaxes`. A benefit of this approach is that a given version of `usincometaxes` will always produce the same results when using 'wasm'. This holds because a given version of `usincometaxes` will always use the exact same JavaScript / WebAssembly files to calculate taxes. You could see a slight discrepancy between `usincometaxes` and  TAXSIM 35 if there is a lag from when TAXSIM 35 is updated to when the JavaScript / WebAssembly files are updated.
+
+`usincometaxes`'s [changelog](https://www.shaneorr.io/r/usincometaxes/news/index.html) will note when a version changes due to an update to the JavaScript / WebAssembly files. That way, you can check if you are using the version of `usincometaxes` with the most recent JavaScript / WebAssembly files and reinstall `usincometaxes` if this is not the case. As a reminder, the following code lets you check package versions: `packageVersion("usincometaxes")`.

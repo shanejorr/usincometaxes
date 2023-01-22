@@ -7,8 +7,7 @@
 taxsim_calculate_taxes(
   .data,
   marginal_tax_rates = "Wages",
-  return_all_information = FALSE,
-  interface = "wasm"
+  return_all_information = FALSE
 )
 }
 \arguments{
@@ -21,19 +20,6 @@ This data set will be sent to TAXSIM. Data frame must have specified column name
 \item{return_all_information}{Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 or only key information (FALSE). Returning all information returns 42 columns of output, while only
 returning key information returns 9 columns. It is faster to download results with only key information.}
-
-\item{interface}{String indicating which NBER TAXSIM interface to use. Should
-be one of: "wasm", "ssh", or "http".
-\itemize{
-\item "wasm" uses a compiled WebAssembly version of the TAXSIM app. Details
-about generating the wasm file can be found here:
-https://github.com/tmm1/taxsim.js
-\item "ssh" uses SSH to connect to taxsimssh.nber.org. Your system must already
-have SSH installed.
-\item "http" uses CURL to connect to
-https://taxsim.nber.org/uptest/webfile.cgi. 'http" does not work for dataset with more than
-1,000 rows.
-}}
 }
 \value{
 The output data set contains all the information returned by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},
@@ -42,7 +28,9 @@ containing \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35's documentation}.
 }
 \description{
 This function calculates state and federal income taxes using the TAXSIM 35 tax simulator.
-See \url{http://taxsim.nber.org/taxsim35/} for more information on TAXSIM 35.
+See \url{http://taxsim.nber.org/taxsim35/} for more information on TAXSIM 35. The function uses
+a compiled WebAssembly (wasm) version of the TAXSIM app that is part of the package to calculate taxes.
+Details about generating the wasm file can be found here: \url{https://github.com/tmm1/taxsim.js}
 }
 \section{Formatting your data}{
 
@@ -88,7 +76,6 @@ Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-19
 
 \examples{
 
-\dontrun{
 family_income <- data.frame(
     taxsimid = c(1, 2),
     state = c('North Carolina', 'NY'),
@@ -102,6 +89,5 @@ family_income <- data.frame(
 family_taxes <- taxsim_calculate_taxes(family_income)
 
 merge(family_income, family_taxes, by = 'taxsimid')
-}
 
 }

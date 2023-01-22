@@ -22,7 +22,7 @@ articles:
   - taxsim-input
   - taxsim-output
   - send-data-to-taxsim
-  - interface-options
+  - wasm
 
 home:
   title: An R package to calculate federal and state income taxes in the United States

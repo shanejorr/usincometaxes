@@ -20,7 +20,6 @@ This function is useful for troubleshooting. It is not needed to calculate taxes
 if you continue receiving unreasonable errors from \code{\link{taxsim_calculate_taxes}}. In such as case,
 you can run this function on your data set. You should then save the resulting
 data frame as a csv file. Then, upload the file to \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
-If there are no errors with TAXSIM 35 then the issue lies in \code{\link{taxsim_calculate_taxes}}.
 }
 \details{
 \code{\link{create_dataset_for_taxsim}} takes the same columns as column names as \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35}.
@@ -38,6 +37,5 @@ family_income <- data.frame(
 
 family_taxes <- create_dataset_for_taxsim(family_income)
 
-# You can then write out the data frame as a csv file for uploading to TAXSIM 35
 
 }
