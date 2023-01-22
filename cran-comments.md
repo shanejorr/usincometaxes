@@ -1,4 +1,22 @@
-# Submission
+# Resubmission
+
+Original submission contained the following:
+
+> Found the following (possibly) invalid URLs:
+>      URL: https://users.nber.org/~taxsim/statesoi.html (moved to
+> https://taxsim.nber.org/statesoi.html)
+>        From: inst/doc/taxsim-input.html
+>              README.md
+>        Status: 301
+>        Message: Moved Permanently
+>
+> Please change http --> https, add trailing slashes, or follow moved
+> content as appropriate.
+> Please fix and resubmit.
+
+I have fixed the link for this submission
+
+# Original Submission
 
 Removed the interface parameter from the `taxsim_calculate_taxes()` function. Previously, users could 
 calculate taxes by either sending their data to the TAXSIM server or conduct the calculations locally 
