@@ -1,8 +1,10 @@
 # Submission
 
-Updated checked and converted errors to messages in order to meet the following CRAN policy, "Packages which use Internet resources should fail gracefully with an informative message if the resource is not available or has changed (and not give a check warning nor error).". 
-
-Updated tests so that tests which call the API are skipped on CRAN.
+Removed the interface parameter from the `taxsim_calculate_taxes()` function. Previously, users could 
+calculate taxes by either sending their data to the TAXSIM server or conduct the calculations locally 
+with a WebAssembly version of the program that runs on the TAXSIM server. The program on the TAXSIM 
+server changes frequently, causing errors to this package and requiring frequent updates. The WebAssembly
+version is stable, which will lead to fewer errors and less maintenance.
 
 Check NEWS.md for specifics.
 
@@ -30,4 +32,9 @@ As noted in [R-hub issue #503](https://github.com/r-hub/rhub/issues/503), this c
 
 # Downstream dependencies
 
-There are no downstream dependencies, as checked by `revdepcheck::revdep_check()`.
+## revdepcheck results
+
+We checked 0 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 0 new problems
+ * We failed to check 0 packages
