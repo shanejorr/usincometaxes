@@ -41,9 +41,9 @@ The column names in `usincometaxes` are the same as TAXSIM 35's variable names. 
     * "dependent child" or 8 for dependent, usually a child with income; or
     * "head of household" or 1 for head of household filing status.
 <br>   
-* **state**: State two letter abbreviation ('NC'), full state name ('North Carolina') or [state SOI code](https://users.nber.org/~taxsim/statesoi.html) (32). 
-    If state income taxes are not needed,
-    either label as "No State" or remove this variable. State income tax information is only available from 1977 to 2023.
+* **state**: State two letter abbreviation ('NC'), full state name ('North Carolina') or [state SOI code](https://taxsim.nber.org/statesoi.html) (32). 
+
+If state income taxes are not needed, either label as "No State" or remove this variable. State income tax information is only available from 1977 to 2023.
 
 ## Optional columns
 
