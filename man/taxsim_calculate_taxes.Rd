@@ -30,7 +30,7 @@ containing \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35's documentation}.
 This function calculates state and federal income taxes using the TAXSIM 35 tax simulator.
 See \url{http://taxsim.nber.org/taxsim35/} for more information on TAXSIM 35. The function uses
 a compiled WebAssembly (wasm) version of the TAXSIM app that is part of the package to calculate taxes.
-Details about generating the wasm file can be found here: https://github.com/tmm1/taxsim.js
+Details about generating the wasm file can be found here: \url{https://github.com/tmm1/taxsim.js}
 }
 \section{Formatting your data}{
 

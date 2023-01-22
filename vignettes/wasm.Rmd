@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`usincometaxes` uses a JavaScript / WebAssembly version of TAXSIM 35 to calculate taxes. THe JavaScript / WebAssembly files are part of the package. Therefore, you can calcualte taxes without sending data to the TAXSIM server. The output *should* be the same as the output from the TAXSIM 35 server. But, keep reading for why this might not always be the case.
+`usincometaxes` uses a JavaScript / WebAssembly version of TAXSIM 35 to calculate taxes. The JavaScript / WebAssembly files are part of the package. Therefore, you can calculate taxes without sending data to the TAXSIM server. The output *should* be the same as the output from the TAXSIM 35 server. But, keep reading for why this might not always be the case.
 
 The JavaScript / WebAssembly tooling comes from Aman Gupta Karmani's great work that you can find in this GitHub repo: https://github.com/tmm1/taxsim.js. And while you're checking out his work, don't overlook his tax calculator web app at [taxsim.app](https://taxsim.app).
 
