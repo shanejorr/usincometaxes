@@ -37,7 +37,9 @@ income taxes.
 
 ``` r
 library(dplyr)
+#> Warning: package 'dplyr' was built under R version 4.2.1
 library(knitr)
+#> Warning: package 'knitr' was built under R version 4.2.1
 library(usincometaxes)
 
 family_income <- data.frame(
@@ -133,8 +135,8 @@ information on input columns. There are two differences between
 
 1.  `usincometaxes` allows users to specify the state with either the
     two letter abbreviation or [state SOI
-    code](https://users.nber.org/~taxsim/statesoi.html). `usincometaxes`
-    will convert the abbreviation to an SOI code for TAXSIM 35.
+    code](https://taxsim.nber.org/statesoi.html). `usincometaxes` will
+    convert the abbreviation to an SOI code for TAXSIM 35.
 2.  For filing status, `mstat`, users can either use the TAXSIM 35
     integer found in TAXSIM 35’s documentation or one of the following
     descriptions:

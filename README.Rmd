@@ -110,7 +110,7 @@ These are the same column names found in the [TAXSIM 35](http://taxsim.nber.org/
 Therefore, you can consult the package documentation or TAXSIM 35 documentation for more information on input columns.
 There are two differences between `usincometaxes` and TAXSIM 35:
 
-1.  `usincometaxes` allows users to specify the state with either the two letter abbreviation or [state SOI code](https://users.nber.org/~taxsim/statesoi.html). 
+1.  `usincometaxes` allows users to specify the state with either the two letter abbreviation or [state SOI code](https://taxsim.nber.org/statesoi.html). 
 `usincometaxes` will convert the abbreviation to an SOI code for TAXSIM 35.
 2.  For filing status, `mstat`, users can either use the TAXSIM 35 integer found in TAXSIM 35's documentation or 
 one of the following descriptions:
