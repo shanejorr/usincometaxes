@@ -5,8 +5,7 @@ Original submission contained the following:
 > Found the following (possibly) invalid URLs:
 >      URL: https://users.nber.org/~taxsim/statesoi.html (moved to
 > https://taxsim.nber.org/statesoi.html)
->        From: inst/doc/taxsim-input.html
->              README.md
+>        From: README.md
 >        Status: 301
 >        Message: Moved Permanently
 >
