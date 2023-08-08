@@ -1,3 +1,5 @@
+# usincometaxes (development version)
+
 # usincometaxes 0.6.0
 
 Removed the `interface` option to `taxsim_calculate_taxes()`. Now, 'wasm' is the only interface option. Users are not able to send the data to the TAXSIM server via ssh or http. This feature was removed because we have seen unexpected changes to the TAXSIM server's output, which could silently introduce errors.
