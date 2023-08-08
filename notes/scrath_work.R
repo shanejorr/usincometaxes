@@ -40,6 +40,8 @@ family_income_http <- taxsim_calculate_taxes(
   interface = 'http'
 )
 
+devtools::install_github('shanejorr/usincometaxes', ref = "development")
+
 # testing -----------------------------------------
 
 # devtools::load_all()
