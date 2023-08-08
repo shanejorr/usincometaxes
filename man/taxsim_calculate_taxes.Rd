@@ -7,7 +7,8 @@
 taxsim_calculate_taxes(
   .data,
   marginal_tax_rates = "Wages",
-  return_all_information = FALSE
+  return_all_information = FALSE,
+  interface = "wasm"
 )
 }
 \arguments{
@@ -20,6 +21,9 @@ This data set will be sent to TAXSIM. Data frame must have specified column name
 \item{return_all_information}{Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 or only key information (FALSE). Returning all information returns 42 columns of output, while only
 returning key information returns 9 columns. It is faster to download results with only key information.}
+
+\item{interface}{String indicating which NBER TAXSIM interface to use. Should
+be one of: "wasm", "ssh", or "http". Default "wasm".}
 }
 \value{
 The output data set contains all the information returned by \href{http://taxsim.nber.org/taxsim35/}{TAXSIM 35},

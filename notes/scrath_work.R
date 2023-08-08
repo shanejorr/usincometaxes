@@ -13,17 +13,51 @@ library(usincometaxes)
 
 # add when accepted into CRAN
 
+family_income_regular <- data.frame(
+  taxsimid = 100,
+  state = 'North Carolina',
+  year = 2021,
+  mstat = 'single',
+  pwages = 11432, # primary wages
+  page = 27, # primary age
+  depx = 4,
+  age1 = 3,
+  age2 = 5,
+  age3 = 9
+)
+
+
+family_income_wasm <- taxsim_calculate_taxes(
+  .data = family_income_regular,
+  marginal_tax_rates = 'Wages',
+  return_all_information = TRUE
+)
+
+family_income_http <- taxsim_calculate_taxes(
+  .data = family_income_regular,
+  marginal_tax_rates = 'Wages',
+  return_all_information = TRUE,
+  interface = 'http'
+)
+
 # testing -----------------------------------------
 
-devtools::load_all()
+# devtools::load_all()
 
 taxsim_input <- data.frame(
-  taxsimid = seq(1:10),
+  taxsimid = seq(1:10000),
   mstat = 2,
   year = 1980,
-  state = seq(1:10),
-  ltcg = 100000,
+  state = 40,
+  ltcg = 10000,
   idtl = 2
+)
+
+http_test <- taxsim_calculate_taxes(
+  .data = taxsim_input,
+  marginal_tax_rates = 'Wages',
+  return_all_information = FALSE,
+  interface = 'ssh'
 )
 
 .data <- taxsim_input
@@ -36,6 +70,10 @@ known_hosts_file <- 'notes/known_hosts'
 raw_data <- from_taxsim_tmp_filename
 
 vroom::vroom_write(taxsim_input, to_taxsim_tmp_filename, ",", progress = FALSE)
+
+
+http_results <- calculate_taxes_http(to_taxsim_tmp_filename, 2)
+wasm_results <- taxsim_calculate_taxes(taxsim_input, return_all_information = TRUE)
 
 create_ssh_command(to_taxsim_tmp_filename, from_taxsim_tmp_filename, std_error_filename, known_hosts_file, '22')
 
