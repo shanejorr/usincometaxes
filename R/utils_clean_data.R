@@ -143,15 +143,15 @@ greater_zero_cols <- function() {
 #' @param marginal_tax_rate String representing the \code{marginal_tax_rate} parameter in \code{taxsim_calculate_taxes}
 #'
 #' @keywords internal
-convert_marginal_tax_rates <- function(marginal_tax_rate_specification) {
+convert_marginal_tax_rates <- function(marginal_tax_rate) {
 
   possible_values <- c('Wages', 'Long Term Capital Gains', 'Primary Wage Earner', 'Secondary Wage Earner')
 
-  if (!marginal_tax_rate_specification %in% possible_values) {
+  if (!marginal_tax_rate %in% possible_values) {
     stop(paste0("`marginal_tax_rate` must be one of: ", "'", paste0(possible_values, collapse = "', '"), "'"))
   }
 
-  switch(marginal_tax_rate_specification,
+  switch(marginal_tax_rate,
          'Wages' = 11,
          'Long Term Capital Gains' = 70,
          'Primary Wage Earner' = 85,

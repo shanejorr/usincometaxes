@@ -4,7 +4,7 @@
 \alias{convert_marginal_tax_rates}
 \title{Recode marginal tax rates.}
 \usage{
-convert_marginal_tax_rates(marginal_tax_rate_specification)
+convert_marginal_tax_rates(marginal_tax_rate)
 }
 \arguments{
 \item{marginal_tax_rate}{String representing the \code{marginal_tax_rate} parameter in \code{taxsim_calculate_taxes}}

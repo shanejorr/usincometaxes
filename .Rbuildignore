@@ -13,3 +13,5 @@
 ^Meta$
 ^revdep$
 ^CRAN-SUBMISSION$
+^old_wasm_files$
+^.*\.DS_Store$
