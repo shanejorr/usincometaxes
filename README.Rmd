@@ -12,6 +12,8 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+
+options(scipen = 999)
 ```
 
 <!-- badges: start -->
@@ -58,7 +60,7 @@ family_income <- data.frame(
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
   marginal_tax_rates = 'Wages',
-  return_all_information = TRUE
+  return_all_information = FALSE
 )
 ```
 

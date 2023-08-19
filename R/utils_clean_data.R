@@ -66,12 +66,13 @@ clean_from_taxsim <- function(from_taxsim) {
 #' @keywords internal
 taxsim_cols <- function() {
 
-  # NOTE: You need to change replace_missing() and check_required_cols() if you change this function.
+  # NOTE: You need to change check_required_cols() if you change this function.
 
   c(
     'taxsimid', 'year', 'mstat', # required
     'state', 'page', 'sage',
     'depx', 'age1', 'age2', 'age3', # dependents
+    'dep13', 'dep17', 'dep18', # dependents old way
     'pwages', 'swages', 'psemp', 'ssemp', 'dividends', 'intrec', 'stcg', 'ltcg', 'otherprop', 'nonprop',
     'pensions', 'gssi', 'pui', 'sui', 'transfers', 'rentpaid', 'proptax', 'otheritem',
     'childcare', 'mortgage', 'scorp', 'pbusinc', 'pprofinc', 'sbusinc', 'sprofinc',
@@ -88,11 +89,11 @@ taxsim_cols <- function() {
 from_taxsim_cols <- function() {
 
   # named vector to rename the columns of the data set received from TAXSIM
-  col_names_output <- c(
+  c(
     # primary output
     'taxsimid' = 'taxsimid', 'year' = 'year', 'state' = 'state',  'fiitax' = 'fiitax',
     'siitax' = 'siitax',  'fica' = 'fica',  'frate' = 'frate',
-    'srate' = 'srate',  'ficar' = 'ficar', 'tfica' = 'tfica',
+    'srate' = 'srate',  'ficar' = 'ficar', 'tfica' = 'tfica', 'credits' = 'credits',
 
     # extended output
     'v10' = 'v10_federal_agi', 'v11' = 'v11_ui_agi', 'v12' = 'v12_soc_sec_agi', 'v13' = 'v13_zero_bracket_amount',
@@ -109,12 +110,13 @@ from_taxsim_cols <- function() {
     'v38' = 'v38_state_child_care_credit', 'v39' = 'v39_state_eitc', 'v40' = 'v40_state_total_credits',
     'v41' = 'v41_state_bracket_rate',
 
+    # not sure what this is, as it is new
+    'staxbc' = 'staxbc',
+
     # extra federal columns
     'v42' = 'v42_self_emp_income', 'v43' = 'v43_medicare_tax_unearned_income',
     'v44' = 'v44_medicare_tax_earned_income', 'v45' = 'v45_cares_recovery_rebate'
   )
-
-  return(col_names_output)
 
 }
 
@@ -143,15 +145,15 @@ greater_zero_cols <- function() {
 #' @param marginal_tax_rate String representing the \code{marginal_tax_rate} parameter in \code{taxsim_calculate_taxes}
 #'
 #' @keywords internal
-convert_marginal_tax_rates <- function(marginal_tax_rate_specification) {
+convert_marginal_tax_rates <- function(marginal_tax_rate) {
 
   possible_values <- c('Wages', 'Long Term Capital Gains', 'Primary Wage Earner', 'Secondary Wage Earner')
 
-  if (!marginal_tax_rate_specification %in% possible_values) {
+  if (!marginal_tax_rate %in% possible_values) {
     stop(paste0("`marginal_tax_rate` must be one of: ", "'", paste0(possible_values, collapse = "', '"), "'"))
   }
 
-  switch(marginal_tax_rate_specification,
+  switch(marginal_tax_rate,
          'Wages' = 11,
          'Long Term Capital Gains' = 70,
          'Primary Wage Earner' = 85,

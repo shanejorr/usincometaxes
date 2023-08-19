@@ -1,6 +1,6 @@
 Package: usincometaxes
 Title: Calculate Federal and State Income Taxes in the United States
-Version: 0.6.0
+Version: 0.7.0
 Authors@R: c(
     person("Shane", "Orr", email = "shane.j.orr@gmail.com", role = c("aut", "cre", "cph")),
     person("Thomas", "Wells", email = "thomascwells@gmail.com", role = "ctb")
@@ -37,4 +37,4 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3

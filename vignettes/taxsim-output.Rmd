@@ -45,8 +45,9 @@ Marginal rates are with respect to wage income unless another rate is requested.
 
 Returned columns when `return_all_information` = `TRUE`.
 
-* All standard columns shown above, plus:
-<br>
+All standard columns shown above, plus:
+
+* **credits**: Total refundable and non-refundable federal credits
 * **v10_federal_agi**: Federal AGI
 * **v11_ui_agi**: UI in AGI
 * **v12_soc_sec_agi**: Social Security in AGI
@@ -83,6 +84,7 @@ The following columns are zero if no state is specified:
 * **v39_state_eitc**: State EIC
 * **v40_state_total_credits**: State Total Credits
 * **v41_state_bracket_rate**: State Bracket Rate
+* **staxbc**: State tax liability before credits
 
 Additional federal results:
 

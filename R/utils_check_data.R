@@ -34,7 +34,7 @@ check_data <- function(.data, cols, state_column_name) {
     stop("`year` must be a numeric value between 1960 and 2023", call. = FALSE)
   }
 
-  return(NULL)
+  return(invisible(NULL))
 
 }
 
@@ -76,7 +76,7 @@ check_state <- function(.data, cols, state_column_name) {
 
   }
 
-  return(NULL)
+  return(invisible(NULL))
 
 }
 
@@ -225,7 +225,7 @@ check_greater_zero <- function(.data, cols) {
 
   } else {
 
-    return(NULL)
+    return(invisible(NULL))
 
   }
 
@@ -256,7 +256,7 @@ check_taxsimid <- function(taxsimid_col) {
   if (number_unique_values != total_values) {
     stop("taxsimid must contain unique values.", call. = FALSE)
   } else {
-    return(NULL)
+    return(invisible(NULL))
   }
 
 }
@@ -277,7 +277,7 @@ check_parameters <- function(.data, marginal_tax_rates, return_all_information) 
 
   if (!(marginal_tax_rates %in% marginal_rates_options)) stop(marginal_rates_stop_message, call. = FALSE)
 
-  NULL
+  return(invisible(NULL))
 
 }
 
@@ -306,6 +306,6 @@ check_spouse <- function(.data, cols) {
 
   }
 
-  NULL
+  return(invisible(NULL))
 
 }
