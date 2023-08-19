@@ -1,29 +1,19 @@
-# Resubmission
+Resolved the following note in CRAN by editing documentation:
 
-Original submission contained the following:
+```
+  Documented arguments not in \usage in documentation object 'convert_marginal_tax_rates':
+    'marginal_tax_rate'
+  
+  Functions with \usage entries need to have the appropriate \alias
+  entries, and all their arguments documented.
+  The \usage entries must correspond to syntactically valid R code.
+  See chapter 'Writing R documentation files' in the 'Writing R
+  Extensions' manual.
+```
 
-> Found the following (possibly) invalid URLs:
->      URL: https://users.nber.org/~taxsim/statesoi.html (moved to
-> https://taxsim.nber.org/statesoi.html)
->        From: README.md
->        Status: 301
->        Message: Moved Permanently
->
-> Please change http --> https, add trailing slashes, or follow moved
-> content as appropriate.
-> Please fix and resubmit.
+Added `_PACKAGE` to `r/usincometaxes.r` to resolve `roxygen2`'s breaking change.
 
-I have fixed the link for this submission
-
-# Original Submission
-
-Removed the interface parameter from the `taxsim_calculate_taxes()` function. Previously, users could 
-calculate taxes by either sending their data to the TAXSIM server or conduct the calculations locally 
-with a WebAssembly version of the program that runs on the TAXSIM server. The program on the TAXSIM 
-server changes frequently, causing errors to this package and requiring frequent updates. The WebAssembly
-version is stable, which will lead to fewer errors and less maintenance.
-
-Check NEWS.md for specifics.
+Made other small edits to code. Check NEWS.md for specifics.
 
 # R CMD check test environment
 
@@ -39,13 +29,23 @@ Check NEWS.md for specifics.
 
 ## win-builder (devel) check results
 
-0 errors | 0 warnings | 1 notes
-
+```
+Found the following files/directories:
+  ''NULL''
 * checking for detritus in the temp directory ... NOTE
+
 Found the following files/directories:
   'lastMiKTeXException'
+* DONE
 
-As noted in [R-hub issue #503](https://github.com/r-hub/rhub/issues/503), this could be due to a bug/crash in MiKTeX and can likely be ignored.
+Status: 2 NOTEs
+```
+
+Both notes are bugs in R-Hub.
+
+First note is documented in <https://github.com/r-hub/rhub/issues/560>
+
+Second note is documented in <https://github.com/r-hub/rhub/issues/503>
 
 # Downstream dependencies
 
