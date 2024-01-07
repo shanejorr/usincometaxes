@@ -1,19 +1,4 @@
-Resolved the following note in CRAN by editing documentation:
-
-```
-  Documented arguments not in \usage in documentation object 'convert_marginal_tax_rates':
-    'marginal_tax_rate'
-  
-  Functions with \usage entries need to have the appropriate \alias
-  entries, and all their arguments documented.
-  The \usage entries must correspond to syntactically valid R code.
-  See chapter 'Writing R documentation files' in the 'Writing R
-  Extensions' manual.
-```
-
-Added `_PACKAGE` to `r/usincometaxes.r` to resolve `roxygen2`'s breaking change.
-
-Made other small edits to code. Check NEWS.md for specifics.
+Resolved errors that were caused by failed tests.
 
 # R CMD check test environment
 
