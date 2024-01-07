@@ -30,8 +30,8 @@ check_data <- function(.data, cols, state_column_name) {
 
   # tax year must be between the following two values
   # tax year is required, so we don't need to check whether it exists
-  if (!all(.data$year >= 1960 & .data$year <= 2024)) {
-    stop("`year` must be a numeric value between 1960 and 2023", call. = FALSE)
+  if (!all(.data$year >= 1960 & .data$year <= 2023)) {
+    stop("`year` must be a numeric value between 1960 and 2023.", call. = FALSE)
   }
 
   return(invisible(NULL))

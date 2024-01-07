@@ -31,7 +31,7 @@ test_that("Output is correct (including marital status)", {
   # program can calculate taxes for the current year and previous years
   id_nums <- as.integer(seq(1, 10))
   n <- length(id_nums)
-  current_year <- as.numeric(format(Sys.Date(), "%Y"))
+  current_year <- 2023
   years <- seq(current_year, current_year - n + 1)
 
   n_additional_filing_status <- n - length(filing_status_values)

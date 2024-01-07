@@ -1,3 +1,7 @@
+# usincometaxes 0.7.1
+
+Make 2023 the most recent year you can use. TAXSIM currently does not work for 2024.
+
 # usincometaxes 0.7.0
 
 Update `taxsim.wasm` and `taxsim.js` to latest files. ETag of current version is `e23da-601f65ac97a40`.
