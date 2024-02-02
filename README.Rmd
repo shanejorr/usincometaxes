@@ -53,7 +53,7 @@ family_income <- data.frame(
   state = c('North Carolina', 'NY'),
   year = c(2015, 2020),
   mstat = c('married, jointly', 'single'),
-  pwages = c(50000, 100000), # primary wages
+  pwages = c(50000, 100000),  # primary wages
   page = c(26, 36) # primary age
 )
 
