@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxsim WebAssembly Test</title>
+</head>
+<body>
+    <h1>Taxsim WebAssembly Example</h1>
+    <div id="output">Running...</div>
+
+    <script src="taxsim.js"></script>
+    <script>
+        async function runTaxsim() {
+            let input1 = ["taxsimid,mstat,year,ltcg,idtl", "1,2,1970,100000,0", "2,2,2022,50000,0"].join("\n");
+
+            try {
+                let output = await taxsim(input1);  // Await the result of taxsim
+                document.getElementById("output").innerText = "Taxsim Output:\n" + output;
+                console.log('Taxsim Output:', output);  // Print to console for debugging
+            } catch (error) {
+                document.getElementById("output").innerText = "Error: " + error.message;
+                console.error('Taxsim Failed:', error);
+            }
+        }
+
+        runTaxsim();
+    </script>
+</body>
+</html>

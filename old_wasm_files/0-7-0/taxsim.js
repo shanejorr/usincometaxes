@@ -3880,16 +3880,6 @@ var ASM_CONSTS = {
       },get64:function(low, high) {
         return low;
       }};
-  function ___syscall_access(path, amode) {try {
-  
-      path = SYSCALLS.getStr(path);
-      return SYSCALLS.doAccess(path, amode);
-    } catch (e) {
-    if (typeof FS === 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
-    return -e.errno;
-  }
-  }
-
   function ___syscall_dup(fd) {try {
   
       var old = SYSCALLS.getStreamFromFD(fd);
@@ -3966,16 +3956,6 @@ var ASM_CONSTS = {
       var mode = varargs ? SYSCALLS.get() : 0;
       var stream = FS.open(pathname, flags, mode);
       return stream.fd;
-    } catch (e) {
-    if (typeof FS === 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
-    return -e.errno;
-  }
-  }
-
-  function ___syscall_readlink(path, buf, bufsize) {try {
-  
-      path = SYSCALLS.getStr(path);
-      return SYSCALLS.doReadlink(path, buf, bufsize);
     } catch (e) {
     if (typeof FS === 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
     return -e.errno;
@@ -4241,7 +4221,6 @@ function intArrayToString(array) {
 var asmLibraryArg = {
   "__assert_fail": ___assert_fail,
   "__clock_gettime": ___clock_gettime,
-  "__syscall_access": ___syscall_access,
   "__syscall_dup": ___syscall_dup,
   "__syscall_fstat64": ___syscall_fstat64,
   "__syscall_fstatat64": ___syscall_fstatat64,
@@ -4249,7 +4228,6 @@ var asmLibraryArg = {
   "__syscall_getcwd": ___syscall_getcwd,
   "__syscall_lstat64": ___syscall_lstat64,
   "__syscall_open": ___syscall_open,
-  "__syscall_readlink": ___syscall_readlink,
   "__syscall_stat64": ___syscall_stat64,
   "__syscall_unlink": ___syscall_unlink,
   "emscripten_memcpy_big": _emscripten_memcpy_big,
@@ -4271,11 +4249,6 @@ var ___wasm_call_ctors = Module["___wasm_call_ctors"] = function() {
 };
 
 /** @type {function(...*):?} */
-var _malloc = Module["_malloc"] = function() {
-  return (_malloc = Module["_malloc"] = Module["asm"]["malloc"]).apply(null, arguments);
-};
-
-/** @type {function(...*):?} */
 var _main = Module["_main"] = function() {
   return (_main = Module["_main"] = Module["asm"]["main"]).apply(null, arguments);
 };
@@ -4283,6 +4256,11 @@ var _main = Module["_main"] = function() {
 /** @type {function(...*):?} */
 var ___errno_location = Module["___errno_location"] = function() {
   return (___errno_location = Module["___errno_location"] = Module["asm"]["__errno_location"]).apply(null, arguments);
+};
+
+/** @type {function(...*):?} */
+var _malloc = Module["_malloc"] = function() {
+  return (_malloc = Module["_malloc"] = Module["asm"]["malloc"]).apply(null, arguments);
 };
 
 /** @type {function(...*):?} */

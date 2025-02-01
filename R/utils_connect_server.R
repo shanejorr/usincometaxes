@@ -10,6 +10,8 @@ calculate_taxes_wasm <- function(.data) {
   js_path     <- system.file("taxsim/taxsim.js",    package = "usincometaxes")
   wasm_binary <- readBin(wasm_path, raw(), file.info(wasm_path)$size)
 
+  .data <- .data |> select(-mtr)
+
   # convert input data to string
   data_string <- vroom::vroom_format(.data, delim = ",", eol = "\\n")
 

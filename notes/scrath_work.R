@@ -13,6 +13,11 @@ library(usincometaxes)
 
 # add when accepted into CRAN
 
+# to ssh ---------------
+
+"ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null txmtest@taxsim35.nber.org < to_taxsim.csv > results.csv"
+
+
 # testing -----------------------------------------
 
 devtools::load_all()
