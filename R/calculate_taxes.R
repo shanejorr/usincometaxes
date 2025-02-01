@@ -107,6 +107,8 @@ create_dataset_for_taxsim <- function(.data) {
 #' @param return_all_information Boolean (TRUE or FALSE). Whether to return all information from TAXSIM (TRUE),
 #'     or only key information (FALSE). Returning all information returns 42 columns of output, while only
 #'     returning key information returns 9 columns. It is faster to download results with only key information.
+#' @param upload_type Character string specifying how to connect to TAXSIM. Must be either "wasm" to use
+#'     WebAssembly (default) or "ssh" to use SSH connection to TAXSIM's server.
 #'
 #' @section Formatting your data:
 #'
@@ -166,11 +168,11 @@ create_dataset_for_taxsim <- function(.data) {
 #' Journal of Policy Analysis and Management vol 12 no 1, Winter 1993, pages 189-194.
 #'
 #' @export
-taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_all_information = FALSE) {
+taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_all_information = FALSE, upload_type = "wasm") {
 
   # check parameter options
   # must change this function if parameters are added
-  check_parameters(.data, marginal_tax_rates, return_all_information)
+  check_parameters(.data, marginal_tax_rates, return_all_information, upload_type)
 
   # save input ID numbers as object, so we can make sure the output ID numbers are the same
   input_s <- .data$taxsimid
@@ -192,14 +194,24 @@ taxsim_calculate_taxes <- function(.data, marginal_tax_rates = 'Wages', return_a
     "See the following address for more information: https://www.shaneorr.io/r/usincometaxes/articles/send-data-to-taxsim.html"
   )
 
-  # calcualte taxes using wasm
+  # calculate taxes using either wasm or ssh
   from_taxsim <- tryCatch(
-      error = function(cnd) stop(stop_error_message, call. = FALSE),
-      calculate_taxes_wasm(.data)
+    error = function(cnd) stop(stop_error_message, call. = FALSE),
+    {
+      if (upload_type == "wasm") {
+        calculate_taxes_wasm(.data)
+      } else {
+        calculate_taxes_ssh(.data)
+      }
+    }
   )
 
-  # add column names to the TAXSIM columns that do not have names
-  from_taxsim <- clean_from_taxsim(from_taxsim)
+  # add column names to the TAXSIM columns that do not have names only if from WASM
+  # or return data straight from server if it is ssh
+  if (upload_type == "wasm") {
+    from_taxsim <- clean_from_taxsim(from_taxsim)
+  }
+
 
   # check that input and output data sets have the same unique ID numbers
   output_s <- from_taxsim$taxsimid

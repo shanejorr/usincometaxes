@@ -4,7 +4,12 @@
 \alias{check_parameters}
 \title{Check input parameters}
 \usage{
-check_parameters(.data, marginal_tax_rates, return_all_information)
+check_parameters(
+  .data,
+  marginal_tax_rates,
+  return_all_information,
+  upload_type
+)
 }
 \description{
 Check that the input parameters to \code{taxsim_calculate_taxes} are of the proper type

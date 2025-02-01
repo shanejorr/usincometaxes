@@ -30,8 +30,8 @@ check_data <- function(.data, cols, state_column_name) {
 
   # tax year must be between the following two values
   # tax year is required, so we don't need to check whether it exists
-  if (!all(.data$year >= 1960 & .data$year <= 2023)) {
-    stop("`year` must be a numeric value between 1960 and 2023.", call. = FALSE)
+  if (!all(.data$year >= 1960 & .data$year <= 2024)) {
+    stop("`year` must be a numeric value between 1960 and 2024.", call. = FALSE)
   }
 
   return(invisible(NULL))
@@ -260,25 +260,39 @@ check_taxsimid <- function(taxsimid_col) {
   }
 
 }
+
 #' Check input parameters
 #'
 #' Check that the input parameters to `taxsim_calculate_taxes` are of the proper type
 #'    The parameters to this function should be the same as those to `taxsim_calculate_taxes`
 #'
 #' @keywords internal
-check_parameters <- function(.data, marginal_tax_rates, return_all_information) {
+check_parameters <- function(.data, marginal_tax_rates, return_all_information, upload_type) {
 
   marginal_rates_options <- c('Wages', 'Long Term Capital Gains', 'Primary Wage Earner', 'Secondary Wage Earner')
-  marginal_rates_stop_message <- paste0("`marginal_tax_rates` parameter must be one of: '", paste0(marginal_rates_options, collapse = "', '"), "'.")
+  marginal_rates_stop_message <- paste0("`marginal_tax_rates` parameter must be one of: '",
+                                        paste0(marginal_rates_options, collapse = "', '"), "'.")
+  upload_type_options <- c("wasm", "ssh")
+  upload_type_stop_message <- paste0("`upload_type` parameter must be one of: '",
+                                     paste0(upload_type_options, collapse = "', '"), "'.")
 
-  if (!is.data.frame(.data)) stop("`.data` parameter must be a data frame.", call. = FALSE)
+  if (!is.data.frame(.data)) {
+    stop("`.data` parameter must be a data frame.", call. = FALSE)
+  }
 
-  if (!(return_all_information %in% c(T, F))) stop('`all_columns` parameter must be either TRUE or FALSE.', call. = FALSE)
+  if (!(return_all_information %in% c(TRUE, FALSE))) {
+    stop('`all_columns` parameter must be either TRUE or FALSE.', call. = FALSE)
+  }
 
-  if (!(marginal_tax_rates %in% marginal_rates_options)) stop(marginal_rates_stop_message, call. = FALSE)
+  if (!(marginal_tax_rates %in% marginal_rates_options)) {
+    stop(marginal_rates_stop_message, call. = FALSE)
+  }
+
+  if (!(upload_type %in% upload_type_options)) {
+    stop(upload_type_stop_message, call. = FALSE)
+  }
 
   return(invisible(NULL))
-
 }
 
 #' Ensure single taxpayers do not have spouse ages or income
