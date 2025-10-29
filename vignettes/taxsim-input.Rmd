@@ -62,6 +62,17 @@ If state income taxes are not needed, either label as "No State" or remove this 
 
 Ages of any additional dependents are not relevant for the tax calculation, but all dependents should be included in \code{depx}.
 
+**Legacy Dependent Fields (TAXSIM 32 Compatibility)**
+
+The following fields provide an alternative method for specifying dependents and are maintained for backward compatibility with older TAXSIM versions. Use either these fields OR the age1/age2/age3 fields above, not both.
+
+* **dep13**: Number of dependents under age 13.
+<br>
+* **dep17**: Number of dependents under age 17.
+<br>
+* **dep18**: Number of dependents age 18 or older.
+<br>
+
 **Incomes**
 
 * **pwages**: Wage and salary income of Primary Taxpayer (exclude QBI).
@@ -97,9 +108,9 @@ Ages of any additional dependents are not relevant for the tax calculation, but 
     * NOLs.
 <br>   
 * **pensions**: Taxable Pensions and IRA distributions.
-<br>   
-* **ggsi**: Gross Social Security Benefits.
-<br>   
+<br>
+* **gssi**: Gross Social Security Benefits.
+<br>
 * **pui**: Unemployment Compensation received - primary taxpayer.
 <br>   
 * **sui**: Unemployment compensation received - secondary taxpayer. The split is relevant only 2020-2021.
@@ -121,7 +132,14 @@ Ages of any additional dependents are not relevant for the tax calculation, but 
     * Miscellaneous (line 27).
 <br>   
 * **childcare**: Child care expenses.
-<br>   
+<br>
+* **mortgage**: Deductions not included above and not a preference for the AMT. This field consolidates several Schedule A deductions including:
+    * Home mortgage interest (Schedule A Line 15);
+    * Deductible medical expenses not included in Line 16;
+    * Motor Vehicle Taxes paid (Schedule A Line 7);
+    * Charitable contributions (Schedule A Line 19); and
+    * Casualty or Theft Losses (Schedule A Line 20).
+<br>
 
 **The following are for the TCJA Business Tax Deduction.**
 
