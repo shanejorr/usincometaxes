@@ -23,8 +23,26 @@ calculate_taxes_wasm <- function(.data) {
                             V8::JS("{wasmBinary}"),
                             await = TRUE)
 
+  # Filter out debug messages from WASM output
+  # The new WASM version includes debug output that needs to be removed
+  response_lines <- strsplit(response_text, "\n")[[1]]
+
+  # Keep only lines that look like CSV data (contain commas and numbers)
+  # Filter out lines that:
+  # - Contain "TAXSIM:" debug messages
+  # - Start with whitespace followed by 'd' (debug output like " d1", " d2", etc.)
+  # - Are empty or whitespace only
+  csv_lines <- response_lines[
+    grepl(",", response_lines) &  # Must contain comma (CSV format)
+    !grepl("TAXSIM:", response_lines) &  # Not a TAXSIM debug message
+    !grepl("^\\s+d[0-9]", response_lines)  # Not debug output like " d1"
+  ]
+
+  # Rejoin the filtered lines
+  clean_response <- paste(csv_lines, collapse = "\n")
+
   from_taxsim <- tibble::tibble(
-    utils::read.table(text = response_text,
+    utils::read.table(text = clean_response,
                       header = T,
                       sep = ","))
 

@@ -45,6 +45,12 @@ get_state_soi <- function(state_column) {
 #' @keywords internal
 clean_from_taxsim <- function(from_taxsim) {
 
+  # Remove any columns that don't belong (e.g., cdate timestamp from newer WASM versions)
+  # Only keep columns that are in our expected mapping
+  expected_cols <- names(from_taxsim_cols())
+  cols_to_keep <- intersect(colnames(from_taxsim), expected_cols)
+  from_taxsim <- from_taxsim[, cols_to_keep, drop = FALSE]
+
   # change column names from the TAXSIM names to more descriptive names
   for (col in colnames(from_taxsim)) {
     new_colname_output <- from_taxsim_cols()[[col]]
@@ -93,7 +99,7 @@ from_taxsim_cols <- function() {
     # primary output
     'taxsimid' = 'taxsimid', 'year' = 'year', 'state' = 'state',  'fiitax' = 'fiitax',
     'siitax' = 'siitax',  'fica' = 'fica',  'frate' = 'frate',
-    'srate' = 'srate',  'ficar' = 'ficar', 'tfica' = 'tfica', 'credits' = 'credits',
+    'srate' = 'srate',  'ficar' = 'ficar', 'tfica' = 'tfica',
 
     # extended output
     'v10' = 'v10_federal_agi', 'v11' = 'v11_ui_agi', 'v12' = 'v12_soc_sec_agi', 'v13' = 'v13_zero_bracket_amount',
@@ -110,12 +116,22 @@ from_taxsim_cols <- function() {
     'v38' = 'v38_state_child_care_credit', 'v39' = 'v39_state_eitc', 'v40' = 'v40_state_total_credits',
     'v41' = 'v41_state_bracket_rate',
 
-    # not sure what this is, as it is new
+    # state tax before credits
     'staxbc' = 'staxbc',
 
-    # extra federal columns
-    'v42' = 'v42_self_emp_income', 'v43' = 'v43_medicare_tax_unearned_income',
-    'v44' = 'v44_medicare_tax_earned_income', 'v45' = 'v45_cares_recovery_rebate'
+    # Additional state columns (new in updated WASM)
+    'srebate' = 'v42_state_rebate',
+    'senergy' = 'v43_state_energy_credit',
+    'sctc' = 'v44_state_child_tax_credit',
+    'sptcr' = 'v45_state_property_tax_credit_refundable',
+    'samt' = 'v46_state_amt',
+
+    # Additional federal columns (new in updated WASM)
+    'qbid' = 'v47_qualified_business_income_deduction',
+    'niit' = 'v48_net_investment_income_tax',
+    'addmed' = 'v49_additional_medicare_tax',
+    'cares' = 'v50_cares_recovery_rebate',
+    'actc' = 'v51_additional_child_tax_credit'
   )
 
 }

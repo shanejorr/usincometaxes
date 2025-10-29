@@ -44,7 +44,7 @@ test_that("Output is correct (including marital status)", {
   )
 
   n_col_short <- 8
-  n_col_long <- 46
+  n_col_long <- 51  # Updated for new WASM version with additional columns
 
   taxsim_output_short <- taxsim_calculate_taxes(taxsim_input, return_all_information = FALSE)
   taxsim_output_long <- taxsim_calculate_taxes(taxsim_input, return_all_information = TRUE)
