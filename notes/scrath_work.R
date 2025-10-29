@@ -111,10 +111,10 @@ taxsim_data <- read.csv(text = results)
 ######################
 
 family_income <- data.frame(
-  id_number = as.integer(c(1, 2)),
+  taxsimid = as.integer(c(1, 2)),
   state = c('North Carolina', 'NY'),
-  tax_year = c(2020, 2020),
-  filing_status = c('single', 'married, jointly'),
+  year = c(2020, 2020),
+  mstat = c('single', 'married, jointly'),
   primary_wages = c(10000, 15000),
   primary_age = c(26, 36),
   spouse_wages = c(0, 15000),

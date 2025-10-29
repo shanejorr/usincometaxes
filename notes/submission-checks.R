@@ -5,7 +5,7 @@
 # https://cloud.r-project.org/web/checks/check_results_usincometaxes.html
 
 devtools::spell_check()
-devtools::check_rhub()
+rhub::rhub_check()
 
 devtools::check_win_devel()
 devtools::check_win_release()
