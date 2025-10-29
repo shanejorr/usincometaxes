@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Read(//private/tmp/**)",
+      "Bash(cp:*)",
+      "Bash(R -e:*)",
+      "Bash(git push)",
+      "Bash(git push:*)",
+      "Read(//tmp/**)",
+      "Bash(cat:*)",
+      "Read(//Users/shaneorr/repos/personal/**)",
+      "Bash(R CMD check:*)",
+      "Bash(git merge:*)",
+      "Bash(git tag:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
