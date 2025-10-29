@@ -50,17 +50,19 @@ library(usincometaxes)
 
 family_income <- data.frame(
   taxsimid = c(1, 2),
-  state = c('North Carolina', 'NY'),
-  year = c(2015, 2024),
+  state = c('FL', 'NY'),
+  year = c(2023, 2021),
   mstat = c('married, jointly', 'single'),
   pwages = c(50000, 100000),  # primary wages
   page = c(26, 36) # primary age
 )
 
+.data <- create_dataset_for_taxsim(family_income)
+
 family_taxes <- taxsim_calculate_taxes(
   .data = family_income,
   marginal_tax_rates = 'Wages',
-  return_all_information = FALSE,
+  return_all_information = TRUE,
   upload_type = "ssh"
 )
 ```
