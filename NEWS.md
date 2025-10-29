@@ -1,3 +1,21 @@
+# usincometaxes 0.7.2
+
+Update `taxsim.wasm` and `taxsim.js` to latest files from taxsim.app. ETag of current version is `fb937-63851e4a83800`.
+
+The new WASM version includes 10 additional output columns:
+- State columns: `srebate`, `senergy`, `sctc`, `sptcr`, `samt`
+- Federal columns: `qbid`, `niit`, `addmed`, `cares`, `actc`
+
+Documentation improvements:
+- Updated output column documentation in `taxsim-output.Rmd` for new WASM version (51 total columns, up from 46)
+- Added missing input column `mortgage` to `taxsim-input.Rmd` documentation
+- Fixed typo: `ggsi` → `gssi` (Gross Social Security Income) in input documentation
+- Added legacy dependent fields (`dep13`, `dep17`, `dep18`) to input documentation
+
+Internal improvements:
+- Added debug output filtering for new WASM version
+- Added internal SSH testing infrastructure for development purposes
+
 # usincometaxes 0.7.1
 
 Make 2023 the most recent year you can use. TAXSIM currently does not work for 2024.

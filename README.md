@@ -1,6 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 ## Calculate Federal and State Income Taxes
@@ -43,7 +45,7 @@ library(usincometaxes)
 family_income <- data.frame(
   taxsimid = c(1, 2),
   state = c('North Carolina', 'NY'),
-  year = c(2015, 2020),
+  year = c(2015, 2023),
   mstat = c('married, jointly', 'single'),
   pwages = c(50000, 100000),  # primary wages
   page = c(26, 36) # primary age
@@ -62,8 +64,8 @@ kable(family_taxes)
 
 | taxsimid |  fiitax |  siitax |  fica | frate | srate | ficar | tfica |
 |---------:|--------:|--------:|------:|------:|------:|------:|------:|
-|        1 |  3487.5 | 2012.50 |  7650 |    15 |  5.75 |  15.3 |  3825 |
-|        2 | 15103.5 | 5377.86 | 15300 |    24 |  6.41 |  15.3 |  7650 |
+|        1 |  3487.5 | 2012.50 |  7650 |    15 |  5.75 |     0 |  3825 |
+|        2 | 14260.5 | 4951.75 | 15300 |    22 |  6.00 |     0 |  7650 |
 
 Users can use the `taxsimid` column to join the tax data with the
 original data set. Every `taxsimid` in the input data is represented in
@@ -75,10 +77,10 @@ family_income %>%
   kable()
 ```
 
-| taxsimid | state          | year | mstat            | pwages | page |  fiitax |  siitax |  fica | frate | srate | ficar | tfica |
-|---------:|:---------------|-----:|:-----------------|-------:|-----:|--------:|--------:|------:|------:|------:|------:|------:|
-|        1 | North Carolina | 2015 | married, jointly |  50000 |   26 |  3487.5 | 2012.50 |  7650 |    15 |  5.75 |  15.3 |  3825 |
-|        2 | NY             | 2020 | single           | 100000 |   36 | 15103.5 | 5377.86 | 15300 |    24 |  6.41 |  15.3 |  7650 |
+| taxsimid | state | year | mstat | pwages | page | fiitax | siitax | fica | frate | srate | ficar | tfica |
+|---:|:---|---:|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | North Carolina | 2015 | married, jointly | 50000 | 26 | 3487.5 | 2012.50 | 7650 | 15 | 5.75 | 0 | 3825 |
+| 2 | NY | 2023 | single | 100000 | 36 | 14260.5 | 4951.75 | 15300 | 22 | 6.00 | 0 | 7650 |
 
 ## Output
 
@@ -110,10 +112,10 @@ family_taxes_full_output <- taxsim_calculate_taxes(
 kable(family_taxes_full_output)
 ```
 
-| taxsimid |  fiitax |  siitax |  fica | frate | srate | ficar | tfica | credits | v10_federal_agi | v11_ui_agi | v12_soc_sec_agi | v13_zero_bracket_amount | v14_personal_exemptions | v15_exemption_phaseout | v16_deduction_phaseout | v17_itemized_deductions | v18_federal_taxable_income | v19_tax_on_taxable_income | v20_exemption_surtax | v21_general_tax_credit | v22_child_tax_credit_adjusted | v23_child_tax_credit_refundable | v24_child_care_credit | v25_eitc | v26_amt_income | v27_amt_liability | v28_fed_income_tax_before_credit | v29_fica | v30_state_household_income | v31_state_rent_expense | v32_state_agi | v33_state_exemption_amount | v34_state_std_deduction_amount | v35_state_itemized_deduction | v36_state_taxable_income | v37_state_property_tax_credit | v38_state_child_care_credit | v39_state_eitc | v40_state_total_credits | v41_state_bracket_rate | staxbc | v42_self_emp_income | v43_medicare_tax_unearned_income | v44_medicare_tax_earned_income | v45_cares_recovery_rebate |
-|---------:|--------:|--------:|------:|------:|------:|------:|------:|--------:|----------------:|-----------:|----------------:|------------------------:|------------------------:|-----------------------:|-----------------------:|------------------------:|---------------------------:|--------------------------:|---------------------:|-----------------------:|------------------------------:|--------------------------------:|----------------------:|---------:|---------------:|------------------:|---------------------------------:|---------:|---------------------------:|-----------------------:|--------------:|---------------------------:|-------------------------------:|-----------------------------:|-------------------------:|------------------------------:|----------------------------:|---------------:|------------------------:|-----------------------:|-------:|--------------------:|---------------------------------:|-------------------------------:|--------------------------:|
-|        1 |  3487.5 | 2012.50 |  7650 |    15 |  5.75 |  15.3 |  3825 |       0 |           50000 |          0 |               0 |                   12600 |                    8000 |                      0 |                      0 |                       0 |                      29400 |                    3487.5 |                    0 |                      0 |                             0 |                               0 |                     0 |        0 |          50000 |                 0 |                           3487.5 |     7650 |                   50000.01 |                      0 |      50000.01 |                          0 |                          15000 |                            0 |                 35000.01 |                             0 |                           0 |              0 |                       0 |                   0.00 |      0 |                   0 |                                0 |                              0 |                         0 |
-|        2 | 15103.5 | 5377.86 | 15300 |    24 |  6.41 |  15.3 |  7650 |       0 |          100000 |          0 |               0 |                   12400 |                       0 |                      0 |                      0 |                       0 |                      87600 |                   15103.5 |                    0 |                      0 |                             0 |                               0 |                     0 |        0 |         100000 |                 0 |                          15103.5 |    15300 |                  100001.01 |                      0 |     100000.01 |                          0 |                           8000 |                            0 |                 92000.01 |                             0 |                           0 |              0 |                       0 |                   6.41 |      0 |                   0 |                                0 |                              0 |                         0 |
+| taxsimid | fiitax | siitax | fica | frate | srate | ficar | tfica | v10_federal_agi | v11_ui_agi | v12_soc_sec_agi | v13_zero_bracket_amount | v14_personal_exemptions | v15_exemption_phaseout | v16_deduction_phaseout | v17_itemized_deductions | v18_federal_taxable_income | v19_tax_on_taxable_income | v20_exemption_surtax | v21_general_tax_credit | v22_child_tax_credit_adjusted | v23_child_tax_credit_refundable | v24_child_care_credit | v25_eitc | v26_amt_income | v27_amt_liability | v28_fed_income_tax_before_credit | v29_fica | v30_state_household_income | v31_state_rent_expense | v32_state_agi | v33_state_exemption_amount | v34_state_std_deduction_amount | v35_state_itemized_deduction | v36_state_taxable_income | v37_state_property_tax_credit | v38_state_child_care_credit | v39_state_eitc | v40_state_total_credits | v41_state_bracket_rate | staxbc | v42_state_rebate | v43_state_energy_credit | v44_state_child_tax_credit | v45_state_property_tax_credit_refundable | v46_state_amt | v47_qualified_business_income_deduction | v48_net_investment_income_tax | v49_additional_medicare_tax | v50_cares_recovery_rebate | v51_additional_child_tax_credit |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 3487.5 | 2012.50 | 7650 | 15 | 5.75 | 0 | 3825 | 50000 | 0 | 0 | 12600 | 8000 | 0 | 0 | 0 | 29400 | 3487.5 | 0 | 0 | 0 | 0 | 0 | 0 | 50000 | 0 | 3487.5 | 7650 | 50000.01 | 0 | 50000.01 | 0 | 15000 | 0 | 35000.01 | 0 | 0 | 0 | 0 | 0.00 | 2012.50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 2 | 14260.5 | 4951.75 | 15300 | 22 | 6.00 | 0 | 7650 | 100000 | 0 | 0 | 13850 | 0 | 0 | 0 | 0 | 86150 | 14260.5 | 0 | 0 | 0 | 0 | 0 | 0 | 100000 | 0 | 14260.5 | 15300 | 100001.01 | 0 | 100000.01 | 0 | 8000 | 0 | 92000.01 | 0 | 0 | 0 | 0 | 6.25 | 4951.75 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 ## Input
 
