@@ -15,11 +15,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-`usincometaxes` returns tax results as a data frame, with each column representing tax information such as 
-federal and state income taxes owed or other line items. Each row corresponds to a row in the input data frame. 
-Users can specify the amount of output with the `return_all_information` parameter in `taxsim_calculate_taxes()`. 
-Setting `return_all_information` to `TRUE` returns a data frame with 42 columns of detailed tax information. 
-`FALSE` returns 9 columns of key information. `FALSE` leads to quicker calculations and downloads from the NBER's servers. 
+`usincometaxes` returns tax results as a data frame, with each column representing tax information such as
+federal and state income taxes owed or other line items. Each row corresponds to a row in the input data frame.
+Users can specify the amount of output with the `return_all_information` parameter in `taxsim_calculate_taxes()`.
+Setting `return_all_information` to `TRUE` returns a data frame with 51 columns of detailed tax information.
+`FALSE` returns 8 columns of key information. `FALSE` leads to quicker calculations and downloads from the NBER's servers. 
 
 `usincometaxes` provides the same output as [TAXSIM 35](http://taxsim.nber.org/taxsim35/). 
 Setting `return_all_information` to `FALSE` equates to setting `idtl` to 0 in TAXSIM, while `TRUE` corresponds to 2.
@@ -39,7 +39,7 @@ Returned columns when `return_all_information` = `FALSE`.
 * **ficar**: FICA rate.
 * **tfica**: Taxpayer liability for FICA.
 
-Marginal rates are with respect to wage income unless another rate is requested. If detailed intermediate results are requested, the following 35 columns of data are added:.
+Marginal rates are with respect to wage income unless another rate is requested. If detailed intermediate results are requested, the following 43 columns of data are added.
 
 ## Detailed columns
 
@@ -47,7 +47,6 @@ Returned columns when `return_all_information` = `TRUE`.
 
 All standard columns shown above, plus:
 
-* **credits**: Total refundable and non-refundable federal credits
 * **v10_federal_agi**: Federal AGI
 * **v11_ui_agi**: UI in AGI
 * **v12_soc_sec_agi**: Social Security in AGI
@@ -85,10 +84,16 @@ The following columns are zero if no state is specified:
 * **v40_state_total_credits**: State Total Credits
 * **v41_state_bracket_rate**: State Bracket Rate
 * **staxbc**: State tax liability before credits
+* **v42_state_rebate**: State rebate or stimulus payment
+* **v43_state_energy_credit**: State energy efficiency credit
+* **v44_state_child_tax_credit**: State child tax credit
+* **v45_state_property_tax_credit_refundable**: State refundable property tax credit
+* **v46_state_amt**: State Alternative Minimum Tax
 
 Additional federal results:
 
-* **v42_self_emp_income**: Earned Self-Employment Income for FICA
-* **v43_medicare_tax_unearned_income**: Medicare Tax on Unearned Income
-* **v44_medicare_tax_earned_income**: Medicare Tax on Earned Income
-* **v45_cares_recovery_rebate**: CARES act Recovery Rebates
+* **v47_qualified_business_income_deduction**: Qualified Business Income Deduction (Section 199A, introduced in 2018 Tax Cuts and Jobs Act)
+* **v48_net_investment_income_tax**: Net Investment Income Tax (3.8% surtax on investment income, introduced in 2013)
+* **v49_additional_medicare_tax**: Additional Medicare Tax (0.9% surtax on high earners, introduced in 2013)
+* **v50_cares_recovery_rebate**: CARES Act Recovery Rebates (Economic Impact Payments/stimulus checks)
+* **v51_additional_child_tax_credit**: Additional Child Tax Credit (refundable portion of child tax credit)
