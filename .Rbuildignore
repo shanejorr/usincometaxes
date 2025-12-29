@@ -3,6 +3,7 @@
 ^LICENSE\.md$
 ^notes$
 ^README\.Rmd$
+^README\.html$
 ^cran-comments\.md$
 ^data-raw$
 ^pkgdown$
@@ -16,3 +17,4 @@
 ^old_wasm_files$
 ^.*\.DS_Store$
 ^CLAUDE\.md$
+^\.claude$
